@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 
-// Where the internal operations platform (dryer intake/dispatch/quality
-// tracking) lives once it moves off the root domain. Update this if the
-// subdomain changes.
-const OPS_URL = 'https://ops.yellinaseeds.com'
+// The internal operations platform (dryer intake/dispatch/quality tracking)
+// is bundled into this same app as static files under public/ops/ and
+// served at this same-origin path — no separate domain or deployment.
+const OPS_URL = '/ops/'
 
 const LINKS = [
   { id: 'story', label: 'Our Story' },

@@ -1,0 +1,2127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yellina Seeds — Operations Platform</title>
+<meta name="description" content="Yellina Seeds Pvt. Ltd. — Sathupally, Khammam. Seed drying & operations management platform for corn hybrid processing, intake, dispatch and quality tracking.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#F5A623">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="./assets/favicon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="./assets/favicon.png">
+<link rel="apple-touch-icon" href="./assets/favicon.png">
+<link rel="manifest" href="./manifest.json">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.yellinaseeds.com/">
+<meta property="og:title" content="Yellina Seeds — Operations Platform">
+<meta property="og:description" content="Seed drying & operations management — intake, drying, dispatch. Yellina Seeds Pvt. Ltd., Sathupally.">
+<meta property="og:image" content="https://www.yellinaseeds.com/assets/favicon.png">
+<meta property="og:site_name" content="Yellina Seeds">
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Yellina Seeds Pvt. Ltd.",
+  "alternateName": "Yellina Seeds",
+  "url": "https://www.yellinaseeds.com",
+  "logo": "https://www.yellinaseeds.com/assets/favicon.png",
+  "image": "https://www.yellinaseeds.com/assets/favicon.png",
+  "description": "Seed drying and operations management — corn hybrid processing, intake, dispatch and quality tracking.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Sathupally",
+    "addressRegion": "Telangana",
+    "addressCountry": "IN"
+  },
+  "taxID": "36AABCY8231F1ZB"
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<!-- Modular Stylesheets -->
+<link rel="stylesheet" href="css/variables.css?v=22">
+<link rel="stylesheet" href="css/layout.css?v=29">
+<link rel="stylesheet" href="css/components.css?v=51">
+</head>
+<body>
+
+<!-- ============================================================
+     TOPBAR
+     ============================================================ -->
+
+<!-- ============================================================
+     LOGIN SCREEN
+     ============================================================ -->
+<div id="login-screen" style="display:flex;position:fixed;inset:0;z-index:1000;background:#F2F6F0;align-items:stretch;justify-content:stretch;">
+
+  <!-- LEFT PANEL: Dark botanical -->
+  <div class="login-left" style="flex:0 0 42%;background:linear-gradient(165deg,#0E2018 0%,#1A3D28 55%,#1F4730 100%);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 40px;">
+    <!-- Gold glow accent -->
+    <div style="position:absolute;bottom:-80px;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(ellipse,rgba(197,160,60,0.18) 0%,transparent 70%);pointer-events:none;"></div>
+    <!-- Content -->
+    <div style="position:relative;z-index:1;text-align:center;max-width:300px;">
+      <div style="width:72px;height:72px;background:rgba(255,255,255,0.1);backdrop-filter:blur(12px);border:1.5px solid rgba(255,255,255,0.2);border-radius:20px;margin:0 auto 24px;display:flex;align-items:center;justify-content:center;">
+        <img src="assets/icon.jpg" style="width:54px;height:54px;object-fit:contain;border-radius:10px;" onerror="this.parentElement.innerHTML='🌾'">
+      </div>
+      <div style="font-family:'Playfair Display',serif;font-size:30px;font-weight:800;color:#fff;letter-spacing:-.3px;line-height:1.15;margin-bottom:10px;">Yellina Seeds</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.45);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:32px;">Operations Platform</div>
+      <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(197,160,60,0.6),transparent);margin-bottom:28px;"></div>
+      <div style="font-size:14px;color:rgba(255,255,255,0.6);line-height:1.75;font-style:italic;">"Rooted in Nature,<br>Growing the Future"</div>
+      <div style="margin-top:36px;display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 14px;">
+          <span style="font-size:18px;">🌾</span>
+          <span style="font-size:12px;color:rgba(255,255,255,0.6);">Seed drying & operations management</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 14px;">
+          <span style="font-size:18px;">📊</span>
+          <span style="font-size:12px;color:rgba(255,255,255,0.6);">Real-time bin monitoring & analytics</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 14px;">
+          <span style="font-size:18px;">🚛</span>
+          <span style="font-size:12px;color:rgba(255,255,255,0.6);">Truck entry, dispatch & receipts</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL: Light form area -->
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;background:url('/assets/wallpaper.jpg') center center / cover;padding:32px;">
+    <div style="width:100%;max-width:400px;">
+      <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:800;color:#1A3D28;letter-spacing:-.2px;margin-bottom:4px;">Welcome back</div>
+      <div style="font-size:13px;color:#2D5A3D;margin-bottom:28px;">Sign in to continue to the platform</div>
+
+      <!-- Card -->
+      <div style="background:rgba(255,255,255,0.90);backdrop-filter:blur(20px);border:1px solid rgba(180,215,175,0.5);border-radius:20px;padding:30px;box-shadow:0 20px 60px rgba(15,40,25,0.10),0 4px 16px rgba(15,40,25,0.06);">
+        <div id="login-error" style="display:none;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:10px 14px;font-size:13px;color:#DC2626;margin-bottom:16px;"></div>
+
+        <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:22px;">
+          <div>
+            <label style="font-size:11px;font-weight:700;color:#4A6E52;text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:6px;">Email</label>
+            <input id="login-email" type="email" placeholder="you@yellinaseeds.com"
+              style="width:100%;height:44px;padding:0 14px;background:#fff;border:1.5px solid #C8DEC5;border-radius:10px;color:#1A3D28;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;"
+              onfocus="this.style.borderColor='#22A05A';this.style.boxShadow='0 0 0 3px rgba(34,160,90,0.1)'"
+              onblur="this.style.borderColor='#C8DEC5';this.style.boxShadow=''"
+              onkeydown="if(event.key==='Enter')doLogin()">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:700;color:#4A6E52;text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:6px;">Password</label>
+            <input id="login-password" type="password" placeholder="••••••••••"
+              style="width:100%;height:44px;padding:0 14px;background:#fff;border:1.5px solid #C8DEC5;border-radius:10px;color:#1A3D28;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;"
+              onfocus="this.style.borderColor='#22A05A';this.style.boxShadow='0 0 0 3px rgba(34,160,90,0.1)'"
+              onblur="this.style.borderColor='#C8DEC5';this.style.boxShadow=''"
+              onkeydown="if(event.key==='Enter')doLogin()">
+          </div>
+        </div>
+
+        <button id="login-btn" onclick="doLogin()"
+          style="width:100%;height:46px;background:linear-gradient(135deg,#1A5C36,#22A05A);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.3px;transition:all .2s;box-shadow:0 4px 16px rgba(26,92,54,0.28);"
+          onmouseover="this.style.filter='brightness(1.08)';this.style.transform='translateY(-1px)'"
+          onmouseout="this.style.filter='';this.style.transform=''">
+          Sign In
+        </button>
+
+        <div style="text-align:center;margin-top:14px;">
+          <a href="#" onclick="showForgotPassword()" style="font-size:12px;color:#7A9E7E;text-decoration:none;">Forgot password?</a>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:18px;font-size:11px;color:#2D5A3D;">
+        <span style="display:inline-flex;align-items:center;gap:6px;">🔒 Secured by Supabase · All data encrypted at rest</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="app-shell" style="display:none">
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+    <img src="assets/icon.jpg" class="logo-img" alt="Yellina Seeds" style="background:#fff;border-radius:6px;padding:2px;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div style="width:44px;height:44px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border-radius:10px;display:none;align-items:center;justify-content:center;font-size:22px;">🌾</div>
+    <div class="brand-text">
+      <span class="brand-name">Yellina Seeds</span>
+      <span class="brand-tagline">Operations Platform</span>
+    </div>
+  </div>
+
+  <div class="topbar-center">
+    <div class="search-bar" id="search-bar-wrap">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--ink-5)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="global-search" placeholder="Search DR no, vehicle, hybrid, receipt…" oninput="globalSearch(this.value)" onkeydown="if(event.key==='Escape')closeSearchDropdown()" autocomplete="off">
+      <span style="font-size:11px;color:var(--ink-5);background:var(--surface-3);padding:1px 6px;border-radius:4px;">⌘K</span>
+      <div id="search-dropdown" class="search-dropdown" style="display:none;"></div>
+    </div>
+  </div>
+
+  <div class="topbar-right">
+    <select id="lang-select" class="form-select" style="padding:2px 4px;width:52px;border-radius:8px;font-weight:700;font-size:11px;background-color:var(--surface-2);border:1px solid var(--surface-4);color:var(--ink-4);cursor:pointer;" onchange="changeLanguage(this.value)">
+      <option value="en">EN</option>
+      <option value="hi">HI</option>
+      <option value="te">TE</option>
+    </select>
+
+    <!-- Boiler Temps + Pressure -->
+    <div class="boiler-wrap" id="boiler-wrap">
+      <button class="boiler-pill" id="boiler-btn" onclick="toggleBoilerEdit()" title="Boiler temps & pressure — click to update" style="gap:8px;padding:0 10px;height:36px;">
+        <div style="display:flex;flex-direction:column;align-items:center;line-height:1.2;">
+          <span style="font-size:8px;font-weight:700;opacity:.6;letter-spacing:.3px;">B1</span>
+          <span id="boiler-1-display" style="font-size:12px;font-weight:800;">—</span>
+        </div>
+        <span style="opacity:.2;font-size:10px;">|</span>
+        <div style="display:flex;flex-direction:column;align-items:center;line-height:1.2;">
+          <span style="font-size:8px;font-weight:700;opacity:.6;letter-spacing:.3px;">B2</span>
+          <span id="boiler-2-display" style="font-size:12px;font-weight:800;">—</span>
+        </div>
+        <span style="opacity:.2;font-size:10px;">|</span>
+        <div style="display:flex;flex-direction:column;align-items:center;line-height:1.2;">
+          <span style="font-size:8px;font-weight:700;opacity:.6;letter-spacing:.3px;" id="boiler-pressure-unit-display">kg/cm²</span>
+          <span id="boiler-pressure-display" style="font-size:12px;font-weight:800;">—</span>
+        </div>
+      </button>
+      <div class="boiler-popup" id="boiler-popup" style="display:none;min-width:260px;">
+        <div class="boiler-popup-title">🔥 Boiler Status</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div>
+            <div style="font-size:10px;font-weight:700;color:var(--ink-4);letter-spacing:.5px;margin-bottom:4px;">B.No:1 Temp</div>
+            <div style="display:flex;align-items:center;gap:4px;">
+              <input type="number" id="boiler-1-input" class="form-input" style="font-size:16px;font-weight:700;text-align:center;padding:5px 6px;" placeholder="42.6" step="0.1" min="0" max="999">
+            </div>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:700;color:var(--ink-4);letter-spacing:.5px;margin-bottom:4px;">B.No:2 Temp</div>
+            <div style="display:flex;align-items:center;gap:4px;">
+              <input type="number" id="boiler-2-input" class="form-input" style="font-size:16px;font-weight:700;text-align:center;padding:5px 6px;" placeholder="42.2" step="0.1" min="0" max="999">
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:10px;font-weight:700;color:var(--ink-4);letter-spacing:.5px;margin-bottom:4px;">Pressure</div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <input type="number" id="boiler-pressure-input" class="form-input" style="flex:1;font-size:16px;font-weight:700;text-align:center;padding:5px 6px;" placeholder="5.0" step="0.1" min="0">
+            <select id="boiler-pressure-unit" class="form-input" style="width:90px;padding:5px 6px;font-size:12px;">
+              <option value="kg/cm²">kg/cm²</option>
+              <option value="PSI">PSI</option>
+              <option value="bar">bar</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-solid btn-sm" style="flex:1;" onclick="saveBoilerStatus()">Save All</button>
+          <button class="btn btn-ghost btn-sm" onclick="toggleBoilerEdit()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="role-badge" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;border:1px solid transparent;font-size:12px;"></div>
+    <button onclick="_cmdPalette && _cmdPalette.open()" class="btn btn-ghost btn-sm" title="Command Palette (⌘K)" id="cmd-k-btn" style="display:flex;align-items:center;gap:5px;font-size:12px;padding:5px 10px;color:var(--ink-4);border:1px solid var(--surface-3);border-radius:8px;">
+      <kbd style="font-size:10px;font-family:'DM Mono',monospace;">⌘K</kbd>
+    </button>
+    <button id="notif-perm-btn" onclick="requestNotifPermission && requestNotifPermission().then(()=>updateNotifPermBtn && updateNotifPermBtn())" title="Enable push notifications" style="display:none;align-items:center;gap:5px;font-size:12px;padding:5px 10px;color:#d97706;border:1px solid #fde68a;border-radius:8px;background:#fffbeb;cursor:pointer;">
+      Enable Alerts
+    </button>
+
+    <div class="notif-wrap" id="notif-wrap">
+      <button class="notif-btn" id="notif-btn" onclick="toggleNotifPanel()" title="Alerts">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span class="notif-badge" id="notif-badge" style="display:none;">0</span>
+      </button>
+      <div class="notif-panel" id="notif-panel" style="display:none;">
+        <div class="notif-panel-title">⚠️ Bin Alerts</div>
+        <div id="notif-panel-body"></div>
+      </div>
+    </div>
+    <button class="topbar-btn" onclick="openModal('intake-modal')">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      <span data-i18n="intake.newIntake">New Intake</span>
+    </button>
+    <div class="avatar" id="user-avatar" onclick="toggleUserMenu()" title="">A</div>
+    <div class="user-menu" id="user-menu">
+      <div class="user-menu-email" id="user-menu-email">—</div>
+      <div class="user-menu-divider"></div>
+      <div class="user-menu-item" onclick="dbLogout()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================
+     SIDEBAR
+     ============================================================ -->
+<nav class="sidebar">
+  <div class="nav-section-label" data-i18n="nav.overview">Overview</div>
+  <div class="nav-item active" onclick="showPage('dashboard',this)">
+    <span class="nav-icon">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    </span>
+    <span data-i18n="nav.dashboard">Dashboard</span>
+  </div>
+  <div class="nav-item" onclick="showPage('analytics',this)">
+    <span class="nav-icon">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    </span>
+    <span data-i18n="nav.analytics">Analytics</span>
+  </div>
+
+  <div class="nav-divider"></div>
+  <div class="nav-section-label" data-i18n="nav.operations">Operations</div>
+
+  <div class="nav-item" onclick="showPage('intake',this)">
+    <span class="nav-icon">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8l4 4-4 4M20 12H9"/></svg>
+    </span>
+    <span data-i18n="nav.intake">Intake</span>
+  </div>
+
+  <div class="nav-item" onclick="showPage('bins',this)">
+    <span class="nav-icon">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </span>
+    <span data-i18n="nav.binMonitor">Bin Monitor</span>
+  </div>
+
+  <div class="nav-item" onclick="showPage('entry-trucks',this)">
+    <span class="nav-icon">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8l4 4-4 4M20 12H9"/><path d="M1 8h4"/></svg>
+    </span>
+    <span>Entry Trucks</span>
+  </div>
+
+  <div class="nav-item" onclick="showPage('backyard',this)">
+    <span class="nav-icon">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+    </span>
+    <span>Backyard</span>
+  </div>
+
+  <div class="nav-item" onclick="showPage('shelling',this)">
+    <span class="nav-icon">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+    </span>
+    <span>Shelling</span>
+  </div>
+
+  <div class="nav-item" onclick="showPage('ground-drying',this)">
+    <span class="nav-icon">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/><path d="M12 6v6l4 2"/></svg>
+    </span>
+    <span>Ground Drying</span>
+  </div>
+
+  <div class="nav-divider"></div>
+  <div class="nav-section-label" data-i18n="nav.logistics">Dispatch & Finance</div>
+
+  <div class="nav-item" onclick="showPage('dispatch',this)">
+    <span class="nav-icon">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    </span>
+    <span data-i18n="nav.dispatch">Dispatch</span>
+  </div>
+
+  <div class="nav-item" onclick="showPage('receipts',this)">
+    <span class="nav-icon">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    </span>
+    <span data-i18n="nav.receipts">Receipts</span>
+  </div>
+
+  <div class="nav-divider"></div>
+  <div class="nav-section-label" data-i18n="nav.plantOperations">Plant Operations</div>
+
+  <div class="nav-item" onclick="showPage('maintenance',this)">
+    <span class="nav-icon">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+    </span>
+    <span data-i18n="nav.maintenance">Maintenance</span>
+  </div>
+
+  <div class="nav-item" onclick="showPage('labor',this)">
+    <span class="nav-icon">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+    </span>
+    <span data-i18n="nav.labor">Labor & Shifts</span>
+  </div>
+
+  <div class="nav-item" onclick="showPage('updates',this)">
+    <span class="nav-icon">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    </span>
+    <span>Field Updates</span>
+  </div>
+
+  <div class="nav-divider"></div>
+  <div class="nav-section-label" data-i18n="nav.security">Security</div>
+
+  <div class="nav-item" onclick="showPage('verify',this)">
+    <span class="nav-icon">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </span>
+    <span data-i18n="nav.verifyReceipt">Verify Receipt</span>
+  </div>
+
+  <div class="nav-item" onclick="showManagerAccess(this)" style="color:var(--gold);">
+    <span class="nav-icon">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </span>
+    <span data-i18n="nav.managerAccess">Manager Access</span>
+  </div>
+
+  <div class="nav-item" onclick="showPage('audit',this)">
+    <span class="nav-icon">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+    </span>
+    <span>Audit Log</span>
+  </div>
+
+  <div class="nav-item" onclick="doLogout()" style="color:var(--danger);margin-top:auto;">
+    <span class="nav-icon">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+    </span>
+    <span>Sign Out</span>
+  </div>
+
+  <div class="nav-divider"></div>
+  <div class="sidebar-footer">
+    <div class="company-card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+        <img src="assets/icon.jpg" style="width:32px;height:32px;object-fit:contain;border-radius:6px;" onerror="this.style.display='none'">
+        <div class="company-name">Yellina Seeds Pvt. Ltd.</div>
+      </div>
+      <div class="company-meta">Sathupally, Khammam Dist.</div>
+      <div class="company-meta">GSTIN: 36AABCY8231F1ZB</div>
+      <div style="margin-top:6px;display:flex;align-items:center;gap:8px;">
+        <div class="topbar-time" id="clock" style="font-size:12px;color:var(--ink-4);">--:--:--</div>
+        <div class="live-pill" title="Real-time sync active" style="padding:2px 6px;font-size:10px;height:auto;gap:4px;"><div class="live-dot"></div> Live</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ============================================================
+     MAIN
+     ============================================================ -->
+<main class="main">
+<div class="page-wrap">
+
+<!-- ==================== DASHBOARD ==================== -->
+<div id="page-dashboard" class="page active">
+  <div class="page-header">
+    <div class="page-title-wrap">
+      <div class="page-eyebrow">Operations Center</div>
+      <div class="page-title">Good morning — Here's your plant status</div>
+      <div class="page-subtitle" id="dash-date"></div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" onclick="showPage('analytics',document.querySelector('.nav-item:nth-child(3)'))">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Analytics
+      </button>
+    </div>
+  </div>
+
+  <div class="kpi-grid" id="kpi-grid">
+    <div class="kpi-card kpi-gold">
+      <div class="kpi-icon">🌽</div>
+      <div class="kpi-val" id="kpi-intake">0.0</div>
+      <div class="kpi-label">Total Intake (Kg)</div>
+      <div class="kpi-delta delta-up" id="kpi-intake-d">↑ Today</div>
+    </div>
+
+    <div class="kpi-card kpi-green">
+      <div class="kpi-icon">🌿</div>
+      <div class="kpi-val" id="kpi-drying">0</div>
+      <div class="kpi-label" data-i18n="dash.drying">Drying Bins</div>
+      <div class="kpi-delta delta-up">Active</div>
+    </div>
+    <div class="kpi-card kpi-blue">
+      <div class="kpi-icon">📦</div>
+      <div class="kpi-val" id="kpi-dispatched">0</div>
+      <div class="kpi-label" data-i18n="dash.dispatches">Receipts Issued</div>
+      <div class="kpi-delta delta-up">Verified</div>
+    </div>
+    <div class="kpi-card kpi-purple">
+      <div class="kpi-icon">💧</div>
+      <div class="kpi-val" id="kpi-moisture">—</div>
+      <div class="kpi-label" data-i18n="dash.avgDryingMs">Avg Moisture %</div>
+      <div class="kpi-delta" id="kpi-moisture-d">Active bins</div>
+    </div>
+    <div class="kpi-card kpi-green" style="cursor:pointer;" onclick="showPage('dispatch',document.querySelectorAll('.nav-item')[7])" title="Bins at or below target moisture — ready to ship">
+      <div class="kpi-icon">✅</div>
+      <div class="kpi-val" id="kpi-ready">0</div>
+      <div class="kpi-label">Ready to Dispatch</div>
+      <div class="kpi-delta delta-up" id="kpi-ready-d">Bins at target</div>
+    </div>
+  </div>
+
+  <!-- Weather Widget (full-width below KPIs) -->
+  <div id="weather-widget-card" class="card" style="margin-top:12px;padding:0;overflow:hidden;"></div>
+
+  <!-- LIVE ALERTS STRIP -->
+  <div id="dash-alerts" style="margin-bottom:16px;"></div>
+
+  <div class="section-hdr">
+    <div>
+      <div class="section-title">Bin Overview</div>
+      <div class="text-muted fs12 mt4">All drying chambers — click any bin to update</div>
+    </div>
+    <div class="flex gap8">
+      <span class="chip chip-drying">Drying</span>
+      <span class="chip chip-purple">Shelling</span>
+      <span class="chip chip-gray">Empty</span>
+    </div>
+  </div>
+  <div class="bins-master" id="dash-bins"></div>
+
+  <!-- FIFO + RECENT GRID -->
+  <div class="grid2" style="margin-bottom:16px;">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">📋 Dispatch Queue <span style="font-size:11px;font-weight:400;color:var(--ink-5);">FIFO — oldest first</span></div>
+        <button class="btn btn-ghost btn-sm" onclick="showPage('dispatch',document.querySelectorAll('.nav-item')[7])">Dispatch</button>
+      </div>
+      <div class="panel-body" id="dash-fifo"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title" data-i18n="dash.recentDispatches">Recent Dispatches</div>
+        <button class="btn btn-ghost btn-sm" onclick="showPage('dispatch',document.querySelectorAll('.nav-item')[7])">View All</button>
+      </div>
+      <div class="panel-body">
+        <table class="data-table"><thead><tr>
+          <th data-i18n="dash.receipt">Receipt ID</th><th data-i18n="dispatch.modal.party">Party</th><th data-i18n="dash.bags">Bags</th><th data-i18n="dash.amount">Amount</th>
+        </tr></thead><tbody id="recent-dispatch-tbody"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title" data-i18n="dash.recentIntakes">Recent Intakes</div>
+      <button class="btn btn-ghost btn-sm" onclick="showPage('intake',document.querySelectorAll('.nav-item')[4])">View All</button>
+    </div>
+    <div class="panel-body" style="overflow-x:auto;">
+      <table class="data-table" style="min-width:520px;"><thead><tr>
+        <th data-i18n="dash.date">Date</th><th data-i18n="dash.challan">DR No</th><th data-i18n="dash.vehicle">Vehicle</th><th data-i18n="dash.hybrid">Hybrid</th><th data-i18n="dash.qty">Qty</th><th data-i18n="dash.bin">Bin</th><th data-i18n="dash.status">Status</th><th></th>
+      </tr></thead><tbody id="recent-tbody"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== INTAKE ==================== -->
+<div id="page-intake" class="page">
+  <div class="page-header">
+    <div class="page-title-wrap">
+      <div class="page-eyebrow">Logistics</div>
+      <div class="page-title">Intake Register</div>
+      <div class="page-subtitle">All incoming corn loads — <span id="intake-total-weight" class="fw700 text-gold">0T</span> total</div>
+    </div>
+    <div class="header-actions">
+      <input class="form-input" id="intake-search" style="width:240px;" placeholder="🔍 Search vehicle, hybrid, DR no…" oninput="filterTable('intake-search','intake-full-tbody')">
+      <button class="btn btn-gold" onclick="openIntakeModal()" data-requires-perm="create_intake">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        <span data-i18n="intake.newIntake">New Intake</span>
+      </button>
+    </div>
+  </div>
+  <div class="panel">
+    <table class="data-table"><thead><tr>
+      <th>#</th><th data-i18n="dash.date">Date & Time</th><th data-i18n="dash.challan">DR No</th><th data-i18n="dash.vehicle">Vehicle</th><th data-i18n="intake.table.location">From</th><th data-i18n="dash.hybrid">Hybrid</th><th data-i18n="intake.table.lot">Lot No</th><th data-i18n="dash.qty">Qty</th><th data-i18n="intake.table.vehWt">Veh. Wt (Kg)</th><th data-i18n="intake.table.grossWt">Gross Wt (Kg)</th><th data-i18n="intake.table.netWt">Net Wt (Kg)</th><th data-i18n="intake.table.moisture">Moisture %</th><th data-i18n="dash.bin">Bin</th><th data-i18n="dash.status">Status</th><th>Actions</th>
+    </tr></thead><tbody id="intake-full-tbody"></tbody></table>
+    <div id="intake-pagination" style="display:none;padding:12px 20px;border-top:1px solid var(--surface-3);align-items:center;justify-content:space-between;"></div>
+  </div>
+</div>
+
+<!-- ==================== BINS ==================== -->
+<div id="page-bins" class="page">
+  <div class="page-header">
+    <div class="page-title-wrap">
+      <div class="page-eyebrow" data-i18n="nav.operations">Plant Operations</div>
+      <div class="page-title" data-i18n="nav.binMonitor">Bin Monitor</div>
+      <div class="page-subtitle">Click any bin to update moisture, airflow, or status</div>
+    </div>
+    <div class="header-actions">
+      <span class="chip chip-drying">● <span data-i18n="bins.status.drying">Drying</span></span>
+
+      <span class="chip chip-purple">● <span data-i18n="bins.status.shelling">Shelling</span></span>
+    </div>
+  </div>
+  <div class="bins-master" id="bins-full-grid"></div>
+</div>
+
+
+
+<!-- ==================== MAINTENANCE ==================== -->
+<div id="page-maintenance" class="page">
+  <div class="page-header" style="flex-wrap: wrap;">
+    <div class="page-title-wrap">
+      <div class="page-eyebrow">Plant Operations</div>
+      <div class="page-title" data-i18n="nav.maintenance">Maintenance Log</div>
+      <div class="page-subtitle" data-i18n="maint.subtitle">Record and track equipment maintenance and purchases.</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-solid" onclick="openModal('maintenance-modal')" data-requires-perm="create_maintenance">
+        <svg width="13" height="13" fill="currentColor" viewBox="0 0 20 20"><path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"/></svg>
+        <span data-i18n="maint.newLog">New Log</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-body">
+      <table class="data-table" id="maintenance-table">
+        <thead>
+          <tr>
+            <th data-i18n="maint.date">Date</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th data-i18n="maint.reportedBy">Reported By</th>
+            <th data-i18n="maint.workDone">Work Done</th>
+            <th data-i18n="maint.equipment">Equipment</th>
+            <th data-i18n="maint.issue">Issue</th>
+            <th data-i18n="maint.checkedBy">Checked By</th>
+            <th data-i18n="maint.items">Items Bought</th>
+            <th data-i18n="maint.cost">Cost (₹)</th>
+            <th>Photos</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="maintenance-tbody">
+          <!-- Rendered via JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LABOR & SHIFTS ==================== -->
+<div id="page-labor" class="page">
+  <div class="page-header" style="flex-wrap: wrap;">
+    <div class="page-title-wrap">
+      <div class="page-eyebrow">Plant Operations</div>
+      <div class="page-title" data-i18n="nav.labor">Labor & Shifts</div>
+      <div class="page-subtitle" data-i18n="labor.subtitle">Track daily labor distribution and headcounts.</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" onclick="openGroupsModal()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Manage Groups
+      </button>
+      <button class="btn btn-solid" onclick="populateLaborGroupSelect();openModal('labor-modal')">
+        <svg width="13" height="13" fill="currentColor" viewBox="0 0 20 20"><path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"/></svg>
+        <span data-i18n="labor.newLog">New Shift Log</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="labor-groups-bar" style="margin-bottom:16px;"></div>
+
+  <!-- Payroll Summary -->
+  <div id="payroll-summary" style="margin-bottom:20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;"></div>
+
+  <div class="panel">
+    <div style="overflow-x:auto;">
+      <table class="data-table" id="labor-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Group</th>
+            <th>Shift</th>
+            <th>Count</th>
+            <th>Members</th>
+            <th>Remarks</th>
+            <th>Wages (₹)</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="labor-tbody">
+          <!-- Rendered via JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SHELLING ==================== -->
+<div id="page-shelling" class="page">
+  <div class="page-header">
+    <div class="page-title-wrap">
+      <div class="page-eyebrow">Operations</div>
+      <div class="page-title">⚙️ Shelling</div>
+      <div class="page-subtitle">Log corn seed shelling from bins — input weight, output seed weight, lot assignment</div>
+    </div>
+    <button class="btn btn-gold" onclick="openShellingModal()">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      New Shelling Entry
+    </button>
+  </div>
+  <div class="kpi-grid" id="shelling-kpis" style="grid-template-columns:repeat(4,1fr);">
+    <div class="kpi-card kpi-gold"><div class="kpi-icon">📦</div><div class="kpi-val" id="s-total-lots">0</div><div class="kpi-label">Total Lots</div></div>
+    <div class="kpi-card kpi-green"><div class="kpi-icon">✅</div><div class="kpi-val" id="s-complete">0</div><div class="kpi-label">Complete</div></div>
+    <div class="kpi-card kpi-amber"><div class="kpi-icon">⏳</div><div class="kpi-val" id="s-pending">0</div><div class="kpi-label">Pending / In Progress</div></div>
+    <div class="kpi-card kpi-blue"><div class="kpi-icon">🌾</div><div class="kpi-val" id="s-yield">—</div><div class="kpi-label">Avg Seed Yield %</div></div>
+  </div>
+  <div class="panel">
+    <div class="panel-header" style="display:flex;align-items:center;gap:8px;">
+      <span style="font-weight:700;font-size:14px;">Shelling Lots</span>
+    </div>
+    <table class="data-table"><thead><tr>
+      <th>Lot #</th><th>Date</th><th>Source</th><th>Hybrid</th><th>Input (Kg)</th><th>Output Seed (Kg)</th><th>Bags</th><th>Yield %</th><th>Status</th><th></th>
+    </tr></thead><tbody id="shelling-tbody"></tbody></table>
+  </div>
+
+  <!-- Bins ready for shelling -->
+  <div class="panel" style="margin-top:16px;">
+    <div class="panel-header">
+      <span style="font-weight:700;font-size:14px;">🟢 Bins Ready for Shelling</span>
+      <span style="font-size:11px;color:var(--ink-4);margin-left:8px;">moisture ≤ target</span>
+    </div>
+    <div id="shelling-ready-bins" style="padding:12px;display:flex;flex-wrap:wrap;gap:10px;"></div>
+  </div>
+</div>
+
+<!-- ==================== GROUND DRYING ==================== -->
+<div id="page-ground-drying" class="page">
+  <div class="page-header">
+    <div class="page-title-wrap">
+      <div class="page-eyebrow">Operations</div>
+      <div class="page-title">☀️ Ground Drying</div>
+      <div class="page-subtitle">Track small loads dried by sun on the ground</div>
+    </div>
+    <button class="btn btn-gold" onclick="openGroundDryingModal()">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      New Ground Lot
+    </button>
+  </div>
+  <div class="kpi-grid" id="ground-kpis" style="grid-template-columns:repeat(4,1fr);">
+    <div class="kpi-card kpi-gold"><div class="kpi-icon">☀️</div><div class="kpi-val" id="g-total">0</div><div class="kpi-label">Total Lots</div></div>
+    <div class="kpi-card kpi-amber"><div class="kpi-icon">⏳</div><div class="kpi-val" id="g-drying">0</div><div class="kpi-label">Drying</div></div>
+    <div class="kpi-card kpi-green"><div class="kpi-icon">✅</div><div class="kpi-val" id="g-ready">0</div><div class="kpi-label">Ready for Shelling</div></div>
+    <div class="kpi-card kpi-purple"><div class="kpi-icon">🌾</div><div class="kpi-val" id="g-shelled">0</div><div class="kpi-label">Shelled</div></div>
+  </div>
+  <div class="panel">
+    <table class="data-table"><thead><tr>
+      <th>Date</th><th>Challan</th><th>Hybrid</th><th>Qty (Kg)</th><th>Entry Moisture %</th><th>Current Moisture %</th><th>Status</th><th>Notes</th><th></th>
+    </tr></thead><tbody id="ground-tbody"></tbody></table>
+  </div>
+</div>
+
+<!-- ==================== DISPATCH ==================== -->
+<div id="page-dispatch" class="page">
+  <div class="page-header">
+    <div class="page-title-wrap">
+      <div class="page-eyebrow" data-i18n="nav.logistics">Logistics</div>
+      <div class="page-title" data-i18n="dispatch.title">Dispatch & Receipts</div>
+      <div class="page-subtitle">Generate cryptographically signed, tamper-proof receipts</div>
+    </div>
+    <button class="btn btn-gold" onclick="openDispatchModal()">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      <span data-i18n="dispatch.newDispatch">New Dispatch</span>
+    </button>
+  </div>
+  <div class="panel">
+    <table class="data-table"><thead><tr>
+      <th data-i18n="dash.receipt">Receipt ID</th><th data-i18n="dash.date">Date</th><th data-i18n="dispatch.modal.party">To Party</th><th data-i18n="dash.hybrid">Hybrid</th><th data-i18n="dash.bags">Bags</th><th data-i18n="dispatch.modal.totalQty">Qty (Kg)</th><th data-i18n="dispatch.modal.moisture">Moisture %</th><th data-i18n="dash.amount">Amount</th><th data-i18n="dash.vehicle">Vehicle</th><th>Verified</th><th></th>
+    </tr></thead><tbody id="dispatch-full-tbody"></tbody></table>
+    <div id="dispatch-pagination" style="display:none;padding:12px 20px;border-top:1px solid var(--surface-3);align-items:center;justify-content:space-between;"></div>
+  </div>
+</div>
+
+<!-- ==================== RECEIPTS ==================== -->
+<div id="page-receipts" class="page">
+  <div class="page-header">
+    <div class="page-title-wrap">
+      <div class="page-eyebrow" data-i18n="nav.logistics">Documents</div>
+      <div class="page-title" data-i18n="receipts.title">Receipt Archive</div>
+    </div>
+  </div>
+  <div id="receipts-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;"></div>
+</div>
+
+<!-- ==================== MANAGER ACCESS ==================== -->
+<div id="page-manager" class="page">
+  <div class="page-header">
+    <div class="page-title-wrap">
+      <div class="page-eyebrow" data-i18n="nav.security">Administration</div>
+      <div class="page-title" data-i18n="manager.title">Manager Access</div>
+      <div class="page-subtitle">Elevated privileges for bin control and moisture updates.</div>
+    </div>
+  </div>
+  <div style="margin-bottom:16px;display:flex;justify-content:flex-end;">
+    <button class="btn btn-ghost btn-sm" onclick="openModal('change-pin-modal')">🔑 Change Manager PIN</button>
+  </div>
+  <div id="manager-content-area">
+    <!-- Populated by JS -->
+  </div>
+  <div class="card" style="margin-top:20px;">
+    <div id="user-mgmt-section" style="padding:4px;"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     AUDIT LOG PAGE
+     ============================================================ -->
+<div id="page-audit" class="page">
+  <div class="page-header">
+    <div class="page-title-wrap">
+      <div class="page-eyebrow">Security</div>
+      <div class="page-title">📜 Audit Log</div>
+      <div class="page-subtitle">Complete timeline of all platform activity</div>
+    </div>
+    <div id="audit-summary" style="display:flex;gap:10px;align-items:center;"></div>
+  </div>
+  <div class="card" style="margin-bottom:16px;padding:14px 18px;">
+    <div id="audit-filters" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+  </div>
+  <div class="card" style="padding:20px 24px;">
+    <div id="audit-timeline"></div>
+  </div>
+</div>
+
+<!-- ==================== VERIFY ==================== -->
+<div id="page-verify" class="page">
+  <div class="page-header">
+    <div class="page-title-wrap">
+      <div class="page-eyebrow" data-i18n="nav.security">Security</div>
+      <div class="page-title" data-i18n="receipts.verify">Verify Receipt Authenticity</div>
+      <div class="page-subtitle">Instantly detect if a receipt has been tampered with</div>
+    </div>
+  </div>
+  <div class="verify-card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding:14px 16px;background:var(--amber-bg);border:1px solid var(--amber-bdr);border-radius:var(--radius);">
+      <span style="font-size:22px;">🔐</span>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--ink);">How it works</div>
+        <div style="font-size:12px;color:var(--ink-4);">Every receipt has a unique cryptographic hash. Even changing one character (amount, bags, party name) will invalidate it instantly.</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" data-i18n="dash.receipt">Receipt ID or Hash</label>
+      <input class="form-input" id="verify-input" style="font-family:'DM Mono',monospace;height:44px;" placeholder="YDS-2026-001001  or paste full hash string…">
+    </div>
+    <button class="btn btn-solid mt16" style="width:100%;justify-content:center;height:44px;" onclick="verifyReceipt()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Verify Authenticity
+    </button>
+    <div id="verify-result"></div>
+  </div>
+</div>
+
+<!-- ==================== ANALYTICS ==================== -->
+<div id="page-analytics" class="page">
+  <div class="page-header">
+    <div class="page-title-wrap">
+      <div class="page-eyebrow" data-i18n="nav.analytics">Intelligence</div>
+      <div class="page-title" data-i18n="nav.analytics">Analytics & Insights</div>
+    </div>
+    <div class="header-actions">
+      <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--ink-4); display:flex; align-items:center; margin-right:12px;" id="analytics-range">Last 7 days</div>
+      <button class="btn btn-ghost" onclick="openDailyReport()" style="margin-right:8px;">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Daily Report
+      </button>
+      <button class="btn btn-gold" onclick="openModal('export-modal')">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        <span data-i18n="actions.export">Export to Excel</span>
+      </button>
+    </div>
+  </div>
+  <div class="kpi-grid kpi-grid-analytics" id="analytics-kpis">
+    <div class="kpi-card kpi-gold"><div class="kpi-icon">🌽</div><div class="kpi-val" id="a-total">0</div><div class="kpi-label">Total Intake (Kg)</div></div>
+    <div class="kpi-card kpi-green"><div class="kpi-icon">📤</div><div class="kpi-val" id="a-disp">0</div><div class="kpi-label">Dispatches</div></div>
+    <div class="kpi-card kpi-purple"><div class="kpi-icon">💰</div><div class="kpi-val" id="a-rev">₹0</div><div class="kpi-label">Total Revenue</div></div>
+    <div class="kpi-card kpi-amber"><div class="kpi-icon">💧</div><div class="kpi-val" id="a-mdrop">—</div><div class="kpi-label">Avg Moisture Drop</div></div>
+    <div class="kpi-card kpi-blue"><div class="kpi-icon">⏱️</div><div class="kpi-val" id="a-days">—</div><div class="kpi-label">Avg Drying Days</div></div>
+  </div>
+
+  <div class="analytics-grid mb16">
+    <div class="chart-panel">
+      <div class="chart-title"><span data-i18n="analytics.dailyIntake">Daily Intake Volume (Kg)</span><span class="chart-subtitle" data-i18n="analytics.thisWeek">this week</span></div>
+      <div class="bar-chart-wrap" id="intake-bar-chart"></div>
+      <div class="chart-x-axis"></div>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-title" data-i18n="analytics.hybridMix">Hybrid Mix</div>
+      <div class="donut-wrap mt16" id="hybrid-donut"></div>
+    </div>
+  </div>
+  <div class="analytics-grid-3">
+    <div class="chart-panel">
+      <div class="chart-title" data-i18n="analytics.moistureCurve">Moisture Reduction Curve</div>
+      <div class="progress-list mt16" id="moisture-curve"></div>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-title" data-i18n="analytics.dispatchPerf">Dispatch Performance</div>
+      <div id="dispatch-perf" style="margin-top:12px;"></div>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-title" data-i18n="analytics.binUtil">Bin Utilization</div>
+      <div id="bin-util-chart" style="text-align:center;padding-top:10px;"></div>
+    </div>
+  </div>
+
+  <!-- ── Advanced Analytics ── -->
+  <div style="margin-top:24px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+      <div style="font-size:15px;font-weight:700;color:var(--ink);">📊 Advanced Analytics</div>
+      <div style="font-size:11px;color:var(--ink-5);background:var(--surface-2);padding:3px 10px;border-radius:99px;">Deep insights from your season data</div>
+    </div>
+
+    <!-- Row 1: Stock Flow + Season Efficiency -->
+    <div class="analytics-grid mb16">
+      <div class="chart-panel">
+        <div class="chart-title">Stock Flow <span class="chart-subtitle">intake → dryer → dispatched</span></div>
+        <div id="adv-stock-flow" style="margin-top:14px;"></div>
+      </div>
+      <div class="chart-panel">
+        <div class="chart-title">Season Efficiency Score <span class="chart-subtitle">key performance ratios</span></div>
+        <div id="adv-season-eff" style="margin-top:14px;"></div>
+      </div>
+    </div>
+
+    <!-- Row 2: Drying Velocity + ETA -->
+    <div class="chart-panel mb16">
+      <div class="chart-title">⚡ Drying Velocity &amp; ETA to 10% Target <span class="chart-subtitle">active bins — moisture drop rate &amp; predicted days remaining</span></div>
+      <div id="adv-drying-velocity" style="margin-top:14px;"></div>
+    </div>
+
+    <!-- Row 3: Hybrid Leaderboard + Company Volume -->
+    <div class="analytics-grid mb16">
+      <div class="chart-panel">
+        <div class="chart-title">🌽 Hybrid Performance Leaderboard <span class="chart-subtitle">from completed cycles</span></div>
+        <div id="adv-hybrid-leader" style="margin-top:14px;"></div>
+      </div>
+      <div class="chart-panel">
+        <div class="chart-title">🏭 Top Suppliers by Volume <span class="chart-subtitle">intake Kg by company</span></div>
+        <div id="adv-company-vol" style="margin-top:14px;"></div>
+      </div>
+    </div>
+
+    <!-- Row 4: Daily Throughput Trend -->
+    <div class="chart-panel mb16">
+      <div class="chart-title">📈 Cumulative Intake Trend <span class="chart-subtitle">total Kg received over the season — last 14 days</span></div>
+      <div id="adv-intake-trend" style="margin-top:14px;height:80px;"></div>
+    </div>
+  </div>
+
+  <!-- ── FAANG Analytics ── -->
+  <div style="margin-top:24px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+      <div style="font-size:15px;font-weight:700;color:var(--ink);">🏆 Intelligence Centre</div>
+      <div style="font-size:11px;color:var(--ink-5);background:var(--surface-2);padding:3px 10px;border-radius:99px;">Predictive &amp; operational intelligence</div>
+    </div>
+
+    <!-- Row A: Health Score + Alerts -->
+    <div class="analytics-grid mb16">
+      <div class="chart-panel" style="display:flex;flex-direction:column;">
+        <div class="chart-title">🎯 Operational Health Score <span class="chart-subtitle">composite season performance</span></div>
+        <div id="faang-health" style="margin-top:14px;display:flex;align-items:center;gap:24px;"></div>
+      </div>
+      <div class="chart-panel">
+        <div class="chart-title">⚠️ Live Risk &amp; Alerts <span class="chart-subtitle">real-time bin status warnings</span></div>
+        <div id="faang-alerts" style="margin-top:14px;"></div>
+      </div>
+    </div>
+
+    <!-- Row B: Season Heatmap -->
+    <div class="chart-panel mb16">
+      <div class="chart-title">📅 Season Activity Heatmap <span class="chart-subtitle">intake Kg per day — darker = more corn received</span></div>
+      <div id="faang-heatmap" style="margin-top:16px;overflow-x:auto;"></div>
+    </div>
+
+    <!-- Row C: Bin Ranking + Arrival Pattern -->
+    <div class="analytics-grid mb16">
+      <div class="chart-panel">
+        <div class="chart-title">🏆 Bin Performance Ranking <span class="chart-subtitle">fastest avg cycle time from history</span></div>
+        <div id="faang-bin-rank" style="margin-top:14px;"></div>
+      </div>
+      <div class="chart-panel">
+        <div class="chart-title">🕐 Truck Arrival Pattern <span class="chart-subtitle">busiest days &amp; hours from intake timestamps</span></div>
+        <div id="faang-arrival" style="margin-top:14px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Yield Reconciliation ── -->
+  <div style="margin-top:24px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+      <div style="font-size:15px;font-weight:700;color:var(--ink);">⚖️ Yield Reconciliation</div>
+      <div style="font-size:11px;color:var(--ink-5);background:var(--surface-2);padding:3px 10px;border-radius:99px;">Intake vs Dispatch per hybrid — identify losses &amp; pending stock</div>
+    </div>
+    <div class="chart-panel">
+      <div id="adv-yield-recon" style="margin-top:4px;"></div>
+    </div>
+  </div>
+
+  <!-- ── Cycle Analytics ── -->
+  <div style="margin-top:20px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+      <div style="font-size:15px;font-weight:700;color:var(--ink);">🔄 Bin &amp; Dryer Cycle Tracker</div>
+      <div style="font-size:11px;color:var(--ink-5);background:var(--surface-2);padding:3px 10px;border-radius:99px;">Season cycles — how many times each bin has been used</div>
+    </div>
+    <div class="kpi-grid" id="cycle-kpis" style="margin-bottom:16px;"></div>
+    <div class="analytics-grid">
+      <div class="chart-panel">
+        <div class="chart-title">Cycles per Bin <span class="chart-subtitle">completed + in-progress</span></div>
+        <div id="cycle-per-bin" style="margin-top:12px;"></div>
+      </div>
+      <div class="chart-panel">
+        <div class="chart-title">Cycle History Log <span class="chart-subtitle">last 10 completed</span></div>
+        <div id="cycle-history-log" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <!-- Stock Reconciliation -->
+    <div style="margin-top:24px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <span style="font-size:16px;font-weight:700;color:var(--ink);">⚖️ Stock Reconciliation</span>
+        <span style="font-size:11px;color:var(--ink-5);background:var(--surface-2);padding:3px 10px;border-radius:99px;">Intake vs dispatch vs what's currently drying</span>
+      </div>
+      <div id="stock-recon" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;"></div>
+    </div>
+
+    <!-- Season Comparison -->
+    <div style="margin-top:24px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <span style="font-size:16px;font-weight:700;color:var(--ink);">📅 Season Comparison</span>
+        <span id="season-comp-label" style="font-size:11px;color:var(--ink-5);background:var(--surface-2);padding:3px 10px;border-radius:99px;"></span>
+      </div>
+      <div id="season-comp" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;"></div>
+    </div>
+
+    <!-- Moisture Charts -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="padding:16px 20px 8px;border-bottom:1px solid var(--surface-3);display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:15px;font-weight:700;color:var(--ink);">📉 Moisture Trends</div>
+          <div style="font-size:11px;color:var(--ink-5);margin-top:2px;">Real-time drying progress per bin</div>
+        </div>
+      </div>
+      <div style="padding:16px 20px;">
+        <div style="margin-bottom:20px;">
+          <div style="font-size:12px;font-weight:700;color:var(--ink-4);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em;">Active Bins Progress</div>
+          <div style="height:220px;position:relative;"><canvas id="chart-bin-moisture"></canvas></div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--ink-4);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em;">Moisture History Over Time</div>
+          <div style="height:240px;position:relative;"><canvas id="chart-moisture-history"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cost & Margin -->
+    <div style="margin-top:24px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        <div style="font-size:15px;font-weight:700;color:var(--ink);">💰 Cost &amp; Margin Tracker</div>
+        <div style="font-size:11px;color:var(--ink-5);background:var(--surface-2);padding:3px 10px;border-radius:99px;">procurement cost vs revenue — per hybrid breakdown</div>
+      </div>
+      <div class="chart-panel">
+        <div id="faang-cost-margin" style="margin-top:4px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ENTRY TRUCKS PAGE -->
+<div class="page" id="page-entry-trucks">
+  <div class="page-wrap">
+    <div class="page-header">
+      <div>
+        <div class="page-eyebrow">Operations</div>
+        <div class="page-title">Entry Trucks</div>
+        <div class="page-subtitle">Register and track trucks arriving at the facility</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-solid" onclick="openModal('truck-modal')">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Register Truck
+        </button>
+      </div>
+    </div>
+    <!-- KPIs -->
+    <div class="kpi-grid" id="truck-kpis" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px;"></div>
+    <!-- Filter tabs -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;" id="truck-filter-tabs">
+      <button class="btn btn-sm btn-solid" data-filter="all" onclick="filterTrucks('all',this)">All</button>
+      <button class="btn btn-sm btn-ghost" data-filter="waiting" onclick="filterTrucks('waiting',this)">Waiting</button>
+      <button class="btn btn-sm btn-ghost" data-filter="intake" onclick="filterTrucks('intake',this)">In Intake</button>
+      <button class="btn btn-sm btn-ghost" data-filter="completed" onclick="filterTrucks('completed',this)">Completed</button>
+    </div>
+    <!-- Truck cards grid -->
+    <div id="truck-cards-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;"></div>
+  </div>
+</div>
+
+<!-- BACKYARD PAGE -->
+<div class="page" id="page-backyard">
+  <div class="page-wrap">
+    <div class="page-header">
+      <div>
+        <div class="page-eyebrow">Operations</div>
+        <div class="page-title">Backyard — Stock Removal Log</div>
+        <div class="page-subtitle">Log stock removed from each batch due to damage, quality or other reasons</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-solid" onclick="openBackyardModal()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Log Removal
+        </button>
+      </div>
+    </div>
+    <!-- KPIs -->
+    <div class="kpi-grid" id="backyard-kpis" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px;"></div>
+    <!-- Table -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Removal Records</div>
+      </div>
+      <div class="panel-body">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date & Time</th>
+              <th>Intake / DR No</th>
+              <th>Bin</th>
+              <th>Hybrid</th>
+              <th>Vehicle</th>
+              <th>Qty Removed (Kg)</th>
+              <th>Bags</th>
+              <th>Reason</th>
+              <th>Removed By</th>
+              <th>Notes</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="backyard-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== FIELD UPDATES ==================== -->
+<div id="page-updates" class="page">
+  <div class="page-header">
+    <div class="page-title-wrap">
+      <div class="page-eyebrow">Field Operations</div>
+      <div class="page-title">Field Updates <span id="updates-count" style="font-size:14px;font-weight:500;color:var(--ink-4);margin-left:6px;"></span></div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-gold" onclick="openUpdateModal()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Update
+      </button>
+    </div>
+  </div>
+  <div id="updates-filters" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;"></div>
+  <div id="updates-feed"></div>
+</div>
+
+</div><!-- /page-wrap -->
+</main>
+
+<!-- ============================================================
+     MODALS
+     ============================================================ -->
+
+<!-- INTAKE MODAL -->
+<div class="overlay" id="intake-modal">
+  <div class="modal" style="width:640px;">
+    <div class="modal-header">
+      <div class="modal-title" data-i18n="intake.modal.title">New Intake Entry</div>
+      <button class="modal-close" onclick="closeModal('intake-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group" style="margin-bottom:14px;background:var(--blue-bg);border:1px solid var(--blue-bdr);border-radius:var(--radius);padding:12px 14px;">
+        <label class="form-label" style="color:var(--blue);margin-bottom:6px;">🚛 Select Registered Truck (Optional)</label>
+        <select class="form-select" id="i-truck-select" onchange="onTruckSelected(this.value)" style="border-color:var(--blue-bdr);">
+          <option value="">— Enter truck details manually below —</option>
+        </select>
+        <input type="hidden" id="i-truck-id">
+        <div style="font-size:11px;color:var(--blue);margin-top:5px;opacity:.7;">Select a pre-registered truck to auto-fill vehicle details</div>
+      </div>
+      <div class="form-section"><span class="form-section-icon">🚛</span> <span data-i18n="intake.modal.truck">Truck & Transport</span></div>
+      <div class="form-row cols2">
+        <div class="form-group"><label class="form-label">DR Number *</label><input class="form-input" id="i-challan" placeholder="e.g. 178"></div>
+        <div class="form-group"><label class="form-label">From Location</label><input class="form-input" id="i-location" placeholder="Village, Mandal, District"></div>
+      </div>
+      <div class="form-section" style="font-size:13px;padding:8px 0 4px;">
+        <span>Vehicles</span>
+        <button class="btn btn-ghost" style="float:right; padding:4px 8px; height:auto; min-height:0;" onclick="addVehicleRow()">+ Add Vehicle</button>
+      </div>
+      <div id="i-vehicle-rows"></div>
+      <div class="form-row cols2" style="margin-bottom:4px;">
+        <div class="form-group"><label class="form-label">Date & Time <span style="color:var(--ink-4);font-weight:400;">(optional — leave blank for now)</span></label><input class="form-input" id="i-datetime" type="datetime-local"></div>
+      </div>
+      <div class="form-section"><span class="form-section-icon">🌾</span> <span data-i18n="intake.modal.seed">Seed Details</span></div>
+      <div class="form-row cols3">
+        <div class="form-group"><label class="form-label" data-i18n="intake.modal.company">Company</label>
+          <input class="form-input" id="i-company" placeholder="e.g. Yellina, Crystal…">
+        </div>
+        <div class="form-group"><label class="form-label">Hybrid / Variety *</label><input class="form-input" id="i-hybrid" placeholder="e.g. YS-07, DS-255"></div>
+      </div>
+      <div class="form-section" style="font-size:13px;padding:8px 0 4px;">
+        <span>Lot Numbers</span>
+        <button class="btn btn-ghost" style="float:right; padding:4px 8px; height:auto; min-height:0;" onclick="addLotRow()">+ Add Lot</button>
+      </div>
+      <div id="i-lot-rows"></div>
+      <div class="form-row cols2">
+        <div class="form-group"><label class="form-label">Entry Moisture %</label><input class="form-input" id="i-moisture" type="number" step="0.1" min="0" max="60" placeholder="36.6"></div>
+      </div>
+      <div class="form-section">
+        <span class="form-section-icon">🏭</span> <span data-i18n="intake.modal.alloc">Bin Assignments</span>
+        <button class="btn btn-ghost" style="float:right; padding:4px 8px; height:auto; min-height:0;" onclick="addIntakeBinRow()" data-i18n="intake.modal.addBin">+ Add Bin</button>
+      </div>
+      <div id="i-bin-rows"></div>
+      <div class="form-section" style="font-size:13px;padding:8px 0 4px;margin-top:12px;">
+        <span>LR Numbers</span>
+        <button class="btn btn-ghost" style="float:right; padding:4px 8px; height:auto; min-height:0;" onclick="addLRRow()">+ Add LR</button>
+      </div>
+      <div id="i-lr-rows">
+        <div class="form-row cols1 i-lr-row" style="align-items:flex-end;">
+          <div class="form-group" style="position:relative;">
+            <label class="form-label">LR Number</label>
+            <input class="form-input i-lr-input" placeholder="LR No.">
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:8px;">
+        <div>
+          <label class="form-label">Procurement Rate <span style="font-weight:400;color:var(--ink-5);">(Rs/Kg, optional)</span></label>
+          <input type="number" id="intake-proc-rate" min="0" step="0.01" placeholder="e.g. 18.50" class="form-input">
+        </div>
+      </div>
+      <div class="form-row cols1">
+        <div class="form-group"><label class="form-label">Remarks</label><textarea class="form-textarea" id="i-remarks" placeholder="Any additional notes…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('intake-modal')">Cancel</button>
+      <button class="btn btn-solid" onclick="saveIntake()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        <span data-i18n="intake.modal.save">Save Intake</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- DISPATCH MODAL -->
+<div class="overlay" id="dispatch-modal">
+  <div class="modal" style="width:640px;">
+    <div class="modal-header">
+      <div class="modal-title" id="dispatch-modal-title">New Dispatch</div>
+      <button class="modal-close" onclick="closeModal('dispatch-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="dispatch-edit-id">
+      <div class="form-section"><span class="form-section-icon">👤</span> <span data-i18n="dispatch.modal.receiver">Receiver</span></div>
+      <div class="form-row cols1"><div class="form-group"><label class="form-label">Party / Firm Name *</label><input class="form-input" id="d-party" placeholder="e.g. Sai Sanjus Seeds"></div></div>
+      <div class="form-row cols2">
+        <div class="form-group"><label class="form-label" data-i18n="dispatch.modal.address">Address / Location</label><input class="form-input" id="d-address" placeholder="Village, Mandal, District"></div>
+        <div class="form-group"><label class="form-label">Vehicle Number *</label><input class="form-input" id="d-vehicle" placeholder="e.g. TS08UD5119" style="text-transform:uppercase;"></div>
+      </div>
+      <div class="form-row cols2">
+        <div class="form-group"><label class="form-label">Driver Name</label><input class="form-input" id="d-driver-name" placeholder="Driver's name"></div>
+        <div class="form-group"><label class="form-label">Driver Phone</label><input class="form-input" id="d-driver-phone" placeholder="e.g. 9876543210" type="tel"></div>
+      </div>
+      <div class="form-row cols3">
+        <div class="form-group">
+          <label class="form-label">Buyer GSTIN</label>
+          <input type="text" id="d-buyer-gstin" class="form-input" placeholder="e.g. 36AABCY8231F1ZB" maxlength="15" style="text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">HSN Code</label>
+          <input type="text" id="d-hsn-code" class="form-input" value="1005 10 90" placeholder="e.g. 1005 10 90">
+        </div>
+        <div class="form-group">
+          <label class="form-label">GST Rate %</label>
+          <select id="d-gst-rate" class="form-select">
+            <option value="0">0% — Exempt (Seed Corn)</option>
+            <option value="5">5% CGST+SGST</option>
+            <option value="12">12% CGST+SGST</option>
+            <option value="18">18% CGST+SGST</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row cols2" style="margin-bottom:4px;">
+        <div class="form-group"><label class="form-label">Date & Time <span style="color:var(--ink-4);font-weight:400;">(optional — leave blank for now)</span></label><input class="form-input" id="d-datetime" type="datetime-local"></div>
+      </div>
+      <div class="form-section"><span class="form-section-icon">🌾</span> Seed Details</div>
+      <div class="form-row cols1">
+        <div class="form-group"><label class="form-label">Hybrid / Variety *</label><input class="form-input" id="d-hybrid" placeholder="e.g. DS-255"></div>
+      </div>
+      <div class="form-section" style="font-size:13px;padding:8px 0 4px;">
+        <span>Lot Numbers</span>
+        <button class="btn btn-ghost" style="float:right;padding:4px 8px;height:auto;min-height:0;" onclick="addDispatchLotRow()">+ Add Lot</button>
+      </div>
+      <div id="d-lot-rows"></div>
+      <div class="form-section">
+        <span class="form-section-icon">📦</span> From Shelling Lots
+        <button class="btn btn-ghost" style="float:right; padding:4px 8px; height:auto; min-height:0;" onclick="addDispatchLotRowFromShelling()">+ Add Lot</button>
+      </div>
+      <div id="d-shelling-rows">
+        <!-- Populated dynamically -->
+      </div>
+      <div class="form-row cols3">
+        <div class="form-group"><label class="form-label" data-i18n="dash.bags">No. of Bags *</label><input class="form-input" id="d-bags" type="number" min="1" max="99999" placeholder="339" oninput="calcDispatchRate()"></div>
+        <div class="form-group"><label class="form-label" data-i18n="dispatch.modal.totalQty">Total Qty (Kg) *</label><input class="form-input" id="d-qty" type="number" min="1" max="9999999" placeholder="11775"></div>
+        <div class="form-group"><label class="form-label" data-i18n="dispatch.modal.moisture">Final Moisture %</label><input class="form-input" id="d-moisture" type="number" step="0.1" min="0" max="60" placeholder="10.3"></div>
+      </div>
+      <div class="form-row cols2">
+        <div class="form-group">
+          <label class="form-label" data-i18n="dash.amount">Amount (₹) *</label>
+          <input class="form-input" id="d-amount" type="number" min="1" max="999999999" placeholder="230000">
+          <div style="display:flex;align-items:center;gap:6px;margin-top:6px;padding:7px 10px;background:var(--surface-2);border-radius:var(--radius);border:1px solid var(--surface-4);">
+            <span style="font-size:11px;color:var(--ink-5);white-space:nowrap;">💡 ₹</span>
+            <input class="form-input" id="d-rate-per-bag" type="number" min="1" placeholder="Rate/bag" style="flex:1;height:28px;font-size:12px;padding:4px 8px;" oninput="calcDispatchRate()">
+            <span style="font-size:11px;color:var(--ink-5);white-space:nowrap;">× bags</span>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">LR Number</label><input class="form-input" id="d-lr" placeholder="e.g. 68"></div>
+      </div>
+      <div class="form-row cols2">
+        <div class="form-group"><label class="form-label">Remarks</label><textarea class="form-textarea" id="d-remarks" placeholder="Notes…"></textarea></div>
+        <div class="form-group">
+          <label class="form-label">Sale Rate <span style="font-weight:400;color:var(--ink-5);">(Rs/Kg, optional)</span></label>
+          <input type="number" id="dispatch-sale-rate" min="0" step="0.01" placeholder="e.g. 22.00" class="form-input">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('dispatch-modal')">Cancel</button>
+      <button class="btn btn-gold" id="dispatch-save-btn" onclick="saveDispatch()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span data-i18n="dispatch.modal.save">Generate Receipt</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- SHELLING MODAL -->
+<div class="overlay" id="shelling-modal">
+  <div class="modal" style="width:560px;">
+    <div class="modal-header">
+      <div class="modal-title">New Shelling Entry</div>
+      <button class="modal-close" onclick="closeModal('shelling-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="shelling-edit-id">
+      <input type="hidden" id="s-source-type">
+      <input type="hidden" id="s-hybrid">
+
+      <!-- Step 1: Pick source -->
+      <div class="form-group">
+        <label class="form-label">Source</label>
+        <select class="form-select" id="s-source-pick" onchange="onShellingSourceChange()">
+          <option value="">— Select a bin or ground-drying lot —</option>
+        </select>
+      </div>
+
+      <!-- Source summary card (auto-shown when source picked) -->
+      <div id="s-source-summary" style="display:none;"></div>
+
+      <!-- Step 2: Enter the new data only -->
+      <div class="form-row cols2" style="margin-top:14px;">
+        <div class="form-group">
+          <label class="form-label">Output Seed (Kg) *</label>
+          <input class="form-input" id="s-output-kg" type="number" min="0" step="0.1" placeholder="e.g. 20,000" oninput="calcShellingYield()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Bags Packed *</label>
+          <input class="form-input" id="s-bags" type="number" min="0" placeholder="e.g. 600">
+        </div>
+      </div>
+
+      <div id="shelling-yield-display" style="display:none;"></div>
+
+      <div class="form-row cols2">
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-select" id="s-status">
+            <option value="pending">In progress</option>
+            <option value="complete">Complete · empty source</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Lot Number</label>
+          <input class="form-input" id="s-lot-number" readonly style="background:#F4F6FA;cursor:default;">
+        </div>
+      </div>
+
+      <!-- Advanced (hidden until expanded) -->
+      <div style="margin-top:8px;">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="toggleShellingAdvanced()" id="s-adv-toggle" style="font-size:11px;color:var(--ink-4);">+ Override input weight, hybrid, or date</button>
+      </div>
+
+      <div id="s-advanced" style="display:none;margin-top:10px;padding:12px;background:#F7F8FA;border-radius:8px;border:1px solid #E8ECF1;">
+        <div class="form-row cols3">
+          <div class="form-group">
+            <label class="form-label">Input Weight (Kg)</label>
+            <input class="form-input" id="s-input-kg" type="number" min="0" step="0.1" oninput="calcShellingYield()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Hybrid</label>
+            <input class="form-input" id="s-hybrid-override" placeholder="Override hybrid">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Shelling Date</label>
+            <input class="form-input" id="s-date" type="date">
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:8px;">
+          <label class="form-label">Notes</label>
+          <input class="form-input" id="s-notes" placeholder="Optional notes">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('shelling-modal')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveShelling()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Save Shelling Entry
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- GROUND DRYING MODAL -->
+<div class="overlay" id="ground-drying-modal">
+  <div class="modal" style="width:560px;">
+    <div class="modal-header">
+      <div class="modal-title">☀️ Ground Drying Entry</div>
+      <button class="modal-close" onclick="closeModal('ground-drying-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="gd-edit-id">
+      <div class="form-row cols2">
+        <div class="form-group">
+          <label class="form-label">Date *</label>
+          <input class="form-input" id="gd-date" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Challan / Ref No.</label>
+          <input class="form-input" id="gd-challan" placeholder="e.g. CH-001">
+        </div>
+      </div>
+      <div class="form-row cols2">
+        <div class="form-group">
+          <label class="form-label">Hybrid / Variety *</label>
+          <input class="form-input" id="gd-hybrid" placeholder="e.g. DS-255">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Quantity (Kg) *</label>
+          <input class="form-input" id="gd-qty" type="number" min="0" step="0.1" placeholder="5000">
+        </div>
+      </div>
+      <div class="form-row cols2">
+        <div class="form-group">
+          <label class="form-label">Entry Moisture %</label>
+          <input class="form-input" id="gd-entry-moisture" type="number" step="0.1" min="0" max="60" placeholder="18.5">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Current Moisture %</label>
+          <input class="form-input" id="gd-current-moisture" type="number" step="0.1" min="0" max="60" placeholder="10.2">
+        </div>
+      </div>
+      <div class="form-row cols2">
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-select" id="gd-status">
+            <option value="drying">⏳ Drying</option>
+            <option value="ready">✅ Ready for Shelling</option>
+            <option value="shelled">📦 Shelled</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notes</label>
+          <input class="form-input" id="gd-notes" placeholder="Optional notes">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('ground-drying-modal')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveGroundDrying()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Save
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- BIN MODAL -->
+<div class="overlay" id="bin-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="bin-modal-title">Update Bin</div>
+      <button class="modal-close" onclick="closeModal('bin-modal')">✕</button>
+    </div>
+    <div class="modal-body" id="bin-modal-body"></div>
+  </div>
+</div>
+
+<!-- CHANGE PIN MODAL -->
+<div class="overlay" id="change-pin-modal">
+  <div class="modal" style="width:340px;">
+    <div class="modal-header">
+      <div class="modal-title">🔑 Change Manager PIN</div>
+      <button class="modal-close" onclick="closeModal('change-pin-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group" style="margin-bottom:12px;">
+        <label class="form-label">Current PIN</label>
+        <input type="password" class="form-input" id="pin-old" placeholder="••••">
+      </div>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label class="form-label">New PIN</label>
+        <input type="password" class="form-input" id="pin-new" placeholder="••••">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirm New PIN</label>
+        <input type="password" class="form-input" id="pin-confirm" placeholder="••••" onkeydown="if(event.key==='Enter')changeManagerPin()">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('change-pin-modal')">Cancel</button>
+      <button class="btn btn-gold" onclick="changeManagerPin()">Update PIN</button>
+    </div>
+  </div>
+</div>
+
+<!-- PIN MODAL -->
+<div class="overlay" id="pin-modal">
+  <div class="modal" style="width:320px;">
+    <div class="modal-header">
+      <div class="modal-title">Manager Access</div>
+      <button class="modal-close" onclick="closeModal('pin-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label" data-i18n="manager.enterPin">Enter PIN</label>
+        <input type="password" class="form-input" id="manager-pin-input" placeholder="••••" onkeydown="if(event.key==='Enter')verifyPinAndAccess()">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('pin-modal')" data-i18n="actions.cancel">Cancel</button>
+      <button class="btn btn-gold" onclick="verifyPinAndAccess()" data-i18n="actions.unlock">Unlock</button>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="overlay" id="export-modal">
+  <div class="modal" style="width:400px;">
+    <div class="modal-header">
+      <div class="modal-title" data-i18n="export.title">Export Data to Excel</div>
+      <button class="modal-close" onclick="closeModal('export-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:16px;color:var(--ink-4);font-size:14px;" data-i18n="export.subtitle">Select the datasets you wish to include in the downloaded spreadsheet:</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
+        <label style="display:flex;align-items:center;cursor:pointer;">
+          <input type="checkbox" id="export-chk-bins" checked style="width:18px;height:18px;margin-right:10px;">
+          <span class="fw700" data-i18n="export.optBins">Bins State</span>
+        </label>
+        <label style="display:flex;align-items:center;cursor:pointer;">
+          <input type="checkbox" id="export-chk-intakes" checked style="width:18px;height:18px;margin-right:10px;">
+          <span class="fw700" data-i18n="export.optIntake">Intake Logs</span>
+        </label>
+        <label style="display:flex;align-items:center;cursor:pointer;">
+          <input type="checkbox" id="export-chk-dispatches" checked style="width:18px;height:18px;margin-right:10px;">
+          <span class="fw700" data-i18n="export.optDispatch">Dispatch Receipts</span>
+        </label>
+        <label style="display:flex;align-items:center;cursor:pointer;">
+          <input type="checkbox" id="export-chk-maintenance" checked style="width:18px;height:18px;margin-right:10px;">
+          <span class="fw700" data-i18n="export.optMaintenance">Maintenance Logs</span>
+        </label>
+        <label style="display:flex;align-items:center;cursor:pointer;">
+          <input type="checkbox" id="export-chk-labor" checked style="width:18px;height:18px;margin-right:10px;">
+          <span class="fw700" data-i18n="export.optLabor">Labor Logs</span>
+        </label>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;">
+        <button class="btn btn-ghost" onclick="closeModal('export-modal')" data-i18n="actions.cancel">Cancel</button>
+        <button class="btn btn-solid" onclick="executeExport()" data-i18n="export.downloadBtn">Download .xlsx</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RECEIPT MODAL -->
+<div class="overlay" id="receipt-modal">
+  <div class="modal" style="width:540px;">
+    <div class="modal-header">
+      <div class="modal-title">Dispatch Receipt</div>
+      <button class="modal-close" onclick="closeModal('receipt-modal')">✕</button>
+    </div>
+    <div class="modal-body" id="receipt-modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('receipt-modal')">Close</button>
+      <button class="btn btn-ghost" onclick="copyReceiptHash()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        <span data-i18n="actions.copyHash">Copy Hash</span>
+      </button>
+      <button class="btn btn-ghost" onclick="shareReceiptWhatsApp()" style="color:#25D366;border-color:#25D366;" title="Share on WhatsApp">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.122.553 4.118 1.52 5.847L.057 23.09a.75.75 0 00.926.91l5.33-1.47A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.723 9.723 0 01-5.105-1.443l-.366-.217-3.165.873.841-3.07-.237-.381A9.713 9.713 0 012.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/></svg>
+        WhatsApp
+      </button>
+      <button class="btn btn-ghost" onclick="printDriverSlip()" style="color:var(--green);border-color:var(--green);" title="Print Driver Slip (Gate Pass for truck driver)">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        Driver Slip
+      </button>
+      <button class="btn btn-solid" onclick="printReceipt()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        <span data-i18n="actions.print">Print Invoice</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MAINTENANCE MODAL -->
+<div class="overlay" id="maintenance-modal">
+  <div class="modal" style="width:600px;">
+    <div class="modal-header">
+      <div class="modal-title" id="maint-modal-title">New Maintenance Log</div>
+      <button class="modal-close" onclick="closeModal('maintenance-modal')">✕</button>
+    </div>
+    <div class="modal-body" style="padding:20px;">
+      <input type="hidden" id="maint-edit-id">
+      <div class="form-row cols2">
+        <div class="form-group">
+          <label class="form-label" data-i18n="maint.date">Date</label>
+          <input type="date" id="maint-date" class="form-input">
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="maint.reportedBy">Reported By</label>
+          <input type="text" id="maint-reported" class="form-input" placeholder="Name">
+        </div>
+      </div>
+      <div class="form-row cols2">
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select id="maint-status" class="form-input">
+            <option value="open">🔴 Open</option>
+            <option value="in_progress">🟡 In Progress</option>
+            <option value="closed">🟢 Closed</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Priority</label>
+          <select id="maint-priority" class="form-input">
+            <option value="low">▼ Low</option>
+            <option value="medium" selected>▶ Medium</option>
+            <option value="high">▲ High</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row cols1"><div class="form-group">
+          <label class="form-label" data-i18n="maint.equipment">Equipment Name</label>
+          <input type="text" id="maint-equipment" class="form-input" placeholder="e.g. Dryer 1, Boiler, Conveyor">
+      </div></div>
+      <div class="form-row cols1"><div class="form-group">
+          <label class="form-label" data-i18n="maint.issue">Issue Description</label>
+          <input type="text" id="maint-issue" class="form-input" placeholder="What was the problem?">
+      </div></div>
+      <div class="form-row cols1"><div class="form-group">
+          <label class="form-label" data-i18n="maint.workDone">Work Done</label>
+          <input type="text" id="maint-work" class="form-input" placeholder="What work was completed?">
+      </div></div>
+      <div class="form-row"><div class="form-group">
+          <label class="form-label" data-i18n="maint.checkedBy">Checked By / Worker</label>
+          <input type="text" id="maint-checker" class="form-input" placeholder="Name">
+      </div></div>
+      <div class="form-row"><div class="form-group">
+          <label class="form-label" data-i18n="maint.cost">Payment/Cost (₹)</label>
+          <input type="number" id="maint-cost" class="form-input" placeholder="Amount" min="0" max="9999999">
+      </div></div>
+      <div class="form-row cols1"><div class="form-group">
+          <label class="form-label" data-i18n="maint.items">Items Bought</label>
+          <input type="text" id="maint-items" class="form-input" placeholder="Parts or materials purchased">
+      </div></div>
+      <div class="form-row cols1"><div class="form-group">
+          <label class="form-label">📷 Photos (payment screenshots, invoices)</label>
+          <div id="maint-img-dropzone" onclick="document.getElementById('maint-images').click()"
+            style="border:2px dashed var(--surface-4);border-radius:var(--radius-lg);padding:18px 16px;text-align:center;cursor:pointer;transition:all var(--transition);background:var(--surface-2);"
+            onmouseover="this.style.borderColor='var(--gold)';this.style.background='var(--gold-pale)'"
+            onmouseout="this.style.borderColor='var(--surface-4)';this.style.background='var(--surface-2)'"
+            ondragover="event.preventDefault();this.style.borderColor='var(--gold)'"
+            ondrop="event.preventDefault();handleMaintImageDrop(event)">
+            <div style="font-size:24px;margin-bottom:6px;">📎</div>
+            <div style="font-size:12px;font-weight:600;color:var(--ink-4);">Click to attach or drag &amp; drop</div>
+            <div style="font-size:11px;color:var(--ink-5);margin-top:2px;">JPG, PNG, WEBP — up to 10 MB each</div>
+          </div>
+          <input type="file" id="maint-images" accept="image/*" multiple style="display:none;" onchange="previewMaintImages(this.files)">
+          <div id="maint-img-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;"></div>
+      </div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('maintenance-modal')" data-i18n="actions.cancel">Cancel</button>
+      <button class="btn btn-solid" id="maint-save-btn" onclick="saveMaintenance()">Save Log</button>
+    </div>
+  </div>
+</div>
+
+<!-- LABOR & SHIFTS MODAL -->
+<div class="overlay" id="labor-modal">
+  <div class="modal" style="width:520px;">
+    <div class="modal-header">
+      <div class="modal-title" id="labor-modal-title">New Shift Log</div>
+      <button class="modal-close" onclick="closeModal('labor-modal')">✕</button>
+    </div>
+    <input type="hidden" id="labor-edit-id">
+    <div class="modal-body" style="padding:20px;">
+      <div class="form-row"><div class="form-group">
+        <label class="form-label">Date *</label>
+        <input type="date" id="labor-date" class="form-input">
+      </div></div>
+      <div class="form-row cols1"><div class="form-group">
+        <label class="form-label">Group *</label>
+        <select id="labor-group" class="form-input" onchange="onLaborGroupChange()">
+          <option value="">— Select Group —</option>
+        </select>
+        <div style="margin-top:6px;font-size:11px;color:var(--ink-5);">No groups yet? <a href="#" onclick="event.preventDefault();closeModal('labor-modal');openGroupsModal();" style="color:var(--gold-dark);font-weight:600;">Set up groups first →</a></div>
+      </div></div>
+      <div class="form-row"><div class="form-group">
+        <label class="form-label">Shift Timings</label>
+        <input type="text" id="labor-shift" class="form-input" placeholder="e.g. Morning 6–2, Night 10–6, Full Day">
+      </div></div>
+      <div class="form-row cols3">
+        <div class="form-group">
+          <label class="form-label">Headcount *</label>
+          <input type="number" id="labor-headcount" class="form-input" placeholder="e.g. 5" min="1" max="999">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Wage / Person (₹)</label>
+          <input type="number" id="labor-wage" class="form-input" placeholder="e.g. 450" min="0" step="10">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Work Area</label>
+          <select id="labor-role" class="form-input">
+            <option value="Shelling">Shelling</option>
+            <option value="Boiler">Boiler</option>
+            <option value="Unloading">Unloading</option>
+            <option value="Cleaning">Cleaning</option>
+            <option value="Loading">Loading</option>
+            <option value="General">General</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row cols1"><div class="form-group">
+        <label class="form-label">Members Present</label>
+        <textarea id="labor-people" class="form-textarea" placeholder="Auto-filled from group — edit if someone is absent" style="height:70px;"></textarea>
+      </div></div>
+      <div class="form-row cols1"><div class="form-group">
+        <label class="form-label">Remarks</label>
+        <input type="text" id="labor-remarks" class="form-input" placeholder="Any notes">
+      </div></div>
+      <!-- Photo upload -->
+      <div class="form-row cols1"><div class="form-group">
+        <label class="form-label">Photos (optional)</label>
+        <div class="maint-drop-zone" onclick="document.getElementById('labor-images').click()" ondragover="event.preventDefault()" ondrop="event.preventDefault();handleLaborImageDrop(event)" style="cursor:pointer;">
+          <svg width="20" height="20" fill="none" stroke="var(--ink-5)" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span style="font-size:12px;color:var(--ink-5);">Tap to add shift photos</span>
+          <input type="file" id="labor-images" accept="image/*" multiple style="display:none" onchange="previewLaborImages(this.files)">
+        </div>
+        <div id="labor-img-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>
+      </div></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('labor-modal')">Cancel</button>
+      <button class="btn btn-solid" id="labor-save-btn" onclick="saveLabor()">Save Log</button>
+    </div>
+  </div>
+</div>
+
+<!-- LABOR GROUPS MODAL -->
+<div class="overlay" id="labor-groups-modal">
+  <div class="modal" style="width:560px;max-height:85vh;display:flex;flex-direction:column;">
+    <div class="modal-header">
+      <div class="modal-title">&#128101; Manage Labor Groups</div>
+      <button class="modal-close" onclick="closeModal('labor-groups-modal')">✕</button>
+    </div>
+    <div class="modal-body" style="padding:20px;overflow-y:auto;flex:1;">
+      <!-- Add/Edit form -->
+      <div style="background:var(--surface-2);border-radius:var(--radius-lg);padding:16px;margin-bottom:20px;border:1px solid var(--surface-4);">
+        <div class="fw700 fs12" style="margin-bottom:12px;color:var(--ink);" id="grp-form-title">&#10133; Add New Group</div>
+        <input type="hidden" id="grp-edit-id">
+        <div class="form-row"><div class="form-group">
+          <label class="form-label">Group Name *</label>
+          <input class="form-input" id="grp-name" placeholder="e.g. Shelling Team A">
+        </div></div>
+        <div class="form-row cols1"><div class="form-group">
+          <label class="form-label">Members (one per line, or comma-separated)</label>
+          <textarea class="form-textarea" id="grp-members" style="height:90px;" placeholder="Raju Kumar&#10;Suresh&#10;Venkat Rao&#10;Krishna"></textarea>
+        </div></div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <button class="btn btn-solid btn-sm" onclick="saveGroup()">Save Group</button>
+          <button class="btn btn-ghost btn-sm" onclick="resetGroupForm()" id="grp-cancel-btn" style="display:none;">Cancel Edit</button>
+        </div>
+      </div>
+      <!-- Groups list -->
+      <div id="groups-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TRUCK REGISTRATION MODAL -->
+<div class="overlay" id="truck-modal">
+  <div class="modal" style="width:580px;">
+    <div class="modal-header">
+      <div class="modal-title" id="truck-modal-title">Register Truck</div>
+      <button class="modal-close" onclick="closeModal('truck-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-section"><span class="form-section-icon">🚛</span> Vehicle Details</div>
+      <div class="form-row cols2">
+        <div class="form-group"><label class="form-label">Vehicle Number *</label><input class="form-input" id="t-vehicle" placeholder="e.g. TS08UD5119" style="text-transform:uppercase;"></div>
+        <div class="form-group"><label class="form-label">Company / Party</label><input class="form-input" id="t-company" placeholder="e.g. Crystal Seeds"></div>
+      </div>
+      <div class="form-row cols2">
+        <div class="form-group"><label class="form-label">From Location</label><input class="form-input" id="t-location" placeholder="Village, Mandal"></div>
+        <div class="form-group"><label class="form-label">Arrival Time</label><input class="form-input" id="t-arrival" type="datetime-local"></div>
+      </div>
+      <div class="form-row cols2">
+        <div class="form-group"><label class="form-label">Driver Name</label><input class="form-input" id="t-driver" placeholder="Driver's name"></div>
+        <div class="form-group"><label class="form-label">Driver Phone</label><input class="form-input" id="t-phone" placeholder="Mobile number" type="tel"></div>
+      </div>
+      <div class="form-section"><span class="form-section-icon">⚖️</span> Weighing
+        <span style="margin-left:auto;">
+          <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;font-weight:600;color:var(--ink-3);background:var(--surface-2);border:1.5px dashed var(--border);border-radius:6px;padding:4px 10px;">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Scan Slip
+            <input type="file" id="t-slip-photo" accept="image/*" capture="environment" style="display:none;" onchange="runTruckSlipOcr(this)">
+          </label>
+        </span>
+      </div>
+      <div id="t-slip-status" style="display:none;font-size:11px;color:var(--green);font-weight:600;margin:-8px 0 10px;padding:6px 10px;background:var(--green-pale,#f0fdf4);border-radius:6px;border:1px solid var(--green-bdr,#bbf7d0);"></div>
+      <img id="t-slip-preview" src="" alt="" style="display:none;max-height:100px;width:100%;object-fit:contain;border-radius:var(--radius);border:1px solid var(--border);margin-bottom:10px;">
+      <div class="form-row cols3">
+        <div class="form-group"><label class="form-label">Gross Weight (Kg) <span style="color:var(--ink-5);font-weight:400;">(loaded)</span></label><input class="form-input" id="t-gross" type="number" min="0" max="999999" placeholder="e.g. 28500" oninput="calcTruckNetWeight()"></div>
+        <div class="form-group"><label class="form-label">Tare Weight (Kg) <span style="color:var(--ink-5);font-weight:400;">(empty)</span></label><input class="form-input" id="t-tare" type="number" min="0" max="999999" placeholder="e.g. 8500" oninput="calcTruckNetWeight()"></div>
+        <div class="form-group"><label class="form-label">Net Weight (Kg)</label>
+          <div class="form-input" id="t-net-display" style="background:var(--gold-pale);border-color:var(--gold-border);color:var(--gold-dark);font-weight:700;font-family:'DM Mono',monospace;display:flex;align-items:center;">—</div>
+        </div>
+      </div>
+      <div class="form-row cols1">
+        <div class="form-group"><label class="form-label">Status</label>
+          <select class="form-select" id="t-status">
+            <option value="waiting">Waiting (Parking — bins not available)</option>
+            <option value="intake">In Intake (Bins assigned)</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-section"><span class="form-section-icon">🏷️</span> Lot Numbers</div>
+      <div id="t-lots-container" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;"></div>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="addTruckLot()" style="align-self:flex-start;">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Add Lot
+      </button>
+
+      <div class="form-row cols1" style="margin-top:12px;">
+        <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="t-notes" placeholder="Any additional notes…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('truck-modal')">Cancel</button>
+      <button class="btn btn-solid" onclick="saveTruck()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save Truck
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- BACKYARD REMOVAL MODAL -->
+<div class="overlay" id="backyard-modal">
+  <div class="modal" style="width:560px;">
+    <div class="modal-header">
+      <div class="modal-title" id="backyard-modal-title">Log Stock Removal</div>
+      <button class="modal-close" onclick="closeModal('backyard-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="backyard-edit-id">
+      <div class="form-section"><span class="form-section-icon">📦</span> Stock Details</div>
+      <div class="form-row cols2">
+        <div class="form-group"><label class="form-label">Intake / DR No (optional)</label>
+          <select class="form-select" id="by-intake">
+            <option value="">— Select Intake —</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Bin (optional)</label>
+          <select class="form-select" id="by-bin">
+            <option value="">— Select Bin —</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row cols2">
+        <div class="form-group"><label class="form-label">Vehicle No (optional)</label><input class="form-input" id="by-vehicle" placeholder="e.g. TS08UD5119"></div>
+        <div class="form-group"><label class="form-label">Hybrid</label><input class="form-input" id="by-hybrid" placeholder="e.g. YS-07"></div>
+      </div>
+      <div class="form-row cols2">
+        <div class="form-group"><label class="form-label">Qty Removed (Kg) *</label><input class="form-input" id="by-qty" type="number" min="0" max="9999999" placeholder="e.g. 200"></div>
+        <div class="form-group"><label class="form-label">Bags Removed</label><input class="form-input" id="by-bags" type="number" min="0" max="99999" placeholder="e.g. 5"></div>
+      </div>
+      <div class="form-row cols2">
+        <div class="form-group"><label class="form-label">Reason *</label>
+          <select class="form-select" id="by-reason">
+            <option value="damaged">Damaged</option>
+            <option value="quality">Quality Issues</option>
+            <option value="pest">Pest / Infestation</option>
+            <option value="excess">Excess / Overflow</option>
+            <option value="moisture">High Moisture (Rejected)</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Removed By</label><input class="form-input" id="by-removed-by" placeholder="Name"></div>
+      </div>
+      <div class="form-row cols1">
+        <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="by-notes" placeholder="Details about what was removed and why…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('backyard-modal')">Cancel</button>
+      <button class="btn btn-danger" id="backyard-save-btn" onclick="saveBackyardRemoval()" style="background:var(--red);color:#fff;border-color:var(--red);">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+        Log Removal
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== NEW UPDATE MODAL ==================== -->
+<div class="overlay" id="update-modal">
+  <div class="modal" style="max-width:540px;">
+    <div class="modal-header">
+      <div class="modal-title">New Field Update</div>
+      <button class="modal-close" onclick="closeModal('update-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Type selector -->
+      <div class="form-group">
+        <label class="form-label">Update Type</label>
+        <select class="form-input" id="upd-type" onchange="onUpdTypeChange()">
+          <option value="moisture_photo">💧 Moisture Reading</option>
+          <option value="boiler_temp">🌡️ Boiler / Dryer Temp</option>
+          <option value="intake_photo">🌽 Intake Photo</option>
+          <option value="bin_note">🏠 Bin Note</option>
+          <option value="weigh_slip">⚖️ Weigh Slip</option>
+          <option value="backyard">🏗️ Backyard / Outside Stock</option>
+          <option value="general" selected>📝 General</option>
+        </select>
+      </div>
+
+      <!-- Bin selector — shown for moisture/intake/bin_note -->
+      <div class="form-group" id="upd-bin-group">
+        <label class="form-label">Bin</label>
+        <select class="form-input" id="upd-bin">
+          <option value="">— Select bin —</option>
+        </select>
+      </div>
+
+      <!-- Moisture value — shown for moisture_photo -->
+      <div class="form-group" id="upd-moisture-group" style="display:none;">
+        <label class="form-label" style="display:flex;align-items:center;justify-content:space-between;">
+          Moisture % <span id="upd-moisture-detected" style="font-size:11px;color:var(--green);font-weight:600;"></span>
+        </label>
+        <input type="number" class="form-input" id="upd-moisture" step="0.1" min="0" max="99" placeholder="e.g. 38.0" style="font-family:'DM Mono',monospace;font-size:18px;font-weight:700;text-align:center;">
+      </div>
+
+      <!-- Boiler temps + pressure — shown for boiler_temp -->
+      <div id="upd-temp-group" style="display:none;">
+        <div style="font-size:11px;font-weight:700;color:var(--ink-4);letter-spacing:.5px;margin-bottom:8px;">🔥 BOILER READINGS <span id="upd-temp-detected" style="font-size:11px;color:var(--green);font-weight:600;margin-left:8px;"></span></div>
+        <div class="form-row cols2" style="margin-bottom:0;">
+          <div class="form-group">
+            <label class="form-label">B.No:1 Temp (°C)</label>
+            <input type="number" class="form-input" id="upd-temp" step="0.1" min="0" max="999" placeholder="42.6" style="font-family:'DM Mono',monospace;font-size:20px;font-weight:700;text-align:center;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">B.No:2 Temp (°C)</label>
+            <input type="number" class="form-input" id="upd-temp2" step="0.1" min="0" max="999" placeholder="42.2" style="font-family:'DM Mono',monospace;font-size:20px;font-weight:700;text-align:center;">
+          </div>
+        </div>
+        <div class="form-row cols2" style="margin-bottom:0;">
+          <div class="form-group">
+            <label class="form-label">Pressure</label>
+            <input type="number" class="form-input" id="upd-pressure" step="0.1" min="0" placeholder="5.0" style="font-family:'DM Mono',monospace;font-size:20px;font-weight:700;text-align:center;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Unit</label>
+            <select class="form-input" id="upd-pressure-unit">
+              <option value="kg/cm²">kg/cm²</option>
+              <option value="PSI">PSI</option>
+              <option value="bar">bar</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hybrid + Qty — shown for intake_photo -->
+      <div class="form-row cols2" id="upd-intake-group" style="display:none;">
+        <div class="form-group">
+          <label class="form-label">Hybrid</label>
+          <input type="text" class="form-input" id="upd-hybrid" placeholder="e.g. Crystal-662">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Qty (bags/Qt)</label>
+          <input type="number" class="form-input" id="upd-qty" step="0.1" min="0" placeholder="e.g. 40">
+        </div>
+      </div>
+
+      <!-- Weigh Slip fields — shown for weigh_slip -->
+      <div id="upd-weigh-group" style="display:none;">
+        <div style="font-size:11px;font-weight:700;color:var(--ink-4);letter-spacing:.5px;margin-bottom:8px;">⚖️ WEIGHMENT SLIP DATA <span id="upd-weigh-detected" style="font-size:11px;color:var(--green);font-weight:600;margin-left:8px;"></span></div>
+        <div class="form-row cols2">
+          <div class="form-group">
+            <label class="form-label">Material Direction</label>
+            <select class="form-input" id="upd-material-dir">
+              <option value="INWARD">📥 INWARD (Intake)</option>
+              <option value="OUTWARD">📤 OUTWARD (Dispatch)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ticket No</label>
+            <input type="text" class="form-input" id="upd-ticket-no" placeholder="386" style="font-family:'DM Mono',monospace;">
+          </div>
+        </div>
+        <div class="form-row cols2">
+          <div class="form-group">
+            <label class="form-label">Vehicle No</label>
+            <input type="text" class="form-input" id="upd-vehicle-no" placeholder="AP39GC5075" style="font-family:'DM Mono',monospace;text-transform:uppercase;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Company</label>
+            <input type="text" class="form-input" id="upd-company-name" placeholder="TEST CMP">
+          </div>
+        </div>
+        <div class="form-row cols2">
+          <div class="form-group">
+            <label class="form-label">Hybrid</label>
+            <input type="text" class="form-input" id="upd-weigh-hybrid" placeholder="WEST">
+          </div>
+          <div class="form-group">
+            <label class="form-label">No. of Bags</label>
+            <input type="number" class="form-input" id="upd-bags-count" placeholder="120" min="0" style="font-family:'DM Mono',monospace;">
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:4px;">
+          <div class="form-group">
+            <label class="form-label">Tare (1st Wt) kg</label>
+            <input type="number" class="form-input" id="upd-tare-wt" placeholder="3330" min="0" style="font-family:'DM Mono',monospace;font-weight:700;text-align:center;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gross (2nd Wt) kg</label>
+            <input type="number" class="form-input" id="upd-gross-wt" placeholder="5040" min="0" style="font-family:'DM Mono',monospace;font-weight:700;text-align:center;" oninput="calcNetWeight()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Net Weight kg</label>
+            <input type="number" class="form-input" id="upd-net-wt" placeholder="1710" min="0" style="font-family:'DM Mono',monospace;font-weight:700;text-align:center;background:var(--surface-2);">
+          </div>
+        </div>
+      </div>
+
+      <!-- Photo upload -->
+      <div class="form-group">
+        <label class="form-label">Photo</label>
+        <input type="file" id="upd-photo" accept="image/*" capture="environment"
+          onchange="runOcrOnPhoto(this)"
+          style="display:block;width:100%;font-size:13px;padding:8px;border:1.5px dashed var(--border);border-radius:var(--radius);background:var(--surface-2);cursor:pointer;">
+        <img id="upd-photo-preview" src="" alt="Preview" style="display:none;margin-top:8px;max-height:150px;width:100%;object-fit:contain;border-radius:var(--radius);border:1px solid var(--border);">
+      </div>
+
+      <!-- OCR extracted text -->
+      <div id="upd-ocr-wrap" style="display:none;">
+        <div class="form-label" style="display:flex;align-items:center;gap:6px;">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18"/></svg>
+          Raw OCR Text
+          <span id="upd-ocr-status" style="font-size:11px;color:var(--ink-4);font-weight:400;margin-left:4px;"></span>
+        </div>
+        <textarea class="form-input" id="upd-ocr-text" rows="2" style="font-family:'DM Mono',monospace;font-size:11px;resize:vertical;color:var(--ink-4);" placeholder="Scanned text appears here"></textarea>
+      </div>
+
+      <!-- Notes -->
+      <div class="form-group">
+        <label class="form-label">Notes (optional)</label>
+        <textarea class="form-input" id="upd-notes" rows="2" style="resize:vertical;" placeholder="Any additional observations…"></textarea>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('update-modal')">Cancel</button>
+      <button class="btn btn-gold" id="upd-save-btn" onclick="saveFieldUpdate()">Save &amp; Update</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toasts"></div>
+
+<!-- ============================================================
+     COMMAND PALETTE OVERLAY
+     ============================================================ -->
+<div id="cmd-overlay" style="display:none;opacity:0;position:fixed;inset:0;z-index:9999;background:rgba(15,25,35,0.55);backdrop-filter:blur(4px);align-items:flex-start;justify-content:center;padding-top:15vh;transition:opacity .18s ease;">
+  <div class="cmd-modal" style="width:100%;max-width:600px;background:var(--surface);border-radius:16px;box-shadow:0 24px 80px rgba(0,0,0,0.22),0 0 0 1px rgba(255,255,255,0.08);overflow:hidden;transform:scale(0.97) translateY(-8px);transition:transform .18s cubic-bezier(.34,1.4,.64,1);max-height:70vh;display:flex;flex-direction:column;">
+    <!-- Search bar -->
+    <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--surface-3);">
+      <span style="font-size:18px;color:var(--ink-4);">🔍</span>
+      <input id="cmd-input" type="text" placeholder="Search pages, bins, actions…" autocomplete="off" autocorrect="off" spellcheck="false"
+        style="flex:1;border:none;outline:none;background:transparent;font-size:15px;color:var(--ink);font-family:'DM Sans',sans-serif;">
+      <kbd style="font-size:11px;padding:3px 7px;background:var(--surface-3);border-radius:5px;color:var(--ink-4);font-family:'DM Mono',monospace;cursor:pointer;" onclick="_cmdPalette.close()">ESC</kbd>
+    </div>
+    <!-- Results list -->
+    <div id="cmd-list" style="overflow-y:auto;max-height:calc(70vh - 56px);padding:8px 0;"></div>
+  </div>
+</div>
+
+<!-- OFFLINE BAR — shown when device has no internet -->
+<div class="offline-bar" id="offline-bar">
+  <div class="offline-dot"></div>
+  <span id="offline-bar-text">You're offline — viewing cached data</span>
+</div>
+
+<!-- SYNC BADGE — shown when there are pending writes to sync -->
+<div class="sync-badge" id="sync-badge"></div>
+
+</div><!-- /#app-shell -->
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script src="https://unpkg.com/tesseract.js@4/dist/tesseract.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+<script src="js/error-boundary.js"></script>
+<script src="js/offline-queue.js?v=2"></script>
+<script src="js/db.js?v=22"></script>
+<!-- Modular JavaScript -->
+<script src="js/config.js?v=1"></script>
+<script src="js/state.js?v=5"></script>
+<script src="js/crypto.js"></script>
+<script src="js/utils.js?v=7"></script>
+<script src="js/i18n.js?v=7"></script>
+<script src="js/selects.js?v=4"></script>
+<script src="js/binTile.js?v=20"></script>
+<script src="js/render.js?v=43"></script>
+<script src="js/actions.js?v=50"></script>
+<script src="js/receipt.js?v=9"></script>
+<script src="js/clock.js?v=2"></script>
+<script src="js/roles.js?v=1"></script>
+<script src="js/cmdPalette.js?v=1"></script>
+<script src="js/notifications.js?v=1"></script>
+<script src="js/init.js?v=25"></script>
+</body>
+</html>
