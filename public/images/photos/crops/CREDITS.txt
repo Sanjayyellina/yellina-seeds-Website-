@@ -1,0 +1,14 @@
+Coming-soon crop photos — openly licensed (CC), sourced via Openverse / Wikimedia Commons.
+Used under their respective licences for the Yellina Seeds portfolio "coming soon" tiles.
+Replace with Yellina's own field photos of these crops when available.
+
+  wheat.jpg        — CC BY-SA, "Green Wheat Field"
+  mustard.jpg      — CC0, "Mustard flower plants on the field"
+  bajra.jpg        — CC BY-SA, "Flowering pearl millet"
+  sorghum.jpg      — CC BY, "sorghum field" (Elysium)
+  okra.jpg         — CC BY-SA, okra plant
+  cowpea.jpg       — CC BY, "CSIRO ScienceImage Cowpea pods"
+  radish.jpg       — CC BY-SA, white radish
+  clusterbeans.jpg — CC BY-SA, "Guar plant"
+  cucumber.jpg     — Public domain (USDA ARS)
+  beans.jpg        — CC BY, french beans pods (Has Bean)
