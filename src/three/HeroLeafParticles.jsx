@@ -2,38 +2,9 @@ import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 
-const VERTEX = /* glsl */ `
-  attribute float aSize;
-  attribute float aSeed;
-  attribute float aTint;
-  uniform float uTime;
-  varying float vTint;
-  varying float vTwinkle;
-  void main() {
-    vTint = aTint;
-    float tw = 0.55 + 0.45 * sin(uTime * 1.6 + aSeed * 6.2831);
-    vTwinkle = tw;
-    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-    gl_PointSize = aSize * tw * (9.0 / -mvPosition.z);
-    gl_Position = projectionMatrix * mvPosition;
-  }
-`
-
-const FRAGMENT = /* glsl */ `
-  precision mediump float;
-  varying float vTint;
-  varying float vTwinkle;
-  uniform vec3 uColorDark;
-  uniform vec3 uColorGold;
-  void main() {
-    vec2 uv = gl_PointCoord - vec2(0.5);
-    float d = length(uv);
-    if (d > 0.5) discard;
-    float falloff = smoothstep(0.5, 0.0, d);
-    vec3 color = mix(uColorDark, uColorGold, vTint);
-    gl_FragColor = vec4(color, falloff * (0.55 + 0.45 * vTwinkle));
-  }
-`
+// Radius (world units, at scaleFactor 1) a size-1 particle maps to — tuned so
+// the ball-formed logo reads at roughly the same density as the old dots.
+const SPHERE_RADIUS_UNIT = 0.0034
 
 const BASE_DISTANCE = 3.2
 const BASE_FOV = 34
@@ -128,7 +99,7 @@ const MOUSE_TILT = (10 * Math.PI) / 180
 function ParticleCloud({ data, anchorPx }) {
   const { size } = useThree()
   const groupRef = useRef()
-  const matRef = useRef()
+  const meshRef = useRef()
   const mouse = useRef({ x: 0, y: 0 })
   const smoothed = useRef({ x: 0, y: 0 })
   const introDone = useRef(false)
@@ -206,19 +177,9 @@ function ParticleCloud({ data, anchorPx }) {
     return out
   }, [data, startsLocal])
 
-  const liveGeo = useMemo(() => ({
-    positions: startsLocal.slice(),
-    sizes: new Float32Array(data.sizes.length),
-  }), [data, startsLocal])
-
-  const geometry = useMemo(() => {
-    const geo = new THREE.BufferGeometry()
-    geo.setAttribute('position', new THREE.BufferAttribute(liveGeo.positions, 3))
-    geo.setAttribute('aSize', new THREE.BufferAttribute(liveGeo.sizes, 1))
-    geo.setAttribute('aSeed', new THREE.BufferAttribute(data.seeds, 1))
-    geo.setAttribute('aTint', new THREE.BufferAttribute(data.tints, 1))
-    return geo
-  }, [data, liveGeo])
+  const dummy = useMemo(() => new THREE.Object3D(), [])
+  const greenColor = useMemo(() => new THREE.Color('#2F8B49'), [])
+  const goldColor = useMemo(() => new THREE.Color('#C9A227'), [])
 
   useEffect(() => {
     introDone.current = false
@@ -228,23 +189,24 @@ function ParticleCloud({ data, anchorPx }) {
     if (groupRef.current) groupRef.current.position.set(layout.anchorWorldX, layout.anchorWorldY, 0)
   }, [layout])
 
-  const uniforms = useMemo(
-    () => ({
-      uTime: { value: 0 },
-      uColorDark: { value: new THREE.Color('#2F8B49') },
-      uColorGold: { value: new THREE.Color('#C9A227') },
-    }),
-    []
-  )
+  // per-instance colors are set once — the sphere geometry + real lights do
+  // the rest of the "shiny ball" shading, no custom color animation needed
+  useEffect(() => {
+    if (!meshRef.current) return
+    const total = data.sizes.length
+    for (let i = 0; i < total; i++) {
+      meshRef.current.setColorAt(i, data.tints[i] > 0.5 ? goldColor : greenColor)
+    }
+    if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true
+  }, [data, greenColor, goldColor])
 
   useFrame((state) => {
     const t = state.clock.elapsedTime
 
-    if (!introDone.current) {
-      const posAttr = geometry.attributes.position
-      const sizeAttr = geometry.attributes.aSize
+    if (!introDone.current && meshRef.current) {
       let allArrived = true
       const wobbleAmp = 0.09 * layout.scaleFactor
+      const radiusUnit = SPHERE_RADIUS_UNIT * layout.scaleFactor
       for (let i = 0; i < data.delays.length; i++) {
         const local = (t - data.delays[i]) / INTRO_DURATION
         if (local < 1) allArrived = false
@@ -259,13 +221,16 @@ function ParticleCloud({ data, anchorPx }) {
         // decaying flutter riding the path, like a gust — fades out on arrival
         const flutter = (1 - eased) * wobbleAmp
         const seed = data.seeds[i]
-        posAttr.array[i3] = bx + Math.sin(t * 3.2 + seed * 6.283) * flutter
-        posAttr.array[i3 + 1] = by + Math.cos(t * 2.6 + seed * 9.42) * flutter
-        posAttr.array[i3 + 2] = bz
-        sizeAttr.array[i] = data.sizes[i] * (0.2 + 0.8 * eased)
+        dummy.position.set(
+          bx + Math.sin(t * 3.2 + seed * 6.283) * flutter,
+          by + Math.cos(t * 2.6 + seed * 9.42) * flutter,
+          bz
+        )
+        dummy.scale.setScalar(data.sizes[i] * (0.2 + 0.8 * eased) * radiusUnit)
+        dummy.updateMatrix()
+        meshRef.current.setMatrixAt(i, dummy.matrix)
       }
-      posAttr.needsUpdate = true
-      sizeAttr.needsUpdate = true
+      meshRef.current.instanceMatrix.needsUpdate = true
       if (allArrived && t > INTRO_MAX_DELAY + INTRO_DURATION) introDone.current = true
     }
 
@@ -276,22 +241,14 @@ function ParticleCloud({ data, anchorPx }) {
       groupRef.current.rotation.y = swing + smoothed.current.x * MOUSE_YAW
       groupRef.current.rotation.x = -smoothed.current.y * MOUSE_TILT
     }
-    if (matRef.current) matRef.current.uniforms.uTime.value = t
   })
 
   return (
     <group ref={groupRef}>
-      <points geometry={geometry}>
-        <shaderMaterial
-          ref={matRef}
-          vertexShader={VERTEX}
-          fragmentShader={FRAGMENT}
-          uniforms={uniforms}
-          transparent
-          depthWrite={false}
-          blending={THREE.NormalBlending}
-        />
-      </points>
+      <instancedMesh ref={meshRef} args={[undefined, undefined, data.sizes.length]}>
+        <sphereGeometry args={[1, 8, 6]} />
+        <meshStandardMaterial roughness={0.6} metalness={0} />
+      </instancedMesh>
     </group>
   )
 }
@@ -317,6 +274,9 @@ export default function HeroLeafParticles({ anchorPx }) {
     >
       <Suspense fallback={null}>
         {anchorPx && <CameraRig anchorPx={anchorPx} />}
+        <ambientLight intensity={2.5} color="#EFF8E9" />
+        <directionalLight position={[4, 6, 5]} intensity={2.5} color="#FFF3D0" />
+        <directionalLight position={[-4, -2, -3]} intensity={0.9} color="#3E6B4C" />
         {data && anchorPx && <ParticleCloud data={data} anchorPx={anchorPx} />}
       </Suspense>
     </Canvas>
