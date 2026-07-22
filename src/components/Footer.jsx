@@ -341,27 +341,13 @@ export default function Footer({ onNavigate, onCrop }) {
 
         {/* Contact card */}
         <div className="reveal mt-8 rounded-3xl bg-white/[0.07] backdrop-blur border border-white/15 p-7 md:p-9">
-          <div className="grid md:grid-cols-[1fr_1fr_auto] gap-8">
+          <div className="grid md:grid-cols-[1fr_auto] gap-8">
             <div>
               <div className="eyebrow text-leaf !text-[10px] mb-3">{CONTACT.corporate.label}</div>
               <h5 className="text-xl text-white" style={{ fontFamily: 'var(--font-serif)' }}>{CONTACT.corporate.name}</h5>
               <p className="mt-3 text-white/70 text-[13.5px] leading-[1.8]">{CONTACT.corporate.address}</p>
               <a
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('Kompally, Hyderabad, Telangana')}`}
-                target="_blank" rel="noopener noreferrer"
-                className="mt-3 inline-flex items-center gap-2 text-leaf text-[11px] uppercase tracking-[0.18em] font-bold hover:text-white transition-colors"
-                style={{ fontFamily: 'var(--font-sans)' }}
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s-7-5.5-7-11a7 7 0 1114 0c0 5.5-7 11-7 11z" /><circle cx="12" cy="10" r="2.6" /></svg>
-                View on map
-              </a>
-            </div>
-            <div>
-              <div className="eyebrow text-leaf !text-[10px] mb-3">{CONTACT.plant.label}</div>
-              <h5 className="text-xl text-white" style={{ fontFamily: 'var(--font-serif)' }}>{CONTACT.plant.name}</h5>
-              <p className="mt-3 text-white/70 text-[13.5px] leading-[1.8]">{CONTACT.plant.address}</p>
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('Banda Mallaram Village, Telangana')}`}
                 target="_blank" rel="noopener noreferrer"
                 className="mt-3 inline-flex items-center gap-2 text-leaf text-[11px] uppercase tracking-[0.18em] font-bold hover:text-white transition-colors"
                 style={{ fontFamily: 'var(--font-sans)' }}
@@ -379,8 +365,6 @@ export default function Footer({ onNavigate, onCrop }) {
                 <a href={`tel:${CONTACT.phone2Raw}`} className="block text-xl text-white hover:text-leaf transition-colors" style={{ fontFamily: 'var(--font-serif)' }}>
                   {CONTACT.phone2}
                 </a>
-                <div className="text-white/55 text-[12px] mt-2">Customer Care</div>
-                <a href={`tel:${CONTACT.customerCareRaw}`} className="text-white/85 text-[15px] hover:text-leaf transition-colors">{CONTACT.customerCare}</a>
               </div>
               <div>
                 <div className="eyebrow text-leaf !text-[10px] mb-2">Email</div>

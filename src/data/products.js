@@ -266,8 +266,6 @@ export const DEALER_BENEFITS = [
 export const CONTACT = {
   phone: '+91 99494 84078',
   phoneRaw: '+919949484078',
-  customerCare: '+91 85230 06206',
-  customerCareRaw: '+918523006206',
   phone2: '+91 83414 64748',
   phone2Raw: '+918341464748',
   email: 'yellinaseeds@gmail.com',
@@ -276,11 +274,6 @@ export const CONTACT = {
     label: 'Corporate Office',
     name: 'Yellina Seeds Private Limited',
     address: 'Kompally, Hyderabad, Telangana, India',
-  },
-  plant: {
-    label: 'Seed Processing Unit',
-    name: '800-Tonne Drying & Processing Facility',
-    address: 'Banda Mallaram Village, Telangana, India',
   },
   team: [
     {
