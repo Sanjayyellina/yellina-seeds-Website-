@@ -39,6 +39,7 @@ export default function Hero({ onNavigate }) {
   const glowRef = useRef(null)
   const copyRef = useRef(null)
   const emblemSpacerRef = useRef(null)
+  const rotationBoxRef = useRef(null)
   const heroFrameRef = useRef(null)
   const [anchorPx, setAnchorPx] = useState(null)
 
@@ -93,7 +94,7 @@ export default function Hero({ onNavigate }) {
             from its true edges, converging on the anchored emblem spot below */}
         <div className="absolute inset-x-0 top-0 h-screen pointer-events-none" style={{ zIndex: 1 }}>
           <Suspense fallback={null}>
-            <HeroLeafParticles anchorPx={anchorPx} />
+            <HeroLeafParticles anchorPx={anchorPx} boxRef={rotationBoxRef} heroFrameRef={heroFrameRef} />
           </Suspense>
         </div>
 
@@ -139,7 +140,7 @@ export default function Hero({ onNavigate }) {
           {/* the emblem */}
           <div className="relative mt-8 select-none" aria-hidden="true" style={{ width: 'min(72vw, 520px)' }}>
             <div className="logo-halo absolute -inset-[14%]" />
-            <div className="relative aspect-[456/371]">
+            <div ref={rotationBoxRef} className="relative aspect-[456/371]">
               {/* invisible spacer marking where the particle logo (rendered in the
                   full-hero canvas above) should anchor and how big it should read */}
               <div ref={emblemSpacerRef} className="absolute -inset-[10%] pointer-events-none" />
