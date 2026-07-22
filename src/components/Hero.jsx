@@ -1,4 +1,4 @@
-import { useEffect, useRef, lazy, Suspense } from 'react'
+import { useEffect, useRef, useState, lazy, Suspense } from 'react'
 
 const HeroLeafParticles = lazy(() => import('../three/HeroLeafParticles.jsx'))
 
@@ -38,6 +38,27 @@ function Seal({ lines }) {
 export default function Hero({ onNavigate }) {
   const glowRef = useRef(null)
   const copyRef = useRef(null)
+  const emblemSpacerRef = useRef(null)
+  const heroFrameRef = useRef(null)
+  const [anchorPx, setAnchorPx] = useState(null)
+
+  // where the logo should form, measured relative to the full-hero particle
+  // canvas — captured once up front so the fly-in intro lands in the right spot
+  useEffect(() => {
+    const measure = () => {
+      if (!emblemSpacerRef.current || !heroFrameRef.current) return
+      const box = emblemSpacerRef.current.getBoundingClientRect()
+      const frame = heroFrameRef.current.getBoundingClientRect()
+      setAnchorPx({
+        x: box.left + box.width / 2 - frame.left,
+        y: box.top + box.height / 2 - frame.top,
+        boxHeight: box.height,
+      })
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [])
 
   // a sun glow follows the cursor; the field photo inside the logo stays frozen
   useEffect(() => {
@@ -67,7 +88,15 @@ export default function Hero({ onNavigate }) {
 
   return (
     <section id="home" className="relative">
-      <div className="relative overflow-hidden flex flex-col bg-bg">
+      <div ref={heroFrameRef} className="relative overflow-hidden flex flex-col bg-bg">
+        {/* particle logo canvas — spans the whole hero so particles can fly in
+            from its true edges, converging on the anchored emblem spot below */}
+        <div className="absolute inset-x-0 top-0 h-screen pointer-events-none" style={{ zIndex: 1 }}>
+          <Suspense fallback={null}>
+            <HeroLeafParticles anchorPx={anchorPx} />
+          </Suspense>
+        </div>
+
         {/* sun glow chasing the cursor */}
         <div ref={glowRef} className="sun-glow hidden md:block" />
 
@@ -111,13 +140,9 @@ export default function Hero({ onNavigate }) {
           <div className="relative mt-8 select-none" aria-hidden="true" style={{ width: 'min(72vw, 520px)' }}>
             <div className="logo-halo absolute -inset-[14%]" />
             <div className="relative aspect-[456/371]">
-              {/* real logo as a sparkling particle cloud, sampled from its own alpha channel —
-                  revolves in 3D, dark-green/gold toned to read on the light backdrop */}
-              <div className="absolute -inset-[10%] pointer-events-none">
-                <Suspense fallback={null}>
-                  <HeroLeafParticles />
-                </Suspense>
-              </div>
+              {/* invisible spacer marking where the particle logo (rendered in the
+                  full-hero canvas above) should anchor and how big it should read */}
+              <div ref={emblemSpacerRef} className="absolute -inset-[10%] pointer-events-none" />
             </div>
             <div
               className="absolute left-1/2 -bottom-6 h-8 w-[60%] -translate-x-1/2 rounded-[50%]"
