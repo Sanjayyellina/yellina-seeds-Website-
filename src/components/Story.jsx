@@ -45,7 +45,6 @@ const PARTNER_LOGOS = [
   { src: '/images/partners/logo-kaveri.png', alt: 'Kaveri' },
   { src: '/images/partners/logo-nath.png', alt: 'Nath' },
   { src: '/images/partners/logo-crystal.png', alt: 'Crystal' },
-  { src: '/images/partners/logo-kanchan.png', alt: 'Kanchan' },
 ]
 const PARTNER_NAMES = [
   'Shriram Bioseed', '+ several others',
@@ -61,7 +60,7 @@ export default function Story() {
   const ref = useReveal()
 
   return (
-    <section id="story" ref={ref} className="relative bg-sage py-16 md:py-22 overflow-hidden">
+    <section id="story" ref={ref} className="relative bg-sage py-11 md:py-14 overflow-hidden">
       <Backdrop src="/images/photos/field-maize-wide.jpg" color="#F0F4E7" />
       <SectionCurve fill="#FAFAF6" />
       <div className="relative max-w-6xl mx-auto px-6">
@@ -105,7 +104,7 @@ export default function Story() {
         </div>
 
         {/* Timeline — open, no box, big year markers */}
-        <div className="mt-24 reveal" style={{ '--reveal-delay': '120ms' }}>
+        <div className="mt-14 reveal" style={{ '--reveal-delay': '120ms' }}>
           <div className="relative">
             <div className="tl-line absolute left-[7px] top-2 bottom-2 w-0.5 md:left-0 md:right-0 md:top-[7px] md:bottom-auto md:h-0.5 md:w-full rounded" />
             <div className="flex flex-col md:flex-row md:justify-between gap-10 md:gap-4">
@@ -126,7 +125,7 @@ export default function Story() {
         </div>
 
         {/* Partners */}
-        <div className="mt-16 reveal">
+        <div className="mt-10 reveal">
           <div className="flex flex-wrap items-end justify-between gap-3 mb-7">
             <h3 className="text-2xl sm:text-3xl text-green-950 font-light" style={{ fontFamily: 'var(--font-serif)' }}>
               Seed companies we have produced for

@@ -41,7 +41,7 @@ export default function Infrastructure() {
   const ref = useReveal()
 
   return (
-    <section id="plant" ref={ref} className="relative bg-sage py-16 md:py-22">
+    <section id="plant" ref={ref} className="relative bg-sage py-11 md:py-14">
       <SectionCurve fill="#FAFAF6" />
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
@@ -58,7 +58,7 @@ export default function Infrastructure() {
         </div>
 
         {/* Establishing shot — the photo drifts inside its frame as you scroll */}
-        <div className="reveal mt-12 relative rounded-3xl overflow-hidden shadow-[0_30px_60px_-24px_rgba(20,47,27,0.4)]" style={{ '--reveal-delay': '120ms' }}>
+        <div className="reveal mt-8 relative rounded-3xl overflow-hidden shadow-[0_30px_60px_-24px_rgba(20,47,27,0.4)]" style={{ '--reveal-delay': '120ms' }}>
           <div className="w-full aspect-[16/7] relative overflow-hidden">
             <div data-parallax="-0.14" className="absolute -inset-y-[20%] inset-x-0">
               <img

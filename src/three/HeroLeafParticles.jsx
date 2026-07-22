@@ -198,13 +198,13 @@ function useLogoParticles(src, count = 9000) {
   return data
 }
 
-const INTRO_DURATION = 2.6 // seconds each particle takes to arrive, once its delay elapses
+const INTRO_DURATION = 3 // seconds each particle takes to arrive, once its delay elapses
 const INTRO_MAX_DELAY = 1 // random per-particle stagger, spread over this many seconds
 
-// Quintic rather than cubic — an even faster initial burst away from the
-// edges, then a gentle, unhurried settle into the final logo shape.
+// Quartic — a quick initial launch away from the edges without being an
+// abrupt snap, then a gentle, unhurried settle into the final logo shape.
 function easeOutCubic(x) {
-  return 1 - Math.pow(1 - x, 5)
+  return 1 - Math.pow(1 - x, 4)
 }
 function smoothstep01(x) {
   const t = Math.min(Math.max(x, 0), 1)
@@ -214,7 +214,7 @@ function smoothstep01(x) {
 // Degrees of swing to each side from center. Kept well under 90° so the
 // cloud never goes edge-on/flat — it always reads as the leaf shape. Much
 // slower than a typical UI animation on purpose — this is ambient/idle motion.
-const SWING_AMPLITUDE = (60 * Math.PI) / 180
+const SWING_AMPLITUDE = (30 * Math.PI) / 180
 const MOVE_DURATION = 22 // seconds to sweep between center and an extreme
 const PAUSE_DURATION = 14 // seconds paused at center each time through
 const SWING_CYCLE = MOVE_DURATION * 4 + PAUSE_DURATION * 2
@@ -237,21 +237,22 @@ function swingAngle(t) {
 const DRAG_SENSITIVITY = 0.008
 const MAX_DRAG_PITCH = (60 * Math.PI) / 180
 
-// Hover-ripple: an actual expanding ring travels outward from the cursor
-// (like a drop in water), nudging only the band of particles it's currently
-// passing through — not a static "zone" that just grows and stays lit. It
-// travels all the way out to the edge of the logo (not just a small patch
-// near the cursor) before looping into a fresh ring. Particles it has
-// already passed glide back smoothly on a near-critically-damped spring
-// (no bounce/overshoot). Purely distance-based off the cursor's local-space
-// position, so it works identically from any side/angle the logo faces.
-const REPEL_RADIUS = 1.35 // reaches to roughly the edge of the logo from any point inside it
-const REPEL_STRENGTH = 1.9
+// Hover-ripple: particles near the cursor bounce away like knocking into
+// them, then spring back to their resting spot — a little underdamped so
+// the return has a small bounce/overshoot of its own, like play rather
+// than a mechanical snap-back. The push itself ripples outward in time
+// rather than hitting the whole radius at once: the nearest particles
+// start moving first, and the motion reaches progressively farther ones a
+// beat later, like a wave passing through them, before the whole area
+// gently subsides again. Only runs while the cursor is actively moving
+// (see the movement-gating around isHovering below) — holding it still
+// over the logo does nothing.
+const REPEL_RADIUS = 0.032
+const REPEL_STRENGTH = 3.2
 const SPRING_STIFFNESS = 90
 const SPRING_DAMPING = 21
-const RIPPLE_SPEED = 1.1 // world units/sec (pre-scale) the ring expands outward
-const RIPPLE_BAND_WIDTH = 0.22 // half-thickness of the traveling ring, world units (pre-scale)
-const RIPPLE_PERIOD = 1.7 // seconds between successive rings while hovering
+const RIPPLE_DELAY_MAX = 0.5 // seconds for the wave to reach the radius edge from the cursor
+const RIPPLE_RISE_TIME = 0.35 // seconds for the effect to ease in once the wave reaches a particle
 
 const TRAIL_POOL = 220
 const TRAIL_LIFETIME = 3 // seconds
@@ -713,10 +714,6 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
       const flutterAmp = 0.16 * layout.scaleFactor
       const repelRadius = REPEL_RADIUS * layout.scaleFactor
       const repelStrength = REPEL_STRENGTH * layout.scaleFactor
-      const rippleSpeed = RIPPLE_SPEED * layout.scaleFactor
-      const rippleBandWidth = RIPPLE_BAND_WIDTH * layout.scaleFactor
-      const ringRadius = (hoverElapsed.current % RIPPLE_PERIOD) * rippleSpeed
-      const ringFade = 1 - Math.min(ringRadius / repelRadius, 1)
 
       for (let i = 0; i < data.delays.length; i++) {
         const i3 = i * 3
@@ -731,21 +728,27 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
           py += Math.cos(t * 0.55 + seed * 9.42) * flutterAmp * w
         }
 
-        // hover-ripple: only the thin ring the wave is currently passing
-        // through gets nudged — not the whole radius at once — so it reads
-        // as an actual ring expanding out from the cursor, weakening as it
-        // travels, then looping into a fresh ring. Every particle, rung or
-        // not, is continuously pulled back to rest by a damped spring, so
-        // it settles smoothly the moment the ring moves past it.
+        // bounce-off scatter: a particle within reach of the cursor gets
+        // knocked outward (an impulse added to its velocity), but not all at
+        // once — particles right at the cursor start moving almost
+        // immediately, while ones nearer the radius edge only start once
+        // the ripple has had time to travel out to them, so the motion
+        // visibly spreads from the cursor to its neighbors rather than the
+        // whole area reacting in lockstep. Every particle — reached or not
+        // — is continuously pulled back toward its rest spot by a damped
+        // spring, so it all settles smoothly once the wave passes.
         if (repelLocal) {
           const dx = px - repelLocal.x
           const dy = py - repelLocal.y
           const dist = Math.hypot(dx, dy)
-          if (dist > 0.0001 && dist < repelRadius + rippleBandWidth) {
-            const distFromRing = Math.abs(dist - ringRadius)
-            if (distFromRing < rippleBandWidth) {
-              const bandIntensity = smoothstep01(1 - distFromRing / rippleBandWidth)
-              const kick = bandIntensity * ringFade * repelStrength * repelIntensity.current
+          if (dist < repelRadius && dist > 0.0001) {
+            const falloff = 1 - dist / repelRadius
+            const delay = (dist / repelRadius) * RIPPLE_DELAY_MAX
+            const wavePhase = hoverElapsed.current - delay
+            if (wavePhase > 0) {
+              const rise = Math.min(wavePhase / RIPPLE_RISE_TIME, 1)
+              const eased = rise * rise * (3 - 2 * rise)
+              const kick = eased * falloff * falloff * repelStrength * repelIntensity.current
               scatter.velX[i] += (dx / dist) * kick
               scatter.velY[i] += (dy / dist) * kick
             }

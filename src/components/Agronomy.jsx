@@ -34,7 +34,7 @@ export default function Agronomy() {
   const ref = useReveal()
 
   return (
-    <section id="agronomy" ref={ref} className="relative bg-bg py-16 md:py-22 overflow-hidden">
+    <section id="agronomy" ref={ref} className="relative bg-bg py-11 md:py-14 overflow-hidden">
       <Backdrop src="/images/photos/harvest-mesh-bag.jpg" opacity={0.15} />
       <div className="relative max-w-6xl mx-auto px-6">
         <div className="reveal eyebrow eyebrow-rule text-green-700">Agronomy Support</div>
@@ -42,7 +42,7 @@ export default function Agronomy() {
           Our agronomy specialists guide farmers through every stage of cultivation.
         </h2>
 
-        <div className="mt-14 grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="mt-8 grid grid-cols-2 md:grid-cols-5 gap-4">
           {AGRONOMY_SUPPORT.map((area, i) => (
             <div key={area} className="reveal card card-hover corner-leaf p-6 text-center flex flex-col items-center gap-3" style={{ '--reveal-delay': `${i * 70}ms` }}>
               <span className="w-12 h-12 rounded-full bg-sage flex items-center justify-center text-green-700">

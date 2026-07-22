@@ -52,7 +52,7 @@ export default function Quality() {
   }, [])
 
   return (
-    <section id="quality" ref={ref} className="relative bg-bg py-16 md:py-22 overflow-hidden">
+    <section id="quality" ref={ref} className="relative bg-bg py-11 md:py-14 overflow-hidden">
       <Backdrop src="/images/photos/paddy-grain-check.jpg" />
       <div className="relative max-w-6xl mx-auto px-6">
         <div className="reveal eyebrow eyebrow-rule text-green-700">Our Quality Promise</div>
@@ -60,9 +60,9 @@ export default function Quality() {
           Quality without compromise.
         </h2>
 
-        <div className="mt-16 grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+        <div className="mt-10 grid lg:grid-cols-2 gap-10 lg:gap-12 items-start">
           <div>
-            <div ref={ringsRef} className="reveal card grid grid-cols-2 gap-x-6 gap-y-10 max-w-md mx-auto lg:mx-0 px-8 py-10">
+            <div ref={ringsRef} className="reveal card grid grid-cols-2 gap-x-10 gap-y-10 max-w-lg mx-auto lg:mx-0 px-8 py-10">
               {QUALITY_RINGS.map((r, i) => (
                 <Ring key={r.label + r.sub} {...r} color={RING_COLORS[i]} animate={animate} />
               ))}

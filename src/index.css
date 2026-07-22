@@ -211,16 +211,6 @@ body {
   will-change: transform;
 }
 
-/* dreamy sunlit bokeh for the photo bands */
-.bokeh {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 236, 180, 0.5), rgba(255, 236, 180, 0) 68%);
-  filter: blur(2px);
-  animation: float-idle var(--bd, 10s) ease-in-out var(--bdel, 0s) infinite alternate;
-  pointer-events: none;
-}
-
 /* warm light rays sweeping the hero, like morning sun through haze */
 .god-rays {
   background: repeating-linear-gradient(
@@ -240,24 +230,6 @@ body {
 @keyframes rays-drift {
   from { transform: translateX(-60px) skewX(-1deg); opacity: 0.7; }
   to { transform: translateX(60px) skewX(1.5deg); opacity: 1; }
-}
-
-/* fireflies for the dark footer */
-@keyframes firefly {
-  0%, 100% { transform: translate(0, 0); opacity: 0.05; }
-  20% { opacity: 0.9; }
-  50% { transform: translate(var(--fx, 40px), var(--fy, -34px)); opacity: 0.25; }
-  70% { opacity: 0.85; }
-}
-.firefly {
-  position: absolute;
-  width: var(--fs, 5px);
-  height: var(--fs, 5px);
-  border-radius: 50%;
-  background: #F8E3A6;
-  box-shadow: 0 0 16px 5px rgba(243, 217, 143, 0.65);
-  animation: firefly var(--fd, 11s) ease-in-out var(--fdelay, 0s) infinite;
-  pointer-events: none;
 }
 
 /* ---------- Portfolio showcase ---------- */
@@ -395,50 +367,6 @@ body {
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* ---------- Plant-a-seed (SVG scene) ---------- */
-.seed-scene .anim {
-  transform-box: fill-box;
-}
-@keyframes seed-fall {
-  0% { transform: translateY(-140px) rotate(-35deg); }
-  62% { transform: translateY(0) rotate(7deg); }
-  80% { transform: translateY(-9px) rotate(1deg); }
-  100% { transform: translateY(0) rotate(0deg); }
-}
-@keyframes soil-pop {
-  0% { transform: translate(0, 0) scale(1); opacity: 1; }
-  100% { transform: translate(var(--dx, 10px), var(--dy, -18px)) scale(0.3); opacity: 0; }
-}
-@keyframes drop-fall {
-  0% { transform: translateY(-95px); opacity: 0; }
-  18% { opacity: 0.9; }
-  85% { transform: translateY(0); opacity: 0.9; }
-  100% { transform: translateY(3px) scaleY(0.3); opacity: 0; }
-}
-@keyframes splash-ring {
-  0% { transform: scale(0.2); opacity: 0.7; }
-  100% { transform: scale(1.7); opacity: 0; }
-}
-@keyframes root-grow {
-  to { stroke-dashoffset: 0; }
-}
-@keyframes shoot-grow {
-  from { transform: scaleY(0); }
-  to { transform: scaleY(1); }
-}
-@keyframes leaf-unfurl {
-  from { transform: scale(0) rotate(28deg); opacity: 0.5; }
-  to { transform: scale(1) rotate(0deg); opacity: 1; }
-}
-@keyframes plant-sway {
-  0%, 100% { transform: rotate(-1.6deg); }
-  50% { transform: rotate(1.9deg); }
-}
-@keyframes spark-pop {
-  0% { transform: translate(0, 0) scale(0.4); opacity: 1; }
-  100% { transform: translate(var(--sx, 0), var(--sy, -60px)) scale(0); opacity: 0; }
-}
-
 /* ---------- Marquees ---------- */
 @keyframes marquee {
   from { transform: translateX(0); }
@@ -456,11 +384,6 @@ body {
   animation-direction: reverse;
 }
 
-/* ---------- Scroll cue ---------- */
-@keyframes cue-drop {
-  0%, 100% { transform: translateY(0); opacity: 1; }
-  50% { transform: translateY(10px); opacity: 0.35; }
-}
 
 /* hide scrollbars on horizontal rails */
 .no-scrollbar {

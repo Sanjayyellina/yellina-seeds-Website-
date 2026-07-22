@@ -185,7 +185,7 @@ export default function Products({ cat = 'maize', onCatChange }) {
   const items = PRODUCTS.filter((p) => p.category === cat)
 
   return (
-    <section id="products" ref={ref} className="relative py-16 md:py-22 bg-bg overflow-hidden">
+    <section id="products" ref={ref} className="relative py-11 md:py-14 bg-bg overflow-hidden">
       <Backdrop src="/images/photos/field-canopy-green.jpg" opacity={0.15} />
       <div className="relative max-w-6xl mx-auto px-6">
         <div className="reveal eyebrow eyebrow-rule text-green-700">Our Products</div>
@@ -194,7 +194,7 @@ export default function Products({ cat = 'maize', onCatChange }) {
         </h2>
 
         {/* Category tabs */}
-        <div className="reveal mt-10 inline-flex flex-wrap rounded-full bg-sage border border-line p-1.5 gap-1" style={{ '--reveal-delay': '150ms' }}>
+        <div className="reveal mt-7 inline-flex flex-wrap rounded-full bg-sage border border-line p-1.5 gap-1" style={{ '--reveal-delay': '150ms' }}>
           {CATEGORIES.map((c) => (
             <button
               key={c.id}
@@ -217,7 +217,7 @@ export default function Products({ cat = 'maize', onCatChange }) {
             {current.intro || null}
           </p>
 
-          <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="mt-7 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {items.map((p, i) => (
               <ProductCard key={p.id} p={p} onOpen={setActive} delay={i * 80} />
             ))}

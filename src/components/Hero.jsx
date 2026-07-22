@@ -20,7 +20,6 @@ const PARTNER_LOGOS = [
   { src: '/images/partners/logo-kaveri.png', alt: 'Kaveri' },
   { src: '/images/partners/logo-nath.png', alt: 'Nath' },
   { src: '/images/partners/logo-crystal.png', alt: 'Crystal' },
-  { src: '/images/partners/logo-kanchan.png', alt: 'Kanchan' },
 ]
 
 function Seal({ lines }) {
@@ -137,7 +136,7 @@ export default function Hero({ onNavigate }) {
         ))}
 
         {/* monument with side rails */}
-        <div ref={copyRef} className="relative max-w-7xl mx-auto px-6 w-full grid lg:grid-cols-[180px_1fr_150px] items-center gap-8 pt-24 md:pt-28 will-change-transform">
+        <div ref={copyRef} className="relative max-w-7xl mx-auto px-6 w-full grid lg:grid-cols-[180px_1fr_150px] items-center gap-8 pt-16 md:pt-20 will-change-transform">
           {/* left rail — the numbers */}
           <div className="hidden lg:flex flex-col gap-8 justify-self-start" aria-hidden="true">
             {[['31+', 'Years in Seed'], ['15+', 'Partner Companies'], ['2,000+ MT', 'Drying Capacity']].map(([n, l]) => (
@@ -216,7 +215,7 @@ export default function Hero({ onNavigate }) {
         </div>
 
         {/* trust bar — the receipts */}
-        <div className="relative mt-10 md:mt-12 border-t" style={{ borderColor: 'rgba(201,162,39,0.35)' }}>
+        <div className="relative mt-7 md:mt-8 border-t" style={{ borderColor: 'rgba(201,162,39,0.35)' }}>
           <div className="max-w-7xl mx-auto px-6 py-7 flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
             <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-ink-mute text-center lg:text-left lg:max-w-[210px] leading-relaxed shrink-0" style={{ fontFamily: 'var(--font-sans)' }}>
               Trusted production partner to India's leading seed companies

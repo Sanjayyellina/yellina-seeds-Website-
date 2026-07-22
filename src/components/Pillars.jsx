@@ -15,25 +15,9 @@ export default function Pillars() {
   const ref = useReveal()
 
   return (
-    <section id="why" ref={ref} className="relative bg-sage py-16 md:py-22 overflow-hidden">
+    <section id="why" ref={ref} className="relative bg-sage py-11 md:py-14 overflow-hidden">
       <Backdrop src="/images/photos/field-tassels-tree.jpg" color="#F0F4E7" />
       <SectionCurve fill="#FAFAF6" />
-      {/* faint pollen drift */}
-      {[...Array(8)].map((_, i) => (
-        <span
-          key={i}
-          className="pollen"
-          style={{
-            left: `${(i * 83) % 100}%`,
-            width: `${3 + (i % 3) * 2}px`,
-            height: `${3 + (i % 3) * 2}px`,
-            '--p-dur': `${14 + (i % 5) * 4}s`,
-            '--p-delay': `${-i * 2.4}s`,
-            '--p-drift': `${(i % 2 ? 1 : -1) * (20 + i * 6)}px`,
-            '--p-op': 0.25 + (i % 4) * 0.08,
-          }}
-        />
-      ))}
 
       <div className="max-w-6xl mx-auto px-6 relative">
         <div className="reveal eyebrow eyebrow-rule text-green-700">Why Choose Yellina</div>
@@ -41,7 +25,7 @@ export default function Pillars() {
           Experience that grows better harvests.
         </h2>
 
-        <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {PILLARS.map((p, i) => {
             const photo = PILLAR_PHOTOS[p.icon]
             return (
@@ -66,6 +50,14 @@ export default function Pillars() {
               </div>
             )
           })}
+        </div>
+
+        <div className="reveal mt-8 flex items-center gap-4" style={{ '--reveal-delay': '260ms' }}>
+          <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, rgba(201,162,39,0.5))' }} />
+          <p className="text-center text-green-800 italic text-[15px] sm:text-base shrink-0 max-w-lg" style={{ fontFamily: 'var(--font-serif)' }}>
+            Every principle above traces back to one place — our own production floor.
+          </p>
+          <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, rgba(201,162,39,0.5), transparent)' }} />
         </div>
       </div>
     </section>

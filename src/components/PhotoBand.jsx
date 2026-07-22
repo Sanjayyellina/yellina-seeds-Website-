@@ -1,17 +1,8 @@
 import useReveal from '../hooks/useReveal.js'
 
-const BOKEH = [
-  { left: '8%', top: '18%', size: 90, dur: 9, delay: 0 },
-  { left: '22%', top: '62%', size: 46, dur: 7, delay: 1.2 },
-  { left: '46%', top: '12%', size: 60, dur: 11, delay: 0.6 },
-  { left: '68%', top: '70%', size: 110, dur: 8, delay: 2 },
-  { left: '84%', top: '24%', size: 52, dur: 10, delay: 1.6 },
-  { left: '58%', top: '40%', size: 34, dur: 6.5, delay: 0.3 },
-]
-
 // Full-width photo interlude between chapters. The photo itself drifts with
-// scroll (data-parallax picked up by the global loop), sunlit bokeh floats in
-// front, and the quote surfaces word by word.
+// scroll (data-parallax picked up by the global loop), and the quote surfaces
+// word by word.
 export default function PhotoBand({ src, eyebrow, quote, attribution }) {
   const ref = useReveal()
 
@@ -23,16 +14,7 @@ export default function PhotoBand({ src, eyebrow, quote, attribution }) {
       </div>
       <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(20,47,27,0.62), rgba(20,47,27,0.42) 50%, rgba(20,47,27,0.66))' }} />
 
-      {/* sunlight bokeh drifting in the foreground */}
-      {BOKEH.map((b, i) => (
-        <span
-          key={i}
-          className="bokeh"
-          style={{ left: b.left, top: b.top, width: b.size, height: b.size, '--bd': `${b.dur}s`, '--bdel': `${b.delay}s`, '--famp': '22px', '--frot': '0deg', '--fsway': '14px' }}
-        />
-      ))}
-
-      <div className="relative max-w-4xl mx-auto px-6 py-20 md:py-24 text-center">
+      <div className="relative max-w-4xl mx-auto px-6 py-12 md:py-14 text-center">
         <div className="reveal eyebrow text-leaf">{eyebrow}</div>
         <p
           className="reveal mt-6 text-white font-light leading-[1.3] text-2xl sm:text-3xl md:text-[40px]"

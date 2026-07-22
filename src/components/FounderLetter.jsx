@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import useReveal from '../hooks/useReveal.js'
 import Backdrop from './Backdrop.jsx'
+import { STATS } from '../data/products.js'
 
 export default function FounderLetter() {
   const ref = useReveal()
@@ -20,9 +21,9 @@ export default function FounderLetter() {
   }
 
   return (
-    <section ref={ref} className="relative bg-bg py-16 md:py-22 overflow-hidden">
+    <section ref={ref} className="relative bg-bg py-11 md:py-14 overflow-hidden">
       <Backdrop src="/images/photos/field-canopy-green.jpg" />
-      <div className="relative max-w-6xl mx-auto px-6 grid md:grid-cols-[340px_1fr] gap-14 md:gap-20 items-start">
+      <div className="relative max-w-6xl mx-auto px-6 grid md:grid-cols-[300px_1fr] gap-10 md:gap-14 items-start">
         {/* Portrait column */}
         <div className="reveal mx-auto md:mx-0 max-w-[320px] md:sticky md:top-28">
           <div
@@ -56,7 +57,18 @@ export default function FounderLetter() {
             Built on Trust. Driven by Experience.
           </h2>
 
-          <div className="reveal mt-8 space-y-5 text-[15.5px] leading-[1.8] text-ink-soft max-w-2xl" style={{ '--reveal-delay': '160ms' }}>
+          {/* credibility rail — fills the space beside the letter with the
+              numbers that back it up, instead of leaving it empty */}
+          <div className="reveal mt-6 flex flex-wrap gap-x-8 gap-y-3 max-w-3xl" style={{ '--reveal-delay': '120ms' }}>
+            {STATS.slice(0, 3).map((s) => (
+              <div key={s.label} className="flex items-baseline gap-1.5">
+                <span className="text-2xl font-medium text-green-700" style={{ fontFamily: 'var(--font-serif)' }}>{s.num}</span>
+                <span className="text-[11px] uppercase tracking-[0.14em] font-semibold text-ink-mute" style={{ fontFamily: 'var(--font-sans)' }}>{s.sub}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="reveal mt-7 space-y-5 text-[15.5px] leading-[1.8] text-ink-soft max-w-3xl" style={{ '--reveal-delay': '160ms' }}>
             <p className="font-medium text-ink">Dear Stakeholder,</p>
             <p>
               Every successful harvest begins with a single seed. For us, producing that seed has
@@ -97,7 +109,7 @@ export default function FounderLetter() {
             </p>
           </div>
 
-          <div className="reveal mt-10 max-w-2xl" style={{ '--reveal-delay': '220ms' }}>
+          <div className="reveal mt-8 max-w-3xl" style={{ '--reveal-delay': '220ms' }}>
             <div className="card px-6 py-5 !bg-sage">
               <div className="text-[9px] uppercase tracking-[0.28em] text-green-700 font-bold mb-2" style={{ fontFamily: 'var(--font-sans)' }}>Our Promise</div>
               <div className="italic text-[17px] leading-snug text-green-900" style={{ fontFamily: 'var(--font-serif)' }}>

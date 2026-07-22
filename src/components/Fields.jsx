@@ -39,7 +39,7 @@ export default function Fields() {
   const ref = useReveal()
 
   return (
-    <section id="fields" ref={ref} className="relative bg-bg py-14 md:py-18 overflow-hidden">
+    <section id="fields" ref={ref} className="relative bg-bg py-10 md:py-12 overflow-hidden">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>

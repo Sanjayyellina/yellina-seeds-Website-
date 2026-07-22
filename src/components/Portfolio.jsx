@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import useReveal from '../hooks/useReveal.js'
 import SectionCurve from './SectionCurve.jsx'
 
@@ -48,7 +49,7 @@ function Tile({ c, onCrop }) {
       </div>
     </>
   )
-  const base = 'relative shrink-0 w-[210px] sm:w-[240px] h-44 sm:h-52 corner-leaf overflow-hidden group shadow-[0_14px_30px_-14px_rgba(20,47,27,0.35)]'
+  const base = 'relative shrink-0 w-[230px] sm:w-[264px] h-48 sm:h-56 corner-leaf overflow-hidden group shadow-[0_14px_30px_-14px_rgba(20,47,27,0.35)]'
   return available ? (
     <button onClick={() => onCrop(c.crop)} aria-label={`Browse ${c.name}`} className={`${base} text-left cursor-pointer hover:shadow-[0_22px_44px_-16px_rgba(20,47,27,0.5)] transition-shadow duration-500`}>{inner}</button>
   ) : (
@@ -56,15 +57,110 @@ function Tile({ c, onCrop }) {
   )
 }
 
+// Auto-scrolls on its own, but hands control straight to the visitor:
+// drag/swipe/wheel it and the auto-scroll backs off, resuming a little
+// after you let go. Looks like the old CSS marquee but is a real scroll
+// container, so it's fully user-drivable.
 function River({ items, reverse, onCrop, label }) {
+  const trackRef = useRef(null)
+  const pausedUntil = useRef(0)
+  const draggingRef = useRef(false)
+  const dragStartX = useRef(0)
+  const dragStartScroll = useRef(0)
+
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track) return
+    const halfWidth = track.scrollWidth / 2
+    track.scrollLeft = halfWidth / 2
+
+    const SPEED = 34 // px/sec
+    let raf
+    let last = performance.now()
+    const step = (now) => {
+      const dt = (now - last) / 1000
+      last = now
+      if (!draggingRef.current && now > pausedUntil.current) {
+        track.scrollLeft += (reverse ? -1 : 1) * SPEED * dt
+      }
+      // wrap seamlessly through the duplicated item list
+      if (track.scrollLeft <= 0) track.scrollLeft += halfWidth
+      else if (track.scrollLeft >= halfWidth * 2 - track.clientWidth) track.scrollLeft -= halfWidth
+      raf = requestAnimationFrame(step)
+    }
+    raf = requestAnimationFrame(step)
+
+    // native listener (not React's synthetic onWheel) so preventDefault
+    // actually sticks — lets a plain vertical scroll-wheel drive this
+    // horizontal river instead of scrolling the page
+    const onWheelNative = (e) => {
+      pausedUntil.current = performance.now() + 1800
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault()
+        track.scrollLeft += e.deltaY
+      }
+    }
+    track.addEventListener('wheel', onWheelNative, { passive: false })
+
+    // safety net: if a pointerup/cancel is ever missed by the track itself
+    // (seen on some touch/trackpad combos), this guarantees dragging never
+    // gets stuck "on" and silently freezes the auto-scroll for good
+    const onWindowPointerEnd = () => {
+      draggingRef.current = false
+    }
+    window.addEventListener('pointerup', onWindowPointerEnd)
+    window.addEventListener('pointercancel', onWindowPointerEnd)
+
+    return () => {
+      cancelAnimationFrame(raf)
+      track.removeEventListener('wheel', onWheelNative)
+      window.removeEventListener('pointerup', onWindowPointerEnd)
+      window.removeEventListener('pointercancel', onWindowPointerEnd)
+    }
+  }, [reverse])
+
+  const resumeSoon = () => {
+    pausedUntil.current = performance.now() + 1800
+  }
+
+  const onPointerDown = (e) => {
+    const track = trackRef.current
+    if (!track) return
+    draggingRef.current = true
+    dragStartX.current = e.clientX
+    dragStartScroll.current = track.scrollLeft
+    track.setPointerCapture?.(e.pointerId)
+  }
+  const onPointerMove = (e) => {
+    if (!draggingRef.current || !trackRef.current) return
+    trackRef.current.scrollLeft = dragStartScroll.current - (e.clientX - dragStartX.current)
+  }
+  const endDrag = () => {
+    draggingRef.current = false
+    resumeSoon()
+  }
+
   return (
     <div>
       <div className="reveal flex items-center gap-4 mb-4 max-w-6xl mx-auto px-6">
         <div className="text-[11px] uppercase tracking-[0.26em] font-bold text-green-800 whitespace-nowrap" style={{ fontFamily: 'var(--font-sans)' }}>{label}</div>
         <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, rgba(201,162,39,0.5), transparent)' }} />
       </div>
-      <div className="overflow-hidden" style={{ maskImage: 'linear-gradient(90deg, transparent, black 5%, black 95%, transparent)', WebkitMaskImage: 'linear-gradient(90deg, transparent, black 5%, black 95%, transparent)' }}>
-        <div className={`marquee-track ${reverse ? 'marquee-reverse' : ''} flex gap-4 w-max py-2`}>
+      <div
+        ref={trackRef}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+        onPointerLeave={endDrag}
+        onTouchStart={resumeSoon}
+        className="no-scrollbar overflow-x-auto cursor-grab active:cursor-grabbing"
+        style={{
+          maskImage: 'linear-gradient(90deg, transparent, black 5%, black 95%, transparent)',
+          WebkitMaskImage: 'linear-gradient(90deg, transparent, black 5%, black 95%, transparent)',
+        }}
+      >
+        <div className="flex gap-4 w-max py-2">
           {[...items, ...items].map((c, i) => (
             <Tile key={`${c.name}-${i}`} c={c} onCrop={onCrop} />
           ))}
@@ -78,25 +174,27 @@ export default function Portfolio({ onCrop }) {
   const ref = useReveal()
 
   return (
-    <section id="coming" ref={ref} className="relative bg-sage pt-14 pb-16 md:pt-16 md:pb-20 overflow-hidden">
+    <section id="coming" ref={ref} className="relative bg-sage pt-9 pb-10 md:pt-10 md:pb-12 overflow-hidden">
       <SectionCurve fill="#FAFAF6" />
 
-      <div className="max-w-6xl mx-auto px-6 relative">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <div className="reveal eyebrow eyebrow-rule text-green-700">Our Portfolio</div>
-            <h2 className="reveal mt-4 text-3xl sm:text-4xl lg:text-5xl leading-[1.1] text-green-950 font-light tracking-tight max-w-2xl" style={{ fontFamily: 'var(--font-serif)', '--reveal-delay': '90ms' }}>
-              Field crops and vegetable seeds.
-            </h2>
-          </div>
-          <div className="reveal inline-flex items-center gap-2 rounded-full bg-white border border-line px-4 py-2 text-[10.5px] uppercase tracking-[0.2em] font-bold text-amber-deep" style={{ fontFamily: 'var(--font-sans)', '--reveal-delay': '150ms' }}>
-            <span className="w-2 h-2 rotate-45" style={{ background: 'var(--color-gold)' }} />
-            New improved varieties arriving in 2027
-          </div>
+      {/* corner ribbon, clipped by the section's own overflow-hidden */}
+      <div className="reveal absolute top-0 right-0 w-44 h-44 pointer-events-none z-[2]" style={{ '--reveal-delay': '150ms' }} aria-hidden="true">
+        <div
+          className="absolute top-[30px] right-[-46px] w-[190px] rotate-45 text-center py-1.5 text-[9.5px] uppercase tracking-[0.2em] font-bold text-white shadow-[0_4px_10px_-2px_rgba(20,47,27,0.35)]"
+          style={{ background: 'var(--color-gold)', fontFamily: 'var(--font-sans)' }}
+        >
+          New · Arriving 2027
         </div>
       </div>
 
-      <div className="relative mt-10 space-y-8">
+      <div className="max-w-6xl mx-auto px-6 relative">
+        <div className="reveal eyebrow eyebrow-rule text-green-700">Our Portfolio</div>
+        <h2 className="reveal mt-4 text-3xl sm:text-4xl lg:text-5xl leading-[1.1] text-green-950 font-light tracking-tight max-w-2xl" style={{ fontFamily: 'var(--font-serif)', '--reveal-delay': '90ms' }}>
+          Field crops and vegetable seeds.
+        </h2>
+      </div>
+
+      <div className="relative mt-7 space-y-6">
         <River items={FIELD} reverse label="Field Crops" onCrop={onCrop} />
         <River items={VEGETABLE} label="Vegetable Seeds" onCrop={onCrop} />
       </div>
