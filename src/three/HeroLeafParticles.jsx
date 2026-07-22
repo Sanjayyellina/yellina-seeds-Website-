@@ -1,5 +1,5 @@
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
-import { Canvas, useFrame, useThree, useLoader } from '@react-three/fiber'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { HERO_BG_IMAGE } from '../data/heroImage.js'
 
@@ -198,11 +198,13 @@ function useLogoParticles(src, count = 9000) {
   return data
 }
 
-const INTRO_DURATION = 7.5 // seconds each particle takes to arrive, once its delay elapses
-const INTRO_MAX_DELAY = 3 // matches the random spread used for per-particle `delays`
+const INTRO_DURATION = 2.6 // seconds each particle takes to arrive, once its delay elapses
+const INTRO_MAX_DELAY = 1 // random per-particle stagger, spread over this many seconds
 
+// Quintic rather than cubic — an even faster initial burst away from the
+// edges, then a gentle, unhurried settle into the final logo shape.
 function easeOutCubic(x) {
-  return 1 - Math.pow(1 - x, 3)
+  return 1 - Math.pow(1 - x, 5)
 }
 function smoothstep01(x) {
   const t = Math.min(Math.max(x, 0), 1)
@@ -212,7 +214,7 @@ function smoothstep01(x) {
 // Degrees of swing to each side from center. Kept well under 90° so the
 // cloud never goes edge-on/flat — it always reads as the leaf shape. Much
 // slower than a typical UI animation on purpose — this is ambient/idle motion.
-const SWING_AMPLITUDE = (70 * Math.PI) / 180
+const SWING_AMPLITUDE = (60 * Math.PI) / 180
 const MOVE_DURATION = 22 // seconds to sweep between center and an extreme
 const PAUSE_DURATION = 14 // seconds paused at center each time through
 const SWING_CYCLE = MOVE_DURATION * 4 + PAUSE_DURATION * 2
@@ -235,26 +237,39 @@ function swingAngle(t) {
 const DRAG_SENSITIVITY = 0.008
 const MAX_DRAG_PITCH = (60 * Math.PI) / 180
 
-// Hover-scatter: particles near the cursor bounce away like knocking into
-// them, then spring back to their resting spot — a little underdamped so
-// the return has a small bounce/overshoot of its own, like play rather
-// than a mechanical snap-back.
-const REPEL_RADIUS = 0.032
-const REPEL_STRENGTH = 0.65
-const SPRING_STIFFNESS = 140
-const SPRING_DAMPING = 14
+// Hover-ripple: an actual expanding ring travels outward from the cursor
+// (like a drop in water), nudging only the band of particles it's currently
+// passing through — not a static "zone" that just grows and stays lit. It
+// travels all the way out to the edge of the logo (not just a small patch
+// near the cursor) before looping into a fresh ring. Particles it has
+// already passed glide back smoothly on a near-critically-damped spring
+// (no bounce/overshoot). Purely distance-based off the cursor's local-space
+// position, so it works identically from any side/angle the logo faces.
+const REPEL_RADIUS = 1.35 // reaches to roughly the edge of the logo from any point inside it
+const REPEL_STRENGTH = 1.9
+const SPRING_STIFFNESS = 90
+const SPRING_DAMPING = 21
+const RIPPLE_SPEED = 1.1 // world units/sec (pre-scale) the ring expands outward
+const RIPPLE_BAND_WIDTH = 0.22 // half-thickness of the traveling ring, world units (pre-scale)
+const RIPPLE_PERIOD = 1.7 // seconds between successive rings while hovering
 
-const TRAIL_POOL = 160
-const TRAIL_LIFETIME = 2.75 // seconds
+const TRAIL_POOL = 220
+const TRAIL_LIFETIME = 3 // seconds
+const TRAIL_WAVE_AMP = 0.055 // sideways sway amplitude, world units (pre-scale)
+const TRAIL_WAVE_FREQ = 1.5 // radians/sec of the sway oscillation
+const TRAIL_DRIFT_SPEED = 0.05 // world units/sec carried along the movement direction, like wind
 const TRAIL_MIN_SPACING = 10 // px between spawned trail marks
 const TRAIL_DOT_SIZE = [22, 14] // [base, random-add] point-size units — kept very small
 
-// Ambient floating dots — a handful of small motes drifting up and out
-// around the logo like evaporating mist, independent of mouse/drag.
-const FLOAT_POOL = 90
-const FLOAT_LIFETIME = 6.5 // seconds to drift from bottom to top before looping
-const FLOAT_RISE = 0.9 // world units climbed over one lifetime
-const FLOAT_DRIFT = 0.12 // subtle sideways sway amplitude
+// Ambient floating dots — a dense field of small motes licking upward from
+// across the whole logo shape, like the leaf itself is gently on fire. Each
+// one only climbs a short distance before fading back out (a flame tip, not
+// a mote drifting off into the sky), so the effect hugs the silhouette
+// instead of dissipating upward and away. Independent of mouse/drag.
+const FLOAT_POOL = 280
+const FLOAT_LIFETIME = 1.6 // seconds for one full rise-and-fade cycle
+const FLOAT_RISE = 0.3 // world units climbed over one lifetime — a short lick, not a long drift
+const FLOAT_DRIFT = 0.1 // subtle sideways flicker amplitude
 
 function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, imageAspect }) {
   const { size, gl } = useThree()
@@ -265,6 +280,7 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
   const trailMatRef = useRef()
   const floatMatRef = useRef()
   const introDone = useRef(false)
+  const introStartTime = useRef(null)
   const swingStartTime = useRef(null)
 
   const hoveringBox = useRef(false)
@@ -273,14 +289,28 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
   const dragOffset = useRef({ yaw: 0, pitch: 0 })
   const currentTimeRef = useRef(0)
   const mouseClient = useRef({ x: -9999, y: -9999 })
+  const lastMouseClient = useRef({ x: -9999, y: -9999 })
   const frameRectRef = useRef(null)
   const repelIntensity = useRef(0)
+  const hoverElapsed = useRef(0)
   const repelVecTmp = useMemo(() => new THREE.Vector3(), [])
   const repelOriginTmp = useMemo(() => new THREE.Vector3(), [])
   const repelDirTmp = useMemo(() => new THREE.Vector3(), [])
   const repelInvQuatTmp = useMemo(() => new THREE.Quaternion(), [])
   const lastSpawn = useRef({ x: null, y: null })
-  const trailSlots = useRef(Array.from({ length: TRAIL_POOL }, () => ({ active: false, x: 0, y: 0, z: 0, spawnTime: -999, baseSize: 0 })))
+  const trailSlots = useRef(
+    Array.from({ length: TRAIL_POOL }, () => ({
+      active: false,
+      x: 0,
+      y: 0,
+      z: 0,
+      spawnTime: -999,
+      baseSize: 0,
+      dirX: 1,
+      dirY: 0,
+      seed: 0,
+    }))
+  )
   const trailCursor = useRef(0)
 
   // Scales the whole scene so the logo keeps its original on-screen size even
@@ -346,11 +376,25 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
       const last = lastSpawn.current
       const moved = last.x === null || Math.hypot(e.clientX - last.x, e.clientY - last.y) >= TRAIL_MIN_SPACING
       if (!moved) return
+      // movement direction (screen space, Y flipped to match world/NDC's
+      // up-positive Y) — each mark rides this heading outward as it sways,
+      // like it's being carried off on the wind it was drawn into
+      let dirX = 1
+      let dirY = 0
+      if (last.x !== null) {
+        const ddx = e.clientX - last.x
+        const ddy = -(e.clientY - last.y)
+        const dlen = Math.hypot(ddx, ddy)
+        if (dlen > 0.0001) {
+          dirX = ddx / dlen
+          dirY = ddy / dlen
+        }
+      }
       lastSpawn.current = { x: e.clientX, y: e.clientY }
 
       const world = pxToWorld(e.clientX, e.clientY, frameRect)
       // two marks per move, both starting at the same spot — the second
-      // trails the first with its own random size/lifetime pacing, so the
+      // trails the first with its own random size/wave pacing, so the
       // reveal reads fuller without just being one thicker trail
       for (let n = 0; n < 2; n++) {
         const slot = trailSlots.current[trailCursor.current]
@@ -360,6 +404,9 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
         slot.z = (Math.random() - 0.5) * 0.05
         slot.spawnTime = currentTimeRef.current
         slot.baseSize = (TRAIL_DOT_SIZE[0] + Math.random() * TRAIL_DOT_SIZE[1]) * layout.scaleFactor
+        slot.dirX = dirX
+        slot.dirY = dirY
+        slot.seed = Math.random() * Math.PI * 2
         trailCursor.current = (trailCursor.current + 1) % TRAIL_POOL
       }
     }
@@ -484,23 +531,30 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
     return geo
   }, [])
 
-  // Static per-particle scatter/timing for the ambient "evaporating mist"
-  // motes: each drifts straight up on its own timer, looping back to the
-  // bottom once it clears the top, fading in and out along the way.
+  // Static per-particle scatter/timing for the ambient "flame" motes: each
+  // one is rooted at a random point sampled from the logo's own particle
+  // positions (so they cover the whole silhouette, not just a strip below
+  // it), and licks upward a short distance from there on its own timer,
+  // looping back to its root once it fades out.
   const floatParticles = useMemo(() => {
     const out = []
+    const totalTargets = data.targets.length / 3
     for (let i = 0; i < FLOAT_POOL; i++) {
+      const srcIdx = Math.floor(Math.random() * totalTargets)
+      const rootX = data.targets[srcIdx * 3]
+      const rootY = data.targets[srcIdx * 3 + 1]
+      const rootZ = data.targets[srcIdx * 3 + 2]
       out.push({
-        baseX: layout.anchorWorldX + (Math.random() - 0.5) * 2.1 * layout.scaleFactor,
-        baseZ: (Math.random() - 0.5) * 0.4 * layout.scaleFactor,
-        bottomY: layout.anchorWorldY + (-0.95 - Math.random() * 0.25) * layout.scaleFactor,
+        baseX: layout.anchorWorldX + rootX,
+        baseZ: rootZ,
+        bottomY: layout.anchorWorldY + rootY,
         phase: Math.random() * FLOAT_LIFETIME,
         seed: Math.random(),
-        size: (0.35 + Math.random() * 0.5) * layout.scaleFactor,
+        size: (0.3 + Math.random() * 0.45) * layout.scaleFactor,
       })
     }
     return out
-  }, [layout])
+  }, [data, layout])
 
   const floatGeometry = useMemo(() => {
     const geo = new THREE.BufferGeometry()
@@ -516,6 +570,7 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
 
   useEffect(() => {
     introDone.current = false
+    introStartTime.current = null
     swingStartTime.current = null
   }, [data, layout])
 
@@ -573,11 +628,17 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
     currentTimeRef.current = t
 
     if (!introDone.current && meshRef.current) {
+      // anchors the intro to whenever the cloud actually starts running,
+      // not to the R3F clock's own t=0 — if the logo mask / photo took a
+      // moment to load, the clock is already past 0 by the time we get
+      // here, and using it directly would skip that much of the fly-in
+      if (introStartTime.current === null) introStartTime.current = t
+      const introT = t - introStartTime.current
       let allArrived = true
       const wobbleAmp = 0.09 * layout.scaleFactor
       const radiusUnit = 0.0028 * layout.scaleFactor
       for (let i = 0; i < data.delays.length; i++) {
-        const local = (t - data.delays[i]) / INTRO_DURATION
+        const local = (introT - data.delays[i]) / INTRO_DURATION
         if (local < 1) allArrived = false
         const clamped = Math.min(Math.max(local, 0), 1)
         const eased = easeOutCubic(clamped)
@@ -609,16 +670,23 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
       meshRef.current.instanceMatrix.needsUpdate = true
       dotGeometry.attributes.position.needsUpdate = true
       dotGeometry.attributes.aSize.needsUpdate = true
-      if (allArrived && t > INTRO_MAX_DELAY + INTRO_DURATION) {
+      if (allArrived && introT > INTRO_MAX_DELAY + INTRO_DURATION) {
         introDone.current = true
         swingStartTime.current = t
       }
     } else if (meshRef.current) {
       // idle: settled dots get a continuous ambient flicker (flame/breeze
       // fringe around the edge), and everything gets a little bounce-away
-      // scatter from the cursor while it hovers over the box, springing
-      // back (with a slight overshoot) once the cursor leaves or moves on
-      repelIntensity.current += ((hoveringBox.current && !isDragging.current ? 1 : 0) - repelIntensity.current) * 0.08
+      // ripple while the cursor is actively moving over the logo — holding
+      // it still does nothing, gliding back smoothly the moment it stops
+      const cursorMoved =
+        Math.hypot(mouseClient.current.x - lastMouseClient.current.x, mouseClient.current.y - lastMouseClient.current.y) > 0.4
+      lastMouseClient.current = { x: mouseClient.current.x, y: mouseClient.current.y }
+      const isHovering = hoveringBox.current && !isDragging.current && cursorMoved
+      repelIntensity.current += ((isHovering ? 1 : 0) - repelIntensity.current) * 0.08
+      // resets the instant movement stops so each fresh stretch of motion
+      // ripples outward from scratch, rather than snapping the whole radius on
+      hoverElapsed.current = isHovering ? hoverElapsed.current + dt : 0
       let repelLocal = null
       if (repelIntensity.current > 0.01 && frameRectRef.current && groupRef.current) {
         groupRef.current.updateMatrixWorld()
@@ -645,6 +713,10 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
       const flutterAmp = 0.16 * layout.scaleFactor
       const repelRadius = REPEL_RADIUS * layout.scaleFactor
       const repelStrength = REPEL_STRENGTH * layout.scaleFactor
+      const rippleSpeed = RIPPLE_SPEED * layout.scaleFactor
+      const rippleBandWidth = RIPPLE_BAND_WIDTH * layout.scaleFactor
+      const ringRadius = (hoverElapsed.current % RIPPLE_PERIOD) * rippleSpeed
+      const ringFade = 1 - Math.min(ringRadius / repelRadius, 1)
 
       for (let i = 0; i < data.delays.length; i++) {
         const i3 = i * 3
@@ -659,20 +731,24 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
           py += Math.cos(t * 0.55 + seed * 9.42) * flutterAmp * w
         }
 
-        // bounce-off scatter: a particle within reach of the cursor gets
-        // knocked outward (an impulse added to its velocity); every particle
-        // — hit or not — is continuously pulled back toward its rest spot
-        // by a damped spring, so the knock "flows out" and settles back to
-        // normal on its own over the next several frames
+        // hover-ripple: only the thin ring the wave is currently passing
+        // through gets nudged — not the whole radius at once — so it reads
+        // as an actual ring expanding out from the cursor, weakening as it
+        // travels, then looping into a fresh ring. Every particle, rung or
+        // not, is continuously pulled back to rest by a damped spring, so
+        // it settles smoothly the moment the ring moves past it.
         if (repelLocal) {
           const dx = px - repelLocal.x
           const dy = py - repelLocal.y
           const dist = Math.hypot(dx, dy)
-          if (dist < repelRadius && dist > 0.0001) {
-            const falloff = 1 - dist / repelRadius
-            const kick = falloff * falloff * repelStrength * repelIntensity.current
-            scatter.velX[i] += (dx / dist) * kick
-            scatter.velY[i] += (dy / dist) * kick
+          if (dist > 0.0001 && dist < repelRadius + rippleBandWidth) {
+            const distFromRing = Math.abs(dist - ringRadius)
+            if (distFromRing < rippleBandWidth) {
+              const bandIntensity = smoothstep01(1 - distFromRing / rippleBandWidth)
+              const kick = bandIntensity * ringFade * repelStrength * repelIntensity.current
+              scatter.velX[i] += (dx / dist) * kick
+              scatter.velY[i] += (dy / dist) * kick
+            }
           }
         }
         const ax = -SPRING_STIFFNESS * scatter.offsetX[i] - SPRING_DAMPING * scatter.velX[i]
@@ -704,11 +780,14 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
       dotGeometry.attributes.aSize.needsUpdate = true
     }
 
-    // trail dots in the side background zones — spawned on mousemove,
-    // rendered here as a short-lived growing-then-shrinking reveal
+    // trail dots in the side background zones — spawned on mousemove, each
+    // one riding a sideways wave along its own heading as it fades, like a
+    // gust of wind carrying it off rather than sitting still and shrinking
     {
       const posAttr = trailGeometry.attributes.position
       const sizeAttr = trailGeometry.attributes.aSize
+      const waveAmp = TRAIL_WAVE_AMP * layout.scaleFactor
+      const driftSpeed = TRAIL_DRIFT_SPEED * layout.scaleFactor
       for (let i = 0; i < TRAIL_POOL; i++) {
         const slot = trailSlots.current[i]
         if (!slot.active) {
@@ -723,8 +802,11 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
         }
         const lifeT = Math.min(age / TRAIL_LIFETIME, 1)
         const envelope = Math.sin(lifeT * Math.PI)
-        posAttr.array[i * 3] = slot.x
-        posAttr.array[i * 3 + 1] = slot.y
+        const sway = Math.sin(age * TRAIL_WAVE_FREQ + slot.seed) * waveAmp * envelope
+        const perpX = -slot.dirY
+        const perpY = slot.dirX
+        posAttr.array[i * 3] = slot.x + perpX * sway + slot.dirX * driftSpeed * age
+        posAttr.array[i * 3 + 1] = slot.y + perpY * sway + slot.dirY * driftSpeed * age
         posAttr.array[i * 3 + 2] = slot.z
         sizeAttr.array[i] = slot.baseSize * envelope
       }
@@ -732,9 +814,9 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
       sizeAttr.needsUpdate = true
     }
 
-    // ambient floating motes — drift straight up around the logo, fading in
-    // from the bottom and out near the top like evaporating mist, looping
-    // continuously and independent of drag/hover
+    // ambient floating motes — lick upward from their rooted spot on the
+    // logo, fading in and back out over a short quick cycle like flame tips,
+    // looping continuously and independent of drag/hover
     {
       const posAttr = floatGeometry.attributes.position
       const sizeAttr = floatGeometry.attributes.aSize
@@ -744,7 +826,7 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
         const p = floatParticles[i]
         const lifeT = ((t + p.phase) % FLOAT_LIFETIME) / FLOAT_LIFETIME
         const envelope = Math.sin(lifeT * Math.PI)
-        posAttr.array[i * 3] = p.baseX + Math.sin(t * 0.4 + p.seed * 6.283) * drift
+        posAttr.array[i * 3] = p.baseX + Math.sin(t * 2.2 + p.seed * 6.283) * drift * lifeT
         posAttr.array[i * 3 + 1] = p.bottomY + rise * lifeT
         posAttr.array[i * 3 + 2] = p.baseZ
         sizeAttr.array[i] = p.size * envelope
@@ -840,35 +922,60 @@ function CameraRig({ anchorPx }) {
 
 const REVEAL_PHOTO = HERO_BG_IMAGE
 
-// Loads the fixed reveal photo and its aspect ratio inside the R3F tree
-// (needs Suspense for useLoader) before handing off to the particle cloud.
-function PhotoParticles({ data, anchorPx, boxRef, heroFrameRef }) {
-  const photoTexture = useLoader(THREE.TextureLoader, REVEAL_PHOTO)
-  const imageAspect = photoTexture.image.width / photoTexture.image.height
-  return (
-    <ParticleCloud
-      data={data}
-      anchorPx={anchorPx}
-      boxRef={boxRef}
-      heroFrameRef={heroFrameRef}
-      photoTexture={photoTexture}
-      imageAspect={imageAspect}
-    />
-  )
+// A tiny placeholder texture (a flat field-green) so the particle cloud can
+// mount and start flying in the instant the logo mask + layout are ready,
+// without waiting on the (larger, network-fetched) reveal photo. Loaded
+// manually rather than via useLoader/Suspense — that would otherwise block
+// the whole cloud, including its intro clock, on the photo's fetch time,
+// which is exactly the "formation starts a second or two late" gap this
+// fixes. The real photo swaps into the same uniform once it's ready.
+function createPlaceholderTexture() {
+  const canvas = document.createElement('canvas')
+  canvas.width = 2
+  canvas.height = 2
+  const ctx = canvas.getContext('2d')
+  ctx.fillStyle = '#5b7a4a'
+  ctx.fillRect(0, 0, 2, 2)
+  const tex = new THREE.CanvasTexture(canvas)
+  return tex
+}
+
+function useHeroPhotoTexture(src) {
+  const [state, setState] = useState(() => ({ texture: createPlaceholderTexture(), imageAspect: 1 }))
+  useEffect(() => {
+    let cancelled = false
+    const loader = new THREE.TextureLoader()
+    loader.load(src, (tex) => {
+      if (cancelled) return
+      setState({ texture: tex, imageAspect: tex.image.width / tex.image.height })
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [src])
+  return state
 }
 
 export default function HeroLeafParticles({ anchorPx, boxRef, heroFrameRef }) {
   const data = useLogoParticles('/images/logo-green.png', 21000)
+  const { texture: photoTexture, imageAspect } = useHeroPhotoTexture(REVEAL_PHOTO)
   return (
     <Canvas
       dpr={[1, 1.75]}
       gl={{ alpha: true, antialias: true }}
       style={{ touchAction: 'none' }}
     >
-      <Suspense fallback={null}>
-        {anchorPx && <CameraRig anchorPx={anchorPx} />}
-        {data && anchorPx && <PhotoParticles data={data} anchorPx={anchorPx} boxRef={boxRef} heroFrameRef={heroFrameRef} />}
-      </Suspense>
+      {anchorPx && <CameraRig anchorPx={anchorPx} />}
+      {data && anchorPx && (
+        <ParticleCloud
+          data={data}
+          anchorPx={anchorPx}
+          boxRef={boxRef}
+          heroFrameRef={heroFrameRef}
+          photoTexture={photoTexture}
+          imageAspect={imageAspect}
+        />
+      )}
     </Canvas>
   )
 }
