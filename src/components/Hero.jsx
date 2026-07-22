@@ -1,19 +1,10 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, lazy, Suspense } from 'react'
+
+const HeroLeafParticles = lazy(() => import('../three/HeroLeafParticles.jsx'))
 
 // The hero is a thesis: one monumental emblem — the Yellina leaf mark with our
 // real fields living inside it — centered like a crest, grounded by a trust
 // bar of the companies we've produced for since 1995. Big, quiet, certain.
-
-const LOGO_MASK = {
-  WebkitMaskImage: 'url(/images/logo-mask.png)',
-  maskImage: 'url(/images/logo-mask.png)',
-  WebkitMaskRepeat: 'no-repeat',
-  maskRepeat: 'no-repeat',
-  WebkitMaskSize: 'contain',
-  maskSize: 'contain',
-  WebkitMaskPosition: 'center',
-  maskPosition: 'center',
-}
 
 const SEALS = [
   ['100%', 'GENUINE', 'SEEDS'],
@@ -45,17 +36,13 @@ function Seal({ lines }) {
 }
 
 export default function Hero({ onNavigate }) {
-  const maskPhotoRef = useRef(null)
   const glowRef = useRef(null)
   const copyRef = useRef(null)
 
-  // the field inside the logo drifts with the pointer; a sun glow follows it
+  // a sun glow follows the cursor; the field photo inside the logo stays frozen
   useEffect(() => {
     const onMove = (e) => {
       if (window.scrollY > window.innerHeight) return
-      const x = e.clientX / window.innerWidth - 0.5
-      const y = e.clientY / window.innerHeight - 0.5
-      if (maskPhotoRef.current) maskPhotoRef.current.style.translate = `${-x * 28}px ${-y * 18}px`
       if (glowRef.current) glowRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`
     }
     window.addEventListener('pointermove', onMove, { passive: true })
@@ -119,36 +106,17 @@ export default function Hero({ onNavigate }) {
 
           {/* center column */}
           <div className="flex flex-col items-center text-center">
-          <div className="reveal is-visible inline-flex items-center gap-2.5 rounded-full bg-white/85 border border-line px-4 py-2 shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-leaf" />
-            <span className="text-[10.5px] uppercase tracking-[0.24em] font-bold text-green-800" style={{ fontFamily: 'var(--font-sans)' }}>
-              Since 1995 · Khammam District, Telangana
-            </span>
-          </div>
 
           {/* the emblem */}
           <div className="relative mt-8 select-none" aria-hidden="true" style={{ width: 'min(72vw, 520px)' }}>
             <div className="logo-halo absolute -inset-[14%]" />
-            <div className="absolute -inset-[4%] rounded-full" style={{ animation: 'spin-slow 46s linear infinite' }}>
-              <div className="absolute inset-0 rounded-full border border-dashed" style={{ borderColor: 'rgba(201,162,39,0.38)' }} />
-              <span className="absolute left-1/2 -top-1.5 w-3 h-3 -translate-x-1/2 rotate-45" style={{ background: 'var(--color-gold)' }} />
-            </div>
-            <div
-              className="relative aspect-[456/371]"
-              style={{ animation: 'float-idle 10s ease-in-out infinite alternate', '--famp': '8px', '--frot': '0.4deg', '--fsway': '3px' }}
-            >
-              <div className="absolute inset-0 overflow-hidden" style={{ ...LOGO_MASK, filter: 'drop-shadow(0 26px 36px rgba(20,47,27,0.26))' }}>
-                <img
-                  ref={maskPhotoRef}
-                  src="/images/photos/field-maize-rows.jpg"
-                  alt=""
-                  className="w-[112%] h-[112%] max-w-none object-cover transition-[translate] duration-700 ease-out"
-                  fetchPriority="high"
-                />
-                <div
-                  className="absolute inset-y-0 -left-1/3 w-1/3"
-                  style={{ background: 'linear-gradient(100deg, transparent, rgba(255,244,205,0.5), transparent)', animation: 'logo-sheen 7s ease-in-out infinite' }}
-                />
+            <div className="relative aspect-[456/371]">
+              {/* real logo as a sparkling particle cloud, sampled from its own alpha channel —
+                  revolves in 3D, dark-green/gold toned to read on the light backdrop */}
+              <div className="absolute -inset-[10%] pointer-events-none">
+                <Suspense fallback={null}>
+                  <HeroLeafParticles />
+                </Suspense>
               </div>
             </div>
             <div
