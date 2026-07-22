@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, lazy, Suspense } from 'react'
+import { HERO_BG_IMAGE } from '../data/heroImage.js'
 
 const HeroLeafParticles = lazy(() => import('../three/HeroLeafParticles.jsx'))
 
@@ -90,6 +91,19 @@ export default function Hero({ onNavigate }) {
   return (
     <section id="home" className="relative">
       <div ref={heroFrameRef} className="relative overflow-hidden flex flex-col bg-bg">
+        {/* cornfield backdrop — sits behind the particle canvas so it shows
+            through the gaps while the particles are still flying in/scattered,
+            fading out toward the copy below so the text stays legible */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-0 h-screen bg-cover bg-center"
+          style={{
+            zIndex: 0,
+            backgroundImage: `url('${HERO_BG_IMAGE}')`,
+            maskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.4) 45%, rgba(0,0,0,0) 82%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.4) 45%, rgba(0,0,0,0) 82%)',
+          }}
+        />
         {/* particle logo canvas — spans the whole hero so particles can fly in
             from its true edges, converging on the anchored emblem spot below */}
         <div className="absolute inset-x-0 top-0 h-screen pointer-events-none" style={{ zIndex: 1 }}>
