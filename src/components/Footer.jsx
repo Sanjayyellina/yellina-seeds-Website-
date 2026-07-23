@@ -34,10 +34,28 @@ export default function Footer({ onNavigate, onCrop }) {
       <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(20,47,27,0.4), rgba(20,47,27,0.95) 70%)' }} />
 
       <div className="max-w-6xl mx-auto px-6 pt-7 md:pt-8 pb-6 relative">
+        {/* Dealer CTA — flows straight into the contact card below as one
+            continuous dark closing block, instead of a separate floating
+            banner up in the Partner section */}
+        <div className="reveal flex flex-wrap items-center justify-between gap-5 pb-7 mb-7 border-b border-white/12" style={{ '--reveal-delay': '0ms' }}>
+          <div>
+            <h3 className="text-xl sm:text-2xl text-white font-light" style={{ fontFamily: 'var(--font-serif)' }}>
+              Ready to become a Yellina dealer?
+            </h3>
+            <p className="mt-1.5 text-[14px] text-white/70">Reach our team directly — call, WhatsApp, or visit.</p>
+          </div>
+          <a
+            href={`tel:${CONTACT.team[0].tel}`}
+            className="btn-primary !bg-leaf !text-green-950 hover:!bg-white shrink-0"
+          >
+            Call Our Team
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.36 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.34 1.85.573 2.81.7A2 2 0 0122 16.92z" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </a>
+        </div>
+
         {/* Contact card — the site's one canonical contact block (address,
-            named team, email); Partner's dealer CTA points here instead of
-            repeating all of this itself */}
-        <div className="reveal rounded-3xl bg-white/[0.07] backdrop-blur border border-white/15 p-5 md:p-7">
+            named team, email) */}
+        <div className="reveal rounded-3xl bg-white/[0.07] backdrop-blur border border-white/15 p-5 md:p-7" style={{ '--reveal-delay': '60ms' }}>
           <div className="grid md:grid-cols-[1fr_auto] gap-6">
             <div>
               <div className="eyebrow text-leaf !text-[10px] mb-3">{CONTACT.corporate.label}</div>

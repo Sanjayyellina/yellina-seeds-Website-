@@ -1,56 +1,62 @@
-import { Suspense, lazy, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import useReveal from '../hooks/useReveal.js'
 import Backdrop from './Backdrop.jsx'
 import { PRODUCTS, CATEGORIES } from '../data/products.js'
 
-const CobViewer = lazy(() => import('../three/CobModel.jsx'))
+const CATEGORY_ACCENT = { maize: '#2C7A3C', sweetcorn: '#C9A227', paddy: '#B87716' }
 
-function ProductCard({ p, onOpen, delay }) {
+const CATEGORY_ICONS = {
+  maize: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4"><path d="M12 3c2 3 2 6 0 9-2-3-2-6 0-9zM7 8c1.5 2 1.5 4 0 6M17 8c-1.5 2-1.5 4 0 6M12 12v9" strokeLinecap="round" strokeLinejoin="round" /></svg>,
+  sweetcorn: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4"><rect x="8" y="3" width="8" height="15" rx="4" /><path d="M12 18v3" strokeLinecap="round" /></svg>,
+  paddy: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-4 h-4"><path d="M12 21V9M12 9c-3-1-4-4-4-6 3 0 5 2 6 4M12 9c3-1 4-4 4-6-3 0-5 2-6 4" strokeLinecap="round" strokeLinejoin="round" /></svg>,
+}
+
+function ProductCard({ p, onOpen, delay, accent }) {
   return (
     <button
       onClick={() => onOpen(p)}
-      className="reveal group text-left relative corner-leaf overflow-hidden card tilt-card cursor-pointer"
+      className="reveal group text-left relative rounded-2xl overflow-hidden card card-hover cursor-pointer"
       style={{ '--reveal-delay': `${delay}ms` }}
       aria-label={`View ${p.name} details`}
     >
-      <div className="relative overflow-hidden bg-white pt-4 px-4">
+      <div className="absolute top-0 left-0 right-0 h-[3px] z-[1]" style={{ background: accent }} />
+      <div
+        className="relative overflow-hidden pt-4 px-3"
+        style={{ background: `radial-gradient(ellipse at 50% 30%, ${accent}14, transparent 70%)` }}
+      >
         <img
           src={p.image}
           alt={`${p.name} — ${p.type} seed pack`}
           loading="lazy"
-          className="w-full aspect-[3/5] object-contain transition-transform duration-700 group-hover:scale-[1.045]"
+          className="w-full aspect-[4/5] object-contain transition-transform duration-700 group-hover:scale-[1.045]"
         />
         <div className="pack-shine" />
-        {/* growing sprout on hover */}
-        <div className="absolute bottom-3 right-4">
-          <svg width="30" height="38" viewBox="0 0 30 38" className="sprout-icon">
-            <path d="M15 36 V14" stroke="#2C7A3C" strokeWidth="2.4" strokeLinecap="round" />
-            <path d="M15 22 Q6 20 4 10 Q 13 11 15 20 Z" fill="#7DB343" />
-            <path d="M15 16 Q24 14 26 4 Q 17 5 15 14 Z" fill="#2C7A3C" />
-          </svg>
-        </div>
       </div>
-      <div className="absolute top-4 left-4">
-        <span className="rounded-full bg-white/90 backdrop-blur border border-line px-3.5 py-1.5 text-[9px] uppercase tracking-[0.2em] font-bold text-green-800 shadow-sm" style={{ fontFamily: 'var(--font-sans)' }}>
+      <div className="absolute top-3 left-3">
+        <span className="rounded-full bg-white/90 backdrop-blur border border-line px-3 py-1 text-[8.5px] uppercase tracking-[0.18em] font-bold text-green-800 shadow-sm" style={{ fontFamily: 'var(--font-sans)' }}>
           {p.type}
         </span>
       </div>
-      <div className="p-5">
+      <div className="p-4">
         <div className="flex items-baseline justify-between gap-2">
-          <h3 className="text-[22px] text-green-950 font-medium leading-tight" style={{ fontFamily: 'var(--font-serif)' }}>{p.name}</h3>
-          {p.code && <span className="text-[9px] uppercase tracking-[0.16em] font-bold text-ink-mute shrink-0" style={{ fontFamily: 'var(--font-sans)' }}>{p.code}</span>}
+          <h3 className="text-[18px] text-green-950 font-medium leading-tight" style={{ fontFamily: 'var(--font-serif)' }}>{p.name}</h3>
+          {p.code && <span className="text-[8.5px] uppercase tracking-[0.16em] font-bold text-ink-mute shrink-0" style={{ fontFamily: 'var(--font-sans)' }}>{p.code}</span>}
         </div>
-        <p className="mt-2 text-[13px] leading-relaxed text-ink-soft line-clamp-2">{p.tagline}</p>
-        <div className="mt-4 flex flex-wrap gap-1.5">
-          {p.badges.map((b) => (
-            <span key={b} className="rounded-full bg-sage px-2.5 py-1 text-[9px] uppercase tracking-[0.12em] font-semibold text-green-800" style={{ fontFamily: 'var(--font-sans)' }}>
-              {b}
-            </span>
+        <p className="mt-1.5 text-[12px] leading-relaxed text-ink-soft line-clamp-2">{p.tagline}</p>
+
+        {/* truthful-label facts, surfaced right on the tile instead of hidden behind a click */}
+        <div className="mt-3 grid grid-cols-2 gap-1.5">
+          {p.truthful.slice(0, 2).map((t) => (
+            <div key={t.label} className="rounded-lg bg-sage px-2 py-1.5 text-center">
+              <div className="text-[7.5px] uppercase tracking-[0.1em] text-green-700 font-bold" style={{ fontFamily: 'var(--font-sans)' }}>{t.label}</div>
+              <div className="text-[11.5px] font-semibold text-green-950">{t.value}</div>
+            </div>
           ))}
         </div>
-        <div className="mt-5 flex items-center gap-2 text-[10px] uppercase tracking-[0.22em] font-bold text-green-700 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500" style={{ fontFamily: 'var(--font-sans)' }}>
-          View in 3D
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 12h14m0 0l-6-6m6 6l-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+
+        <div className="mt-3.5 flex items-center justify-between text-[9.5px] uppercase tracking-[0.18em] font-bold group-hover:translate-x-0.5 transition-transform duration-500" style={{ fontFamily: 'var(--font-sans)', color: accent }}>
+          Full details
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 12h14m0 0l-6-6m6 6l-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </div>
       </div>
     </button>
@@ -103,25 +109,10 @@ function ProductModal({ p, onClose, onPrev, onNext }) {
         </button>
 
         <div className="grid md:grid-cols-[1fr_1.2fr]">
-          {/* 3D viewer + pack */}
-          <div className="relative min-h-[320px] md:min-h-full flex flex-col bg-sage/70" style={{ background: 'radial-gradient(ellipse at 50% 30%, rgba(125,179,67,0.18), rgba(240,244,231,0.9) 75%)' }}>
-            <div className="h-[300px] md:h-[380px]">
-              <Suspense fallback={<div className="h-full flex items-center justify-center text-green-700/70 text-xs uppercase tracking-[0.3em]">Growing…</div>}>
-                <CobViewer cob={p.cob} />
-              </Suspense>
-            </div>
-            <div className="text-center pb-3 -mt-4 text-[9.5px] uppercase tracking-[0.28em] text-green-800/70 font-bold" style={{ fontFamily: 'var(--font-sans)' }}>
-              Drag to rotate
-            </div>
-            <div className="px-8 pb-8 mt-auto">
-              <div className="card !rounded-xl p-3 flex items-center gap-4">
-                <img src={p.image} alt={`${p.name} pack design`} className="w-16 rounded-lg" />
-                <div>
-                  <div className="text-[9px] uppercase tracking-[0.2em] text-amber-deep font-bold" style={{ fontFamily: 'var(--font-sans)' }}>Pack Design · 2026 Release</div>
-                  <div className="text-green-950 text-sm font-semibold mt-0.5">{p.name} · {p.type}</div>
-                </div>
-              </div>
-            </div>
+          {/* Pack design — no 3D viewer, just the real pack artwork */}
+          <div className="relative min-h-[280px] md:min-h-full flex flex-col items-center justify-center p-8" style={{ background: 'radial-gradient(ellipse at 50% 30%, rgba(125,179,67,0.18), rgba(240,244,231,0.9) 75%)' }}>
+            <img src={p.image} alt={`${p.name} pack design`} className="w-full max-w-[220px] object-contain" />
+            <div className="mt-5 text-[9px] uppercase tracking-[0.2em] text-amber-deep font-bold" style={{ fontFamily: 'var(--font-sans)' }}>Pack Design · 2026 Release</div>
           </div>
 
           {/* Details */}
@@ -134,6 +125,21 @@ function ProductModal({ p, onClose, onPrev, onNext }) {
                   {b}
                 </span>
               ))}
+            </div>
+
+            {/* Truthful label — surfaced right under the badges, not buried at the bottom */}
+            <div className="mt-5 rounded-2xl border border-line bg-white p-5">
+              <div className="text-[10px] uppercase tracking-[0.22em] text-amber-deep font-bold mb-3.5" style={{ fontFamily: 'var(--font-sans)' }}>
+                Truthful Label · per Indian Seed Act 1966
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2.5">
+                {p.truthful.map((t) => (
+                  <div key={t.label} className="flex flex-col">
+                    <span className="text-[10px] text-ink-mute">{t.label}</span>
+                    <b className="text-green-900 text-[13px] font-semibold">{t.value}</b>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {p.claim && (
@@ -155,20 +161,6 @@ function ProductModal({ p, onClose, onPrev, onNext }) {
                 ))}
               </div>
             )}
-
-            <div className="mt-7 rounded-2xl border border-line bg-white p-5">
-              <div className="text-[10px] uppercase tracking-[0.22em] text-amber-deep font-bold mb-3.5" style={{ fontFamily: 'var(--font-sans)' }}>
-                Truthful Label · per Indian Seed Act 1966
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2.5">
-                {p.truthful.map((t) => (
-                  <div key={t.label} className="flex flex-col">
-                    <span className="text-[10px] text-ink-mute">{t.label}</span>
-                    <b className="text-green-900 text-[13px] font-semibold">{t.value}</b>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -188,43 +180,55 @@ export default function Products({ cat = 'maize', onCatChange }) {
     <section id="products" ref={ref} className="relative py-11 md:py-14 bg-bg overflow-hidden">
       <Backdrop src="/images/photos/field-canopy-green.jpg" opacity={0.15} />
       <div className="relative max-w-6xl mx-auto px-6">
-        <div className="reveal eyebrow eyebrow-rule text-green-700">Our Products</div>
-        <h2 className="reveal mt-5 text-3xl sm:text-4xl lg:text-5xl leading-[1.1] text-green-950 font-light tracking-tight max-w-3xl" style={{ fontFamily: 'var(--font-serif)', '--reveal-delay': '90ms' }}>
-          Our varieties, under our own name.
-        </h2>
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <div className="reveal eyebrow eyebrow-rule text-green-700">Our Products</div>
+            <h2 className="reveal mt-5 text-3xl sm:text-4xl lg:text-5xl leading-[1.1] text-green-950 font-light tracking-tight max-w-xl" style={{ fontFamily: 'var(--font-serif)', '--reveal-delay': '90ms' }}>
+              Our varieties, under our own name.
+            </h2>
+          </div>
 
-        {/* Category tabs */}
-        <div className="reveal mt-7 inline-flex flex-wrap rounded-full bg-sage border border-line p-1.5 gap-1" style={{ '--reveal-delay': '150ms' }}>
-          {CATEGORIES.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => setCat(c.id)}
-              className={`rounded-full px-6 py-2.5 text-[11.5px] uppercase tracking-[0.16em] font-bold transition-all duration-400 cursor-pointer ${
-                cat === c.id
-                  ? 'bg-green-700 text-white shadow-md'
-                  : 'text-ink-soft hover:text-green-800'
-              }`}
-              style={{ fontFamily: 'var(--font-sans)' }}
-            >
-              {c.label}
-            </button>
-          ))}
-        </div>
-
-        <div key={cat}>
-          <p className="reveal is-visible mt-8 text-ink-soft text-base leading-relaxed max-w-2xl">
-            <span className="italic text-green-900 text-lg block mb-1.5" style={{ fontFamily: 'var(--font-serif)' }}>{current.heading}</span>
-            {current.intro || null}
-          </p>
-
-          <div className="mt-7 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {items.map((p, i) => (
-              <ProductCard key={p.id} p={p} onOpen={setActive} delay={i * 80} />
-            ))}
+          {/* Category switcher — icon pills */}
+          <div className="reveal inline-flex flex-wrap gap-2" style={{ '--reveal-delay': '150ms' }}>
+            {CATEGORIES.map((c) => {
+              const isActive = cat === c.id
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => setCat(c.id)}
+                  className="flex items-center gap-2 rounded-full px-5 py-2.5 text-[11px] uppercase tracking-[0.14em] font-bold transition-all duration-400 cursor-pointer border"
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    background: isActive ? CATEGORY_ACCENT[c.id] : 'var(--color-card)',
+                    color: isActive ? '#fff' : 'var(--color-ink-soft)',
+                    borderColor: isActive ? CATEGORY_ACCENT[c.id] : 'var(--color-line)',
+                  }}
+                >
+                  <span style={{ color: isActive ? '#fff' : CATEGORY_ACCENT[c.id] }}>{CATEGORY_ICONS[c.id]}</span>
+                  {c.label}
+                </button>
+              )
+            })}
           </div>
         </div>
 
+        <div key={cat} className="mt-9">
+          <div className="flex items-baseline justify-between flex-wrap gap-2">
+            <p className="reveal is-visible text-ink-soft text-base leading-relaxed max-w-2xl">
+              <span className="italic text-green-900 text-lg block mb-1.5" style={{ fontFamily: 'var(--font-serif)' }}>{current.heading}</span>
+              {current.intro || null}
+            </p>
+            <span className="text-[11px] uppercase tracking-[0.16em] font-bold text-ink-mute" style={{ fontFamily: 'var(--font-sans)' }}>
+              {items.length} {items.length === 1 ? 'variety' : 'varieties'}
+            </span>
+          </div>
 
+          <div className="mt-7 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {items.map((p, i) => (
+              <ProductCard key={p.id} p={p} onOpen={setActive} delay={i * 80} accent={CATEGORY_ACCENT[cat]} />
+            ))}
+          </div>
+        </div>
       </div>
 
       {active && (

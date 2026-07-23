@@ -42,13 +42,17 @@ export default function Agronomy() {
           Our agronomy specialists guide farmers through every stage of cultivation.
         </h2>
 
-        <div className="mt-8 grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="mt-10 grid grid-cols-2 sm:grid-cols-5 gap-6">
           {AGRONOMY_SUPPORT.map((area, i) => (
-            <div key={area} className="reveal card card-hover corner-leaf p-6 text-center flex flex-col items-center gap-3" style={{ '--reveal-delay': `${i * 70}ms` }}>
-              <span className="w-12 h-12 rounded-full bg-sage flex items-center justify-center text-green-700">
-                {AREA_ICONS[i]}
+            <div key={area} className="reveal group flex flex-col items-center gap-3.5 text-center" style={{ '--reveal-delay': `${i * 70}ms` }}>
+              <span
+                className="relative w-16 h-16 rounded-full flex items-center justify-center transition-transform duration-400 group-hover:-translate-y-1"
+                style={{ background: 'linear-gradient(145deg, var(--color-sage), #fff)', boxShadow: '0 1px 2px rgba(31,42,33,0.04), 0 14px 28px -14px rgba(31,42,33,0.22)' }}
+              >
+                <span className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-400" style={{ background: 'linear-gradient(145deg, #2C7A3C, #1D4426)' }} />
+                <span className="relative text-green-700 group-hover:text-white transition-colors duration-400">{AREA_ICONS[i]}</span>
               </span>
-              <span className="text-[14px] font-semibold text-green-950 leading-snug" style={{ fontFamily: 'var(--font-serif)' }}>{area}</span>
+              <span className="text-[13px] font-semibold text-green-950 leading-snug max-w-[110px]" style={{ fontFamily: 'var(--font-serif)' }}>{area}</span>
             </div>
           ))}
         </div>

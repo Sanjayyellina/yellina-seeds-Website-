@@ -9,7 +9,7 @@ const BENEFIT_ICONS = [
   <svg key="b4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-5 h-5"><path d="M4 7h13l3 5v5h-2M4 7v10h10M4 7l2-3h8l2 3M7 20a2 2 0 100-4 2 2 0 000 4zm10 0a2 2 0 100-4 2 2 0 000 4z" strokeLinecap="round" strokeLinejoin="round" /></svg>,
 ]
 
-export default function Partner({ onNavigate }) {
+export default function Partner() {
   const ref = useReveal()
 
   return (
@@ -23,32 +23,19 @@ export default function Partner({ onNavigate }) {
           Partner with a company backed by decades of production expertise.
         </p>
 
-        <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="mt-10 grid grid-cols-2 sm:grid-cols-5 gap-6">
           {DEALER_BENEFITS.map((b, i) => (
-            <div key={b} className="reveal card card-hover corner-leaf p-6 flex flex-col gap-3" style={{ '--reveal-delay': `${i * 70}ms` }}>
-              <span className="w-11 h-11 rounded-full bg-sage flex items-center justify-center text-green-700">{BENEFIT_ICONS[i]}</span>
-              <span className="text-[14.5px] font-semibold text-green-950 leading-snug" style={{ fontFamily: 'var(--font-serif)' }}>{b}</span>
+            <div key={b} className="reveal group flex flex-col items-center gap-3.5 text-center" style={{ '--reveal-delay': `${i * 70}ms` }}>
+              <span
+                className="relative w-16 h-16 rounded-full flex items-center justify-center transition-transform duration-400 group-hover:-translate-y-1"
+                style={{ background: 'linear-gradient(145deg, var(--color-sage), #fff)', boxShadow: '0 1px 2px rgba(31,42,33,0.04), 0 14px 28px -14px rgba(31,42,33,0.22)' }}
+              >
+                <span className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-400" style={{ background: 'linear-gradient(145deg, #2C7A3C, #1D4426)' }} />
+                <span className="relative text-green-700 group-hover:text-white transition-colors duration-400">{BENEFIT_ICONS[i]}</span>
+              </span>
+              <span className="text-[13px] font-semibold text-green-950 leading-snug max-w-[120px]" style={{ fontFamily: 'var(--font-serif)' }}>{b}</span>
             </div>
           ))}
-        </div>
-
-        {/* CTA — full contact details (team, address, email) live once,
-            down in the site's Contact section; this just points there
-            instead of repeating that whole card again */}
-        <div className="reveal mt-8 rounded-3xl bg-green-950 px-8 py-7 md:px-10 md:py-8 relative overflow-hidden flex flex-wrap items-center justify-between gap-5" style={{ '--reveal-delay': '120ms' }}>
-          <img src="/images/photos/field-maize-wide.jpg" alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover opacity-[0.14]" loading="lazy" />
-          <div className="relative">
-            <h3 className="text-xl sm:text-2xl text-white font-light" style={{ fontFamily: 'var(--font-serif)' }}>
-              Ready to become a Yellina dealer?
-            </h3>
-            <p className="mt-1.5 text-[14px] text-white/75">Reach our team directly — call, WhatsApp, or visit.</p>
-          </div>
-          <button
-            onClick={() => onNavigate?.('contact')}
-            className="relative btn-primary !bg-leaf !text-green-950 hover:!bg-white shrink-0"
-          >
-            Contact Our Team
-          </button>
         </div>
       </div>
     </section>

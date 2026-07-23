@@ -129,7 +129,7 @@ export default function App() {
           quote="Helping farmers achieve higher productivity from sowing to harvest."
           attribution="Field days · demo plots · season-long guidance"
         />
-        <Partner onNavigate={navigate} />
+        <Partner />
       </main>
       <Footer onNavigate={navigate} onCrop={browseCrop} />
     </div>
