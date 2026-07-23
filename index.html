@@ -34,9 +34,14 @@
 
     <!-- Hero particle logo needs these the instant it mounts — start the
          fetch as early as possible so there's no visible gap before the
-         fly-in begins -->
-    <link rel="preload" as="image" href="/images/photos/field-corn-rows-sunset.jpg" />
-    <link rel="preload" as="image" href="/images/logo-green.png" />
+         fly-in begins. crossorigin must match the crossOrigin="anonymous"
+         used when these are fetched via Image() in HeroLeafParticles.jsx —
+         otherwise the preload's credentials mode doesn't match the real
+         request, the browser treats it as a cache miss, and fetches the
+         same file a second time from scratch (a very real cause of a long
+         delay before the logo starts forming on a slow connection). -->
+    <link rel="preload" as="image" href="/images/photos/field-corn-rows-sunset.jpg" crossorigin="anonymous" />
+    <link rel="preload" as="image" href="/images/logo-green.png" crossorigin="anonymous" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

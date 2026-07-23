@@ -1,7 +1,10 @@
-import { useEffect, useRef, useState, lazy, Suspense } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { HERO_BG_IMAGE } from '../data/heroImage.js'
-
-const HeroLeafParticles = lazy(() => import('../three/HeroLeafParticles.jsx'))
+// Loaded eagerly (not React.lazy/Suspense) — this is the first thing every
+// visitor sees, so the extra async round-trip of a dynamic import + Suspense
+// resolution only delays the logo forming for no benefit; it ships as part
+// of the initial bundle instead.
+import HeroLeafParticles from '../three/HeroLeafParticles.jsx'
 
 // The hero is a thesis: one monumental emblem — the Yellina leaf mark with our
 // real fields living inside it — centered like a crest, grounded by a trust
@@ -106,9 +109,7 @@ export default function Hero({ onNavigate }) {
         {/* particle logo canvas — spans the whole hero so particles can fly in
             from its true edges, converging on the anchored emblem spot below */}
         <div className="absolute inset-x-0 top-0 h-screen pointer-events-none" style={{ zIndex: 1 }}>
-          <Suspense fallback={null}>
-            <HeroLeafParticles anchorPx={anchorPx} boxRef={rotationBoxRef} heroFrameRef={heroFrameRef} />
-          </Suspense>
+          <HeroLeafParticles anchorPx={anchorPx} boxRef={rotationBoxRef} heroFrameRef={heroFrameRef} />
         </div>
 
         {/* sun glow chasing the cursor */}

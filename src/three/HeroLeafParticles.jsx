@@ -104,15 +104,58 @@ const MAX_RAY = 26
 // flicker on the outermost dots, like flames/breeze around the silhouette. A
 // swooping bezier control point per particle gives the "blown in on the wind"
 // flight path on arrival.
+// Keeps trying to load the logo mask until it actually succeeds — on a slow
+// or flaky mobile connection a plain <img onerror> is not enough, since a
+// stalled request may never fire load OR error. Each attempt gets its own
+// timeout; a fresh Image() + cache-busted URL is retried with backoff
+// (capped) until it lands, so the logo eventually forms no matter how bad
+// the connection is, instead of silently never forming at all.
+function loadImageForever(src, onSuccess, isCancelled) {
+  let attempt = 0
+  const attemptLoad = () => {
+    if (isCancelled()) return
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    let settled = false
+    const timeoutMs = Math.min(5000 + attempt * 1500, 12000)
+    const timer = setTimeout(() => {
+      if (settled || isCancelled()) return
+      settled = true
+      img.onload = null
+      img.onerror = null
+      scheduleRetry()
+    }, timeoutMs)
+    img.onload = () => {
+      if (settled || isCancelled()) return
+      settled = true
+      clearTimeout(timer)
+      onSuccess(img)
+    }
+    img.onerror = () => {
+      if (settled || isCancelled()) return
+      settled = true
+      clearTimeout(timer)
+      scheduleRetry()
+    }
+    img.src = attempt === 0 ? src : `${src}${src.includes('?') ? '&' : '?'}retry=${attempt}`
+  }
+  const scheduleRetry = () => {
+    attempt++
+    setTimeout(() => {
+      if (!isCancelled()) attemptLoad()
+    }, Math.min(600 * attempt, 8000))
+  }
+  attemptLoad()
+}
+
 function useLogoParticles(src, count = 9000) {
   const [data, setData] = useState(null)
 
   useEffect(() => {
     let cancelled = false
-    const img = new Image()
-    img.crossOrigin = 'anonymous'
-    img.src = src
-    img.onload = () => {
+    loadImageForever(
+      src,
+      (img) => {
       if (cancelled) return
       const canvas = document.createElement('canvas')
       const w = 220
@@ -191,15 +234,17 @@ function useLogoParticles(src, count = 9000) {
         delays[i] = Math.random() * INTRO_MAX_DELAY
       }
       setData({ targets, edgeDir, swoop, sizes, seeds, delays, isSphere, edgeWeight })
-    }
+      },
+      () => cancelled
+    )
     return () => { cancelled = true }
   }, [src, count])
 
   return data
 }
 
-const INTRO_DURATION = 3 // seconds each particle takes to arrive, once its delay elapses
-const INTRO_MAX_DELAY = 1 // random per-particle stagger, spread over this many seconds
+const INTRO_DURATION = 1.1 // seconds each particle takes to arrive, once its delay elapses
+const INTRO_MAX_DELAY = 0.25 // random per-particle stagger, spread over this many seconds
 
 // Quartic — a quick initial launch away from the edges without being an
 // abrupt snap, then a gentle, unhurried settle into the final logo shape.
@@ -947,11 +992,16 @@ function useHeroPhotoTexture(src) {
   const [state, setState] = useState(() => ({ texture: createPlaceholderTexture(), imageAspect: 1 }))
   useEffect(() => {
     let cancelled = false
-    const loader = new THREE.TextureLoader()
-    loader.load(src, (tex) => {
-      if (cancelled) return
-      setState({ texture: tex, imageAspect: tex.image.width / tex.image.height })
-    })
+    loadImageForever(
+      src,
+      (img) => {
+        if (cancelled) return
+        const tex = new THREE.Texture(img)
+        tex.needsUpdate = true
+        setState({ texture: tex, imageAspect: img.width / img.height })
+      },
+      () => cancelled
+    )
     return () => {
       cancelled = true
     }

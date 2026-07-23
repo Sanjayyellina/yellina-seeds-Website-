@@ -17,13 +17,21 @@ const LINKS = [
 ]
 
 export default function Nav({ onNavigate }) {
-  const [scrolled, setScrolled] = useState(false)
+  // computed synchronously at mount (not via effect) so the very first paint
+  // already reflects the real scroll position — otherwise a reload that
+  // lands mid-page (e.g. a deep link, or scroll position restored by the
+  // browser) flips this a beat after mount and the pill visibly snaps
+  // through its whole scrolled/unscrolled transition on load
+  const [scrolled, setScrolled] = useState(() => typeof window !== 'undefined' && window.scrollY > 60)
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState('')
+  // the transition is only enabled after mount, so that initial state itself
+  // (however it resolves) never animates into view
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     const onScroll = () => setScrolled(window.scrollY > 60)
-    onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
@@ -52,12 +60,12 @@ export default function Nav({ onNavigate }) {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 ${mounted ? 'transition-all duration-500' : ''} ${
         scrolled ? 'py-1.5' : 'py-3'
       }`}
     >
       <nav
-        className={`relative mx-3 md:mx-6 rounded-full px-4 md:px-6 flex items-center justify-between transition-all duration-500 ${
+        className={`relative mx-3 md:mx-6 rounded-full px-4 md:px-6 flex items-center justify-between ${mounted ? 'transition-all duration-500' : ''} ${
           scrolled ? 'glass-nav-solid py-1.5' : 'glass-nav py-2'
         }`}
       >
