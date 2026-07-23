@@ -53,7 +53,7 @@ export default function Infrastructure() {
           </div>
           <p className="reveal max-w-sm text-ink-soft text-[14.5px] leading-relaxed" style={{ '--reveal-delay': '150ms' }}>
             Moisture ruins more seed than pests do. So we built our own drying and processing
-            plant at Banda Mallaram, Siddipet — and these are real photos of it.
+            plant{/* location hidden for now — remove this comment + add back " at Banda Mallaram, Siddipet" to restore */} — and these are real photos of it.
           </p>
         </div>
 
@@ -63,7 +63,7 @@ export default function Infrastructure() {
             <div data-parallax="-0.14" className="absolute -inset-y-[20%] inset-x-0">
               <img
                 src="/images/photos/dryer-exterior.jpg"
-                alt="The Yellina Seeds drying and processing plant at Banda Mallaram, Siddipet District"
+                alt="The Yellina Seeds drying and processing plant"
                 loading="lazy"
                 className="w-full h-full object-cover"
               />
