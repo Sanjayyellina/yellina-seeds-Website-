@@ -45,7 +45,7 @@ export default function Footer({ onNavigate, onCrop }) {
             <p className="mt-1.5 text-[14px] text-white/70">Reach our team directly — call, WhatsApp, or visit.</p>
           </div>
           <a
-            href={`tel:${CONTACT.team[0].tel}`}
+            href={`tel:${CONTACT.customerCareRaw}`}
             className="btn-primary !bg-leaf !text-green-950 hover:!bg-white shrink-0"
           >
             Call Our Team
@@ -62,7 +62,7 @@ export default function Footer({ onNavigate, onCrop }) {
               <h5 className="text-xl text-white" style={{ fontFamily: 'var(--font-serif)' }}>{CONTACT.corporate.name}</h5>
               <p className="mt-3 text-white/70 text-[13.5px] leading-[1.8]">{CONTACT.corporate.address}</p>
               <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('Kompally, Hyderabad, Telangana')}`}
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONTACT.corporate.address)}`}
                 target="_blank" rel="noopener noreferrer"
                 className="mt-3 inline-flex items-center gap-2 text-leaf text-[11px] uppercase tracking-[0.18em] font-bold hover:text-white transition-colors"
                 style={{ fontFamily: 'var(--font-sans)' }}
@@ -70,17 +70,20 @@ export default function Footer({ onNavigate, onCrop }) {
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s-7-5.5-7-11a7 7 0 1114 0c0 5.5-7 11-7 11z" /><circle cx="12" cy="10" r="2.6" /></svg>
                 View on map
               </a>
+
+              <div className="mt-5">
+                <div className="eyebrow text-leaf !text-[10px] mb-2">{CONTACT.plant.label}</div>
+                <p className="text-white/70 text-[13.5px] leading-[1.8]">{CONTACT.plant.address}</p>
+              </div>
             </div>
             <div className="space-y-4">
               <div>
                 <div className="eyebrow text-leaf !text-[10px] mb-2">Direct</div>
                 <div className="space-y-2.5">
-                  {CONTACT.team.map((m) => (
-                    <a key={m.name} href={`tel:${m.tel}`} className="flex items-baseline gap-2 group">
-                      <span className="text-white group-hover:text-leaf transition-colors text-lg" style={{ fontFamily: 'var(--font-serif)' }}>{m.note}</span>
-                      <span className="text-white/50 text-[11px]">{m.name.split(' ')[0]} · {m.role.split(' · ').pop()}</span>
-                    </a>
-                  ))}
+                  <a href={`tel:${CONTACT.customerCareRaw}`} className="flex items-baseline gap-2 group">
+                    <span className="text-white group-hover:text-leaf transition-colors text-lg" style={{ fontFamily: 'var(--font-serif)' }}>{CONTACT.customerCare}</span>
+                    <span className="text-white/50 text-[11px]">Customer Care</span>
+                  </a>
                 </div>
               </div>
               <div>

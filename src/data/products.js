@@ -264,31 +264,17 @@ export const DEALER_BENEFITS = [
 ]
 
 export const CONTACT = {
-  phone: '+91 99494 84078',
-  phoneRaw: '+919949484078',
-  phone2: '+91 83414 64748',
-  phone2Raw: '+918341464748',
   email: 'yellinaseeds@gmail.com',
   hours: 'Customer Care',
+  customerCare: '+91 85230 06206',
+  customerCareRaw: '+918523006206',
   corporate: {
     label: 'Corporate Office',
     name: 'Yellina Seeds Private Limited',
-    address: 'Kompally, Hyderabad, Telangana, India',
+    address: 'Flat No. 209, Vistara Delight Height, Survey No. 241, Aswani Colony, Kompally, Medchal, Hyderabad, Telangana 500014',
   },
-  team: [
-    {
-      initials: 'MK',
-      name: 'Murali Krishna Yellina',
-      role: 'Founder · Managing Director',
-      note: '+91 99494 84078',
-      tel: '+919949484078',
-    },
-    {
-      initials: 'AS',
-      name: 'Abhinav Sanjay Yellina',
-      role: 'Yellina Seeds',
-      note: '+91 83414 64748',
-      tel: '+918341464748',
-    },
-  ],
+  plant: {
+    label: 'Seed Processing Unit',
+    address: 'Sy. No. 8/1A, 1AA, Siddipet District, Hyderabad, Telangana 502103',
+  },
 }

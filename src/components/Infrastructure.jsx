@@ -74,8 +74,9 @@ export default function Infrastructure() {
             <div className="text-white text-xl sm:text-2xl font-medium" style={{ fontFamily: 'var(--font-serif)' }}>
               The Yellina drying & processing unit
             </div>
-            <div className="mt-1 text-white/80 text-[11px] uppercase tracking-[0.2em] font-bold" style={{ fontFamily: 'var(--font-sans)' }}>
-              Survey No. 8/1A · Banda Mallaram · Mulug Mandal · Siddipet
+            {/* hidden for now — remove the `hidden` class to bring the address back */}
+            <div className="hidden mt-1 text-white/80 text-[11px] uppercase tracking-[0.2em] font-bold" style={{ fontFamily: 'var(--font-sans)' }}>
+              Sy. No. 8/1A, 1AA · Siddipet District · Telangana 502103
             </div>
           </div>
           <div className="absolute top-5 right-5 hidden sm:flex rounded-full bg-white/90 backdrop-blur px-4 py-2 text-[10px] uppercase tracking-[0.2em] font-bold text-green-800" style={{ fontFamily: 'var(--font-sans)' }}>

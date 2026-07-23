@@ -56,13 +56,13 @@ export default function Enquiry() {
               us will call you — usually within a working day.
             </p>
             <div className="reveal mt-7 space-y-3" style={{ '--reveal-delay': '200ms' }}>
-              <a href={`https://wa.me/918341464748?text=${encodeURIComponent('Hi Yellina Seeds, I want to know more about your seeds.')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-green-800 font-semibold text-[15px] hover:text-green-700">
+              <a href={`https://wa.me/${CONTACT.customerCareRaw.replace('+', '')}?text=${encodeURIComponent('Hi Yellina Seeds, I want to know more about your seeds.')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-green-800 font-semibold text-[15px] hover:text-green-700">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07a8.1 8.1 0 01-2.39-1.47 8.96 8.96 0 01-1.65-2.05c-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.38-.02-.53-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5 0 1.47 1.07 2.89 1.22 3.09.15.2 2.1 3.2 5.1 4.49.71.3 1.27.49 1.7.63.72.23 1.37.2 1.88.12.58-.09 1.76-.72 2.01-1.42.25-.7.25-1.29.17-1.42-.07-.12-.27-.2-.57-.35z"/><path d="M12.05 2a9.9 9.9 0 00-8.4 15.17L2.06 22l4.94-1.55A9.94 9.94 0 1012.05 2zm5.83 15.78a8.25 8.25 0 01-11.66.03 8.25 8.25 0 015.83-14.1 8.26 8.26 0 015.83 14.07z"/></svg>
                 WhatsApp us directly
               </a>
-              <a href={`tel:${CONTACT.phoneRaw}`} className="flex items-center gap-3 text-green-800 font-semibold text-[15px] hover:text-green-700">
+              <a href={`tel:${CONTACT.customerCareRaw}`} className="flex items-center gap-3 text-green-800 font-semibold text-[15px] hover:text-green-700">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z"/></svg>
-                {CONTACT.phone} · {CONTACT.hours}
+                {CONTACT.customerCare} · {CONTACT.hours}
               </a>
             </div>
           </div>
@@ -120,7 +120,7 @@ export default function Enquiry() {
 
                 {status === 'error' && (
                   <p className="mt-4 text-[13px] text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-2.5">
-                    Please check your name and phone number. If it still fails, call or WhatsApp us at {CONTACT.phone}.
+                    Please check your name and phone number. If it still fails, call or WhatsApp us at {CONTACT.customerCare}.
                   </p>
                 )}
 
