@@ -614,11 +614,20 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
 
   const dummy = useMemo(() => new THREE.Object3D(), [])
 
+  // Only replay the fly-in when the logo's actual particle data changes —
+  // NOT on every `layout` recompute. `layout` depends on the canvas's
+  // measured `size`, which changes any time the browser's address bar/toolbar
+  // shows or hides — something mobile browsers do constantly on scroll (their
+  // "dynamic toolbar" resizing the viewport). Resetting on layout too meant
+  // the logo scattered back to the edges and reformed on almost any scroll
+  // gesture on mobile. Position/scale still update live via the effect below;
+  // only the intro's start/done state must stay put once it has run.
   useEffect(() => {
     introDone.current = false
     introStartTime.current = null
     swingStartTime.current = null
-  }, [data, layout])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data])
 
   useEffect(() => {
     if (groupRef.current) groupRef.current.position.set(layout.anchorWorldX, layout.anchorWorldY, 0)
