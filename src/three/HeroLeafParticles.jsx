@@ -1016,7 +1016,17 @@ export default function HeroLeafParticles({ anchorPx, boxRef, heroFrameRef }) {
     <Canvas
       dpr={[1, 1.75]}
       gl={{ alpha: true, antialias: true }}
-      style={{ touchAction: 'none' }}
+      // R3F sets pointerEvents:'auto' on this element by default, which
+      // overrides the pointer-events-none on its wrapping div — combined
+      // with touchAction:'none' that made the canvas swallow every touch
+      // gesture across the full hero height, so mobile visitors couldn't
+      // scroll past the hero at all. Our drag/hover/trail interactions are
+      // all wired via window-level pointer listeners (see ParticleCloud),
+      // not canvas hit-testing, so the canvas itself never needs to receive
+      // pointer events — forcing it back to none/auto here is safe and
+      // restores normal touch-scrolling without affecting desktop, where
+      // mouse wheel scroll was never touch-action-gated in the first place.
+      style={{ pointerEvents: 'none', touchAction: 'auto', width: '100%', height: '100%' }}
     >
       {anchorPx && <CameraRig anchorPx={anchorPx} />}
       {data && anchorPx && (
