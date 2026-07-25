@@ -2,6 +2,7 @@ import useReveal from '../hooks/useReveal.js'
 import Backdrop from './Backdrop.jsx'
 import SectionCurve from './SectionCurve.jsx'
 import { PILLARS } from '../data/products.js'
+import { useLang } from '../i18n/LanguageContext.jsx'
 
 // Real photo headers for each pillar.
 const PILLAR_PHOTOS = {
@@ -15,6 +16,7 @@ const PILLAR_ACCENT = ['#2C7A3C', '#C9A227', '#7DB343']
 
 export default function Pillars() {
   const ref = useReveal()
+  const { t } = useLang()
 
   return (
     <section id="why" ref={ref} className="relative bg-sage py-11 md:py-14 overflow-hidden">
@@ -22,15 +24,16 @@ export default function Pillars() {
       <SectionCurve fill="#FAFAF6" />
 
       <div className="max-w-6xl mx-auto px-6 relative">
-        <div className="reveal eyebrow eyebrow-rule text-green-700">Why Choose Yellina</div>
+        <div className="reveal eyebrow eyebrow-rule text-green-700">{t('why.eyebrow')}</div>
         <h2 className="reveal mt-5 text-3xl sm:text-4xl lg:text-5xl leading-[1.1] text-green-950 font-light tracking-tight max-w-3xl" style={{ fontFamily: 'var(--font-serif)', '--reveal-delay': '90ms' }}>
-          Experience that grows better harvests.
+          {t('why.heading')}
         </h2>
 
         <div className="mt-12 md:mt-16 space-y-14 md:space-y-20">
           {PILLARS.map((p, i) => {
             const photo = PILLAR_PHOTOS[p.icon]
             const reversed = i % 2 === 1
+            const pillarKey = String(i + 1)
             return (
               <div
                 key={p.num}
@@ -57,12 +60,12 @@ export default function Pillars() {
                     style={{ fontFamily: 'var(--font-sans)', color: PILLAR_ACCENT[i] }}
                   >
                     <span className="w-6 h-px" style={{ background: PILLAR_ACCENT[i] }} />
-                    Pillar {p.num}
+                    {t('why.pillarLabel')} {p.num}
                   </div>
                   <h3 className="mt-4 text-[26px] sm:text-[30px] text-green-950 font-normal leading-snug" style={{ fontFamily: 'var(--font-serif)' }}>
-                    {p.title}
+                    {t(`why.pillars.${pillarKey}.title`)}
                   </h3>
-                  <p className={`mt-4 text-ink-soft text-[15px] leading-[1.75] max-w-md ${reversed ? 'md:ml-auto' : ''}`}>{p.body}</p>
+                  <p className={`mt-4 text-ink-soft text-[15px] leading-[1.75] max-w-md ${reversed ? 'md:ml-auto' : ''}`}>{t(`why.pillars.${pillarKey}.body`)}</p>
                 </div>
               </div>
             )
@@ -72,7 +75,7 @@ export default function Pillars() {
         <div className="reveal mt-14 md:mt-16 flex items-center gap-4" style={{ '--reveal-delay': '260ms' }}>
           <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, rgba(201,162,39,0.5))' }} />
           <p className="text-center text-green-800 italic text-[15px] sm:text-base shrink-0 max-w-lg" style={{ fontFamily: 'var(--font-serif)' }}>
-            Every principle above traces back to one place — our own production floor.
+            {t('why.closing')}
           </p>
           <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, rgba(201,162,39,0.5), transparent)' }} />
         </div>

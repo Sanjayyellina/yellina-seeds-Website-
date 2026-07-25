@@ -45,8 +45,13 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- One extra family per script for each language the switcher supports:
+         Devanagari (Hindi + Marathi), Telugu (already had the serif, adding
+         sans for body/UI text), and Kannada. Fraunces/Outfit don't cover
+         these scripts at all, so index.css swaps --font-serif/--font-sans
+         to the matching Noto family whenever a non-English language is active. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans:wght@300;400;500;600;700&family=Noto+Serif+Telugu:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans:wght@300;400;500;600;700&family=Noto+Serif+Telugu:wght@400;500;600&family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Serif+Devanagari:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Serif+Kannada:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
 

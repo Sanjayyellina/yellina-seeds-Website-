@@ -1,5 +1,6 @@
 import useReveal from '../hooks/useReveal.js'
 import { DEALER_BENEFITS } from '../data/products.js'
+import { useLang } from '../i18n/LanguageContext.jsx'
 
 const BENEFIT_ICONS = [
   <svg key="b0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-5 h-5"><path d="M3 17l4-6 4 3 4-7 6 10M3 21h18" strokeLinecap="round" strokeLinejoin="round" /></svg>,
@@ -11,16 +12,18 @@ const BENEFIT_ICONS = [
 
 export default function Partner() {
   const ref = useReveal()
+  const { t } = useLang()
+  const benefits = t('partner.benefits')
 
   return (
     <section id="partner" ref={ref} className="relative py-11 md:py-14 bg-bg overflow-hidden">
       <div className="max-w-6xl mx-auto px-6 relative">
-        <div className="reveal eyebrow eyebrow-rule text-green-700">For Dealers & Distributors</div>
+        <div className="reveal eyebrow eyebrow-rule text-green-700">{t('partner.eyebrow')}</div>
         <h2 className="reveal mt-5 text-3xl sm:text-4xl lg:text-5xl leading-[1.1] text-green-950 font-light tracking-tight max-w-3xl" style={{ fontFamily: 'var(--font-serif)', '--reveal-delay': '90ms' }}>
-          Grow your business with Yellina.
+          {t('partner.heading')}
         </h2>
         <p className="reveal mt-6 text-ink-soft text-base sm:text-lg leading-relaxed max-w-2xl" style={{ '--reveal-delay': '150ms' }}>
-          Partner with a company backed by decades of production expertise.
+          {t('partner.paragraph')}
         </p>
 
         <div className="mt-10 grid grid-cols-2 sm:grid-cols-5 gap-6">
@@ -33,7 +36,7 @@ export default function Partner() {
                 <span className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-400" style={{ background: 'linear-gradient(145deg, #2C7A3C, #1D4426)' }} />
                 <span className="relative text-green-700 group-hover:text-white transition-colors duration-400">{BENEFIT_ICONS[i]}</span>
               </span>
-              <span className="text-[13px] font-semibold text-green-950 leading-snug max-w-[120px]" style={{ fontFamily: 'var(--font-serif)' }}>{b}</span>
+              <span className="text-[13px] font-semibold text-green-950 leading-snug max-w-[120px]" style={{ fontFamily: 'var(--font-serif)' }}>{benefits[i]}</span>
             </div>
           ))}
         </div>

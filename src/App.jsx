@@ -14,8 +14,10 @@ import Portfolio from './components/Portfolio.jsx'
 import Agronomy from './components/Agronomy.jsx'
 import Partner from './components/Partner.jsx'
 import Footer from './components/Footer.jsx'
+import { useLang } from './i18n/LanguageContext.jsx'
 
 export default function App() {
+  const { t } = useLang()
   const lenisRef = useRef(null)
   const [productCat, setProductCat] = useState('maize')
 
@@ -107,9 +109,9 @@ export default function App() {
         <Story />
         <PhotoBand
           src="/images/photos/paddy-inspection.jpg"
-          eyebrow="Our Promise"
-          quote="If the seed is right, the season is right."
-          attribution="Every packet represents our commitment to the success of every farmer"
+          eyebrow={t('photoBands.promise.eyebrow')}
+          quote={t('photoBands.promise.quote')}
+          attribution={t('photoBands.promise.attribution')}
         />
         <Pillars />
         <Quality />
@@ -118,16 +120,16 @@ export default function App() {
         <Products cat={productCat} onCatChange={setProductCat} />
         <PhotoBand
           src="/images/photos/farmers-cobs.jpg"
-          eyebrow="Built on Trust"
-          quote="Trust is earned in the field — not in advertisements."
-          attribution="Mr. Murali Krishna · Founder & Managing Director"
+          eyebrow={t('photoBands.trust.eyebrow')}
+          quote={t('photoBands.trust.quote')}
+          attribution={t('photoBands.trust.attribution')}
         />
         <Agronomy />
         <PhotoBand
           src="/images/photos/detasseling-crew.jpg"
-          eyebrow="Agronomy Support"
-          quote="Helping farmers achieve higher productivity from sowing to harvest."
-          attribution="Field days · demo plots · season-long guidance"
+          eyebrow={t('photoBands.agronomy.eyebrow')}
+          quote={t('photoBands.agronomy.quote')}
+          attribution={t('photoBands.agronomy.attribution')}
         />
         <Partner />
       </main>

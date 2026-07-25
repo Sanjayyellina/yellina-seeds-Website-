@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { HERO_BG_IMAGE } from '../data/heroImage.js'
+import { useLang } from '../i18n/LanguageContext.jsx'
 // Loaded eagerly (not React.lazy/Suspense) — this is the first thing every
 // visitor sees, so the extra async round-trip of a dynamic import + Suspense
 // resolution only delays the logo forming for no benefit; it ships as part
@@ -9,12 +10,6 @@ import HeroLeafParticles from '../three/HeroLeafParticles.jsx'
 // The hero is a thesis: one monumental emblem — the Yellina leaf mark with our
 // real fields living inside it — centered like a crest, grounded by a trust
 // bar of the companies we've produced for since 1995. Big, quiet, certain.
-
-const SEALS = [
-  ['100%', 'GENUINE', 'SEEDS'],
-  ['QUALITY', 'TESTED', 'GERMINATION ASSURED'],
-  ['TRUTHFULLY', 'LABELLED', ''],
-]
 
 const PARTNER_LOGOS = [
   { src: '/images/partners/logo-syngenta.png', alt: 'Syngenta' },
@@ -39,6 +34,8 @@ function Seal({ lines }) {
 }
 
 export default function Hero({ onNavigate }) {
+  const { t } = useLang()
+  const SEALS = [t('hero.seal1'), t('hero.seal2'), t('hero.seal3')]
   const glowRef = useRef(null)
   const copyRef = useRef(null)
   const emblemSpacerRef = useRef(null)
@@ -140,7 +137,7 @@ export default function Hero({ onNavigate }) {
         <div ref={copyRef} className="relative max-w-7xl mx-auto px-6 w-full grid lg:grid-cols-[180px_1fr_150px] items-center gap-8 pt-16 md:pt-20 will-change-transform">
           {/* left rail — the numbers */}
           <div className="hidden lg:flex flex-col gap-8 justify-self-start" aria-hidden="true">
-            {[['31+', 'Years in Seed'], ['15+', 'Partner Companies'], ['2,000+ MT', 'Drying Capacity']].map(([n, l]) => (
+            {[['31+', t('hero.railYears')], ['15+', t('hero.railPartners')], ['2,000+ MT', t('hero.railDrying')]].map(([n, l]) => (
               <div key={l} className="reveal is-visible pl-4 border-l-2" style={{ borderColor: 'var(--color-gold)' }}>
                 <div className="text-3xl font-medium text-green-800 leading-none" style={{ fontFamily: 'var(--font-serif)' }}>{n}</div>
                 <div className="mt-1.5 text-[9px] uppercase tracking-[0.2em] font-bold text-ink-mute" style={{ fontFamily: 'var(--font-sans)' }}>{l}</div>
@@ -169,7 +166,7 @@ export default function Hero({ onNavigate }) {
           <div className="mt-7">
             <div className="text-4xl sm:text-5xl font-semibold text-green-800 tracking-tight" style={{ fontFamily: 'var(--font-serif)' }}>Yellina Seeds</div>
             <div className="mt-2 text-[10px] uppercase tracking-[0.34em] font-bold" style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-gold)' }}>
-              Rooted in Nature · Growing the Future
+              {t('common.tagline')}
             </div>
           </div>
 
@@ -178,25 +175,23 @@ export default function Hero({ onNavigate }) {
             className="mt-6 text-green-950 leading-[1.12] tracking-tight font-light text-3xl sm:text-4xl lg:text-[44px] max-w-3xl"
             style={{ fontFamily: 'var(--font-serif)' }}
           >
-            Seed you can trust. <span className="text-green-700">Harvests you can count on.</span>
+            {t('hero.h1a')} <span className="text-green-700">{t('hero.h1b')}</span>
           </h1>
 
           <p className="mt-5 text-ink-soft text-[15.5px] sm:text-base max-w-2xl leading-relaxed">
-            From 1995 we have quietly produced premium-quality seed for some of India's most
-            respected seed companies. Today, that same commitment is proudly delivered to
-            farmers under one name — Yellina Seeds Private Limited.
+            {t('hero.paragraph')}
           </p>
 
           <div className="mt-7 flex flex-wrap items-center justify-center gap-4">
             <button className="btn-primary" onClick={() => onNavigate('products')}>
-              See Our Varieties
+              {t('hero.ctaVarieties')}
             </button>
             <a
               href="/brochure/yellina-seeds-company-profile-2026.html"
               download="Yellina-Seeds-Company-Profile-2026.html"
               className="btn-outline"
             >
-              Download Brochure
+              {t('hero.ctaBrochure')}
             </a>
           </div>
 
@@ -219,7 +214,7 @@ export default function Hero({ onNavigate }) {
         <div className="relative mt-7 md:mt-8 border-t" style={{ borderColor: 'rgba(201,162,39,0.35)' }}>
           <div className="max-w-7xl mx-auto px-6 py-7 flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
             <div className="text-[10px] uppercase tracking-[0.24em] font-bold text-ink-mute text-center lg:text-left lg:max-w-[210px] leading-relaxed shrink-0" style={{ fontFamily: 'var(--font-sans)' }}>
-              Trusted production partner to India's leading seed companies
+              {t('hero.trustBar')}
             </div>
             <div className="flex flex-wrap items-center justify-center gap-x-9 gap-y-4 flex-1">
               {PARTNER_LOGOS.map((p) => (

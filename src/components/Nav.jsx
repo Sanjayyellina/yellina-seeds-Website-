@@ -1,22 +1,17 @@
 import { useEffect, useState } from 'react'
+import { useLang } from '../i18n/LanguageContext.jsx'
+import LanguageSwitcher from './LanguageSwitcher.jsx'
 
 // The internal operations platform (dryer intake/dispatch/quality tracking)
 // is bundled into this same app as static files under public/ops/ and
 // served at this same-origin path — no separate domain or deployment.
 const OPS_URL = '/ops/'
 
-const LINKS = [
-  { id: 'story', label: 'Our Story' },
-  { id: 'fields', label: 'Our Fields' },
-  { id: 'why', label: 'Why Yellina' },
-  { id: 'quality', label: 'Quality' },
-  { id: 'plant', label: 'Our Plant' },
-  { id: 'products', label: 'Products' },
-  { id: 'agronomy', label: 'Agronomy' },
-  { id: 'contact', label: 'Contact' },
-]
+const LINK_IDS = ['story', 'fields', 'why', 'quality', 'plant', 'products', 'agronomy', 'contact']
 
 export default function Nav({ onNavigate }) {
+  const { t } = useLang()
+  const LINKS = LINK_IDS.map((id) => ({ id, label: t(`nav.${id}`) }))
   // computed synchronously at mount (not via effect) so the very first paint
   // already reflects the real scroll position — otherwise a reload that
   // lands mid-page (e.g. a deep link, or scroll position restored by the
@@ -38,7 +33,7 @@ export default function Nav({ onNavigate }) {
 
   // scrollspy: underline the section currently in view
   useEffect(() => {
-    const sections = LINKS.map((l) => document.getElementById(l.id)).filter(Boolean)
+    const sections = LINK_IDS.map((id) => document.getElementById(id)).filter(Boolean)
     const obs = new IntersectionObserver(
       (entries) => {
         const visible = entries.filter((e) => e.isIntersecting)
@@ -81,7 +76,7 @@ export default function Nav({ onNavigate }) {
               Yellina Seeds
             </div>
             <div className="hidden 2xl:block whitespace-nowrap text-[8px] uppercase tracking-[0.26em] text-green-700 font-semibold" style={{ fontFamily: 'var(--font-sans)' }}>
-              Rooted in Nature · Growing the Future
+              {t('common.tagline')}
             </div>
           </div>
         </a>
@@ -103,6 +98,7 @@ export default function Nav({ onNavigate }) {
             </a>
           ))}
           <span className="h-4 w-px bg-line" aria-hidden="true" />
+          <LanguageSwitcher variant="desktop" />
           <a
             href={OPS_URL}
             target="_blank"
@@ -111,14 +107,14 @@ export default function Nav({ onNavigate }) {
             style={{ fontFamily: 'var(--font-sans)' }}
           >
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            Login
+            {t('nav.login')}
           </a>
           <a
             href="/brochure/yellina-seeds-company-profile-2026.html"
             download="Yellina-Seeds-Company-Profile-2026.html"
             className="btn-primary !py-2 !px-4 !text-[10.5px] hover:scale-[1.03] active:scale-[0.98]"
           >
-            Brochure
+            {t('nav.brochure')}
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M12 3v13m0 0l-5-5m5 5l5-5M4 21h16" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </a>
         </div>
@@ -137,7 +133,7 @@ export default function Nav({ onNavigate }) {
       {/* Mobile menu */}
       <div
         className={`xl:hidden mx-3 mt-2 rounded-2xl glass-nav-solid overflow-hidden transition-all duration-500 ${
-          open ? 'max-h-[480px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
+          open ? 'max-h-[640px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
         }`}
       >
         <div className="flex flex-col p-5 gap-4">
@@ -152,12 +148,17 @@ export default function Nav({ onNavigate }) {
               {l.label}
             </a>
           ))}
+          <div className="pt-1 border-t border-line">
+            <div className="pt-4">
+              <LanguageSwitcher variant="mobile" />
+            </div>
+          </div>
           <a
             href="/brochure/yellina-seeds-company-profile-2026.html"
             download="Yellina-Seeds-Company-Profile-2026.html"
             className="btn-primary justify-center !py-3"
           >
-            Download Brochure
+            {t('nav.downloadBrochure')}
           </a>
           <a
             href={OPS_URL}
@@ -165,7 +166,7 @@ export default function Nav({ onNavigate }) {
             rel="noopener noreferrer"
             className="btn-outline justify-center !py-3"
           >
-            Staff & Dealer Login
+            {t('nav.staffLogin')}
           </a>
         </div>
       </div>

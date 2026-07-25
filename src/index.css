@@ -29,6 +29,24 @@
   --font-telugu: "Noto Serif Telugu", serif;
 }
 
+/* Language switcher: every component already reads var(--font-serif) /
+   var(--font-sans), so overriding those two variables per active language
+   (set as a data-lang attribute on <html> by LanguageContext) reskins the
+   whole site's typography to the right script with zero per-component
+   changes — Fraunces/Outfit don't cover these scripts at all. */
+:root[data-lang="hi"], :root[data-lang="mr"] {
+  --font-serif: "Noto Serif Devanagari", "Noto Sans Devanagari", serif;
+  --font-sans: "Noto Sans Devanagari", ui-sans-serif, system-ui, sans-serif;
+}
+:root[data-lang="te"] {
+  --font-serif: "Noto Serif Telugu", "Noto Sans Telugu", serif;
+  --font-sans: "Noto Sans Telugu", ui-sans-serif, system-ui, sans-serif;
+}
+:root[data-lang="kn"] {
+  --font-serif: "Noto Serif Kannada", "Noto Sans Kannada", serif;
+  --font-sans: "Noto Sans Kannada", ui-sans-serif, system-ui, sans-serif;
+}
+
 html {
   scroll-behavior: auto;
 }

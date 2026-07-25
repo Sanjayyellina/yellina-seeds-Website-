@@ -1,8 +1,10 @@
 import useReveal from '../hooks/useReveal.js'
 import Backdrop from './Backdrop.jsx'
-import { QUALITY_RINGS, QUALITY_PROMISES } from '../data/products.js'
+import { QUALITY_RINGS } from '../data/products.js'
+import { useLang } from '../i18n/LanguageContext.jsx'
 
 const RING_COLORS = ['#2C7A3C', '#7DB343', '#E39A2E', '#B87716']
+const RING_KEYS = ['geneticPurity', 'physicalPurity', 'germinationMaize', 'germinationPaddy']
 
 // one icon per metric, in QUALITY_RINGS order: genetic purity, physical
 // purity, maize germination, paddy germination
@@ -33,6 +35,8 @@ function QualityIcon({ pct, label, sub, color, icon }) {
 
 export default function Quality() {
   const ref = useReveal()
+  const { t } = useLang()
+  const promises = t('quality.promises')
 
   return (
     <section id="quality" ref={ref} className="relative bg-bg py-11 md:py-14 overflow-hidden">
@@ -40,22 +44,21 @@ export default function Quality() {
       <div className="relative max-w-6xl mx-auto px-6">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <div className="reveal eyebrow eyebrow-rule text-green-700">Our Quality Promise</div>
+            <div className="reveal eyebrow eyebrow-rule text-green-700">{t('quality.eyebrow')}</div>
             <h2 className="reveal mt-5 text-3xl sm:text-4xl lg:text-5xl leading-[1.12] text-green-950 font-light tracking-tight max-w-xl" style={{ fontFamily: 'var(--font-serif)', '--reveal-delay': '90ms' }}>
-              Quality without compromise.
+              {t('quality.heading')}
             </h2>
           </div>
           <p className="reveal max-w-xs text-ink-soft text-[14px] leading-relaxed" style={{ '--reveal-delay': '120ms' }}>
-            We never release a single kilogram of seed without GOT and germination testing. If any
-            lot fails, the entire quantity is discarded.
+            {t('quality.intro')}
           </p>
         </div>
 
         {/* certified-standards — plain icons, no card tile around them */}
         <div className="mt-9 flex flex-wrap justify-center sm:justify-start gap-x-10 gap-y-8">
           {QUALITY_RINGS.map((r, i) => (
-            <div key={r.label + r.sub} className="reveal" style={{ '--reveal-delay': `${i * 70}ms` }}>
-              <QualityIcon {...r} color={RING_COLORS[i]} icon={RING_ICONS[i]} />
+            <div key={RING_KEYS[i]} className="reveal" style={{ '--reveal-delay': `${i * 70}ms` }}>
+              <QualityIcon pct={r.pct} label={t(`quality.rings.${RING_KEYS[i]}.label`)} sub={t(`quality.rings.${RING_KEYS[i]}.sub`)} color={RING_COLORS[i]} icon={RING_ICONS[i]} />
             </div>
           ))}
         </div>
@@ -63,27 +66,25 @@ export default function Quality() {
         <div className="mt-12 grid lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-14 items-start">
           <div>
             <h3 className="reveal text-2xl sm:text-[28px] text-green-950 font-light leading-snug" style={{ fontFamily: 'var(--font-serif)' }}>
-              Every seed is
+              {t('quality.everySeedIs')}
             </h3>
             <div className="mt-6 grid sm:grid-cols-2 gap-3">
-              {QUALITY_PROMISES.map((q, i) => (
-                <div key={q.bold} className="reveal card flex gap-3.5 items-start px-5 py-4 hover:-translate-y-0.5 hover:shadow-[0_2px_4px_rgba(31,42,33,0.05),0_18px_36px_-16px_rgba(31,42,33,0.18)] transition-all duration-400" style={{ '--reveal-delay': `${i * 60}ms` }}>
+              {promises.map((q, i) => (
+                <div key={q} className="reveal card flex gap-3.5 items-start px-5 py-4 hover:-translate-y-0.5 hover:shadow-[0_2px_4px_rgba(31,42,33,0.05),0_18px_36px_-16px_rgba(31,42,33,0.18)] transition-all duration-400" style={{ '--reveal-delay': `${i * 60}ms` }}>
                   <svg width="20" height="20" viewBox="0 0 20 20" className="mt-0.5 shrink-0">
                     <circle cx="10" cy="10" r="9" fill="none" stroke="#7DB343" strokeWidth="1.6" />
                     <path d="M6 10.4l2.6 2.6L14 7.4" fill="none" stroke="#2C7A3C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                   <p className="text-[13.5px] leading-relaxed text-ink-soft">
-                    <b className="text-ink font-semibold">{q.bold}</b>
-                    {q.rest}
+                    <b className="text-ink font-semibold">{q}</b>
                   </p>
                 </div>
               ))}
             </div>
             <div className="reveal mt-6 card !bg-sage px-6 py-5" style={{ '--reveal-delay': '260ms' }}>
-              <div className="font-semibold text-green-900 text-[15px]" style={{ fontFamily: 'var(--font-serif)' }}>The Indian Seeds Act, 1966</div>
+              <div className="font-semibold text-green-900 text-[15px]" style={{ fontFamily: 'var(--font-serif)' }}>{t('quality.actHeading')}</div>
               <p className="mt-1.5 text-[13px] leading-relaxed text-ink-soft">
-                Every Yellina seed packet complies with the provisions of the Indian Seeds Act, 1966,
-                while consistently striving to exceed statutory quality requirements.
+                {t('quality.actText')}
               </p>
             </div>
           </div>
@@ -101,7 +102,7 @@ export default function Quality() {
               </div>
             </div>
             <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 card !rounded-full px-5 py-2 text-[10px] uppercase tracking-[0.22em] font-bold text-green-800 whitespace-nowrap z-[2]" style={{ fontFamily: 'var(--font-sans)' }}>
-              Grain fill, checked in every plot
+              {t('quality.grainFillCaption')}
             </div>
           </div>
         </div>

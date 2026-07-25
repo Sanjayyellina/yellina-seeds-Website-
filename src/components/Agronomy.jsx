@@ -2,13 +2,13 @@ import { Fragment } from 'react'
 import useReveal from '../hooks/useReveal.js'
 import Backdrop from './Backdrop.jsx'
 import { AGRONOMY_SUPPORT } from '../data/products.js'
+import { useLang } from '../i18n/LanguageContext.jsx'
 
 // month cells: s = sowing, g = growth, h = harvest
 const CALENDAR = [
-  { crop: 'Maize', sub: 'Kharif & Rabi', cells: ['h', '', '', '', '', 's', 'g', 'g', 'g', 'h', 's', 'g'] },
-  { crop: 'Paddy', sub: 'Kharif', cells: ['', '', '', '', 's', 's', 'g', 'g', 'g', 'h', 'h', ''] },
+  { key: 'maize', cells: ['h', '', '', '', '', 's', 'g', 'g', 'g', 'h', 's', 'g'] },
+  { key: 'paddy', cells: ['', '', '', '', 's', 's', 'g', 'g', 'g', 'h', 'h', ''] },
 ]
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 const CELL_STYLE = {
   s: { background: '#E39A2E' },
@@ -32,14 +32,16 @@ const AREA_ICONS = [
 
 export default function Agronomy() {
   const ref = useReveal()
+  const { t } = useLang()
+  const months = t('agronomy.months')
 
   return (
     <section id="agronomy" ref={ref} className="relative bg-bg py-11 md:py-14 overflow-hidden">
       <Backdrop src="/images/photos/harvest-mesh-bag.jpg" opacity={0.15} />
       <div className="relative max-w-6xl mx-auto px-6">
-        <div className="reveal eyebrow eyebrow-rule text-green-700">Agronomy Support</div>
+        <div className="reveal eyebrow eyebrow-rule text-green-700">{t('agronomy.eyebrow')}</div>
         <h2 className="reveal mt-5 text-3xl sm:text-4xl lg:text-5xl leading-[1.12] text-green-950 font-light tracking-tight max-w-3xl" style={{ fontFamily: 'var(--font-serif)', '--reveal-delay': '90ms' }}>
-          Our agronomy specialists guide farmers through every stage of cultivation.
+          {t('agronomy.heading')}
         </h2>
 
         <div className="mt-10 grid grid-cols-2 sm:grid-cols-5 gap-6">
@@ -52,7 +54,7 @@ export default function Agronomy() {
                 <span className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-400" style={{ background: 'linear-gradient(145deg, #2C7A3C, #1D4426)' }} />
                 <span className="relative text-green-700 group-hover:text-white transition-colors duration-400">{AREA_ICONS[i]}</span>
               </span>
-              <span className="text-[13px] font-semibold text-green-950 leading-snug max-w-[110px]" style={{ fontFamily: 'var(--font-serif)' }}>{area}</span>
+              <span className="text-[13px] font-semibold text-green-950 leading-snug max-w-[110px]" style={{ fontFamily: 'var(--font-serif)' }}>{t('agronomy.support')[i]}</span>
             </div>
           ))}
         </div>
@@ -61,38 +63,38 @@ export default function Agronomy() {
         <div className="reveal mt-8 card p-7 md:p-8 overflow-x-auto" style={{ '--reveal-delay': '120ms' }}>
           <div className="flex flex-wrap items-baseline justify-between gap-2 mb-6">
             <h3 className="text-xl text-green-950" style={{ fontFamily: 'var(--font-serif)' }}>
-              Seasonal crop calendar
+              {t('agronomy.calendarHeading')}
             </h3>
-            <div className="text-[11px] text-ink-mute">Typical cropping schedule · adjust for your local zone</div>
+            <div className="text-[11px] text-ink-mute">{t('agronomy.calendarNote')}</div>
           </div>
           <div className="min-w-[640px]">
             <div className="grid gap-1" style={{ gridTemplateColumns: '110px repeat(12, 1fr)' }}>
               <div />
-              {MONTHS.map((m) => (
+              {months.map((m) => (
                 <div key={m} className="text-center text-[10px] uppercase tracking-wider font-bold text-ink-mute pb-1" style={{ fontFamily: 'var(--font-sans)' }}>{m}</div>
               ))}
               {CALENDAR.map((row) => (
-                <Fragment key={row.crop}>
+                <Fragment key={row.key}>
                   <div className="pr-3 py-1">
-                    <b className="block text-[13px] text-green-900 font-semibold">{row.crop}</b>
-                    <span className="text-[10.5px] text-ink-mute">{row.sub}</span>
+                    <b className="block text-[13px] text-green-900 font-semibold">{t(`agronomy.calendarCrops.${row.key}.crop`)}</b>
+                    <span className="text-[10.5px] text-ink-mute">{t(`agronomy.calendarCrops.${row.key}.sub`)}</span>
                   </div>
                   {row.cells.map((c, i) => (
-                    <div key={`${row.crop}-${i}`} className="h-9 rounded-md transition-transform hover:scale-y-110" style={CELL_STYLE[c]} />
+                    <div key={`${row.key}-${i}`} className="h-9 rounded-md transition-transform hover:scale-y-110" style={CELL_STYLE[c]} />
                   ))}
                 </Fragment>
               ))}
             </div>
           </div>
           <div className="mt-5 flex flex-wrap gap-6 text-[11.5px] text-ink-soft">
-            <span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full" style={{ background: '#E39A2E' }} />Sowing window</span>
-            <span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full" style={{ background: '#DDEAD2', border: '1px solid #C9D9BC' }} />Crop growth</span>
-            <span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full" style={{ background: '#2C7A3C' }} />Harvest</span>
+            <span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full" style={{ background: '#E39A2E' }} />{t('agronomy.legendSowing')}</span>
+            <span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full" style={{ background: '#DDEAD2', border: '1px solid #C9D9BC' }} />{t('agronomy.legendGrowth')}</span>
+            <span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full" style={{ background: '#2C7A3C' }} />{t('agronomy.legendHarvest')}</span>
           </div>
         </div>
 
         <p className="reveal mt-8 text-center text-ink-soft italic text-[15.5px]" style={{ fontFamily: 'var(--font-serif)' }}>
-          Helping farmers achieve higher productivity from sowing to harvest.
+          {t('agronomy.closing')}
         </p>
       </div>
     </section>
