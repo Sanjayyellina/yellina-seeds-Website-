@@ -8,9 +8,12 @@ const GlobeIcon = (
   </svg>
 )
 
-// Desktop: a small dropdown pill in the nav bar. Mobile: an inline pill
-// row inside the slide-down menu. Both read/write the same LanguageContext,
-// so switching in either place updates the whole site immediately.
+// Desktop: a small dropdown pill in the nav bar. Compact: an icon-only
+// dropdown button that sits right in the mobile top bar (next to the
+// hamburger) so the language option is visible immediately, not buried
+// inside the slide-down menu. Mobile: an inline pill row inside the
+// slide-down menu itself. All three read/write the same LanguageContext,
+// so switching in any of them updates the whole site immediately.
 export default function LanguageSwitcher({ variant = 'desktop' }) {
   const { lang, setLang } = useLang()
   const [open, setOpen] = useState(false)
@@ -48,6 +51,47 @@ export default function LanguageSwitcher({ variant = 'desktop' }) {
                 l.code === lang
                   ? 'bg-green-700 text-white border-green-700'
                   : 'bg-white text-ink-soft border-line hover:border-green-600 hover:text-green-700'
+              }`}
+            >
+              {l.native}
+            </button>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (variant === 'compact') {
+    return (
+      <div className="relative" ref={rootRef}>
+        <button
+          onClick={() => setOpen((o) => !o)}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-label="Change language"
+          className="flex items-center gap-1 rounded-full h-9 px-2.5 text-green-800 hover:text-green-700 transition-colors cursor-pointer"
+        >
+          {GlobeIcon}
+          <span className="text-[10px] font-bold uppercase" style={{ fontFamily: 'var(--font-sans)' }}>{current.code}</span>
+        </button>
+
+        <div
+          role="listbox"
+          className={`absolute right-0 top-full mt-2 min-w-[140px] rounded-2xl glass-nav-solid p-1.5 transition-all duration-200 origin-top-right z-50 ${
+            open ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
+          }`}
+        >
+          {LANGUAGES.map((l) => (
+            <button
+              key={l.code}
+              role="option"
+              aria-selected={l.code === lang}
+              onClick={() => {
+                setLang(l.code)
+                setOpen(false)
+              }}
+              className={`w-full text-left rounded-xl px-3 py-2 text-[13px] transition-colors cursor-pointer ${
+                l.code === lang ? 'bg-green-700 text-white font-semibold' : 'text-ink-soft hover:bg-sage'
               }`}
             >
               {l.native}

@@ -119,15 +119,18 @@ export default function Nav({ onNavigate }) {
           </a>
         </div>
 
-        <button
-          className="xl:hidden flex flex-col gap-1.5 p-2"
-          onClick={() => setOpen(!open)}
-          aria-label="Toggle menu"
-        >
-          <span className={`block h-0.5 w-5 bg-green-800 transition-all duration-300 ${open ? 'rotate-45 translate-y-1.5' : ''}`} />
-          <span className={`block h-0.5 w-5 bg-green-800 transition-all duration-300 ${open ? 'opacity-0' : ''}`} />
-          <span className={`block h-0.5 w-5 bg-green-800 transition-all duration-300 ${open ? '-rotate-45 -translate-y-1.5' : ''}`} />
-        </button>
+        <div className="xl:hidden flex items-center gap-1">
+          <LanguageSwitcher variant="compact" />
+          <button
+            className="flex flex-col gap-1.5 p-2"
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle menu"
+          >
+            <span className={`block h-0.5 w-5 bg-green-800 transition-all duration-300 ${open ? 'rotate-45 translate-y-1.5' : ''}`} />
+            <span className={`block h-0.5 w-5 bg-green-800 transition-all duration-300 ${open ? 'opacity-0' : ''}`} />
+            <span className={`block h-0.5 w-5 bg-green-800 transition-all duration-300 ${open ? '-rotate-45 -translate-y-1.5' : ''}`} />
+          </button>
+        </div>
       </nav>
 
       {/* Mobile menu */}
