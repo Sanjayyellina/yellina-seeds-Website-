@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { HERO_BG_IMAGE } from '../data/heroImage.js'
 import { useLang } from '../i18n/LanguageContext.jsx'
 // Loaded eagerly (not React.lazy/Suspense) — this is the first thing every
@@ -43,6 +43,12 @@ export default function Hero({ onNavigate }) {
   const rotationBoxRef = useRef(null)
   const heroFrameRef = useRef(null)
   const [anchorPx, setAnchorPx] = useState(null)
+  // The hero must never be a blank sky. A plain <img> of the mark is painted in
+  // the emblem slot from the very first frame and only retires once the particle
+  // cloud reports it can draw — so on a slow connection, a device without WebGL,
+  // or while the 21k-point sample is still running, the logo is simply there.
+  const [particlesReady, setParticlesReady] = useState(false)
+  const handleParticlesReady = useCallback(() => setParticlesReady(true), [])
 
   // where the logo should form, measured relative to the full-hero particle
   // canvas — captured once up front so the fly-in intro lands in the right spot
@@ -112,7 +118,12 @@ export default function Hero({ onNavigate }) {
         {/* particle logo canvas — spans the whole hero so particles can fly in
             from its true edges, converging on the anchored emblem spot below */}
         <div className="absolute inset-x-0 top-0 h-screen pointer-events-none" style={{ zIndex: 1 }}>
-          <HeroLeafParticles anchorPx={anchorPx} boxRef={rotationBoxRef} heroFrameRef={heroFrameRef} />
+          <HeroLeafParticles
+            anchorPx={anchorPx}
+            boxRef={rotationBoxRef}
+            heroFrameRef={heroFrameRef}
+            onReady={handleParticlesReady}
+          />
         </div>
 
         {/* sun glow chasing the cursor */}
@@ -164,6 +175,14 @@ export default function Hero({ onNavigate }) {
           <div className="relative mt-8 select-none w-[min(56vw,520px)] lg:w-[min(72vw,520px)]" aria-hidden="true">
             <div className="logo-halo absolute -inset-[14%]" />
             <div ref={rotationBoxRef} className="relative aspect-[456/371]">
+              <img
+                src="/images/logo-green.png"
+                alt=""
+                aria-hidden="true"
+                className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-700 ${
+                  particlesReady ? 'opacity-0' : 'opacity-100'
+                }`}
+              />
               {/* invisible spacer marking where the particle logo (rendered in the
                   full-hero canvas above) should anchor and how big it should read */}
               <div ref={emblemSpacerRef} className="absolute -inset-[10%] pointer-events-none" />

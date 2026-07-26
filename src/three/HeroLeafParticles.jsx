@@ -165,7 +165,11 @@ function loadImageForever(src, onSuccess, isCancelled) {
   const attemptLoad = () => {
     if (isCancelled()) return
     const img = new Image()
-    img.crossOrigin = 'anonymous'
+    // Deliberately NOT crossOrigin. These assets are same-origin, so the canvas
+    // never gets tainted — and asking for CORS here would put this fetch in a
+    // different HTTP cache bucket from the same file requested by the nav <img>
+    // and the CSS background, which meant the browser downloaded each of them
+    // twice on a cold load.
     let settled = false
     const timeoutMs = Math.min(5000 + attempt * 1500, 12000)
     const timer = setTimeout(() => {
@@ -396,11 +400,11 @@ const MONOGRAM_ANCHORS = [
 const MONOGRAM_SLANT = 0.16
 const WRITE_START_DELAY = 0.9 // s after the intro settles before the pen starts
 const WRITE_DURATION = 2.6 // s to sign all three letters
-// Sized against WRITE_DURATION, not picked freely: a mark holds its position for
-// the first 62% of its life, so that hold has to outlast the whole signing plus
-// a beat to read it. At 7s the Y is still pinned ~1.7s after the K lands, then
-// the wind takes the word away letter by letter.
-const WRITE_LIFETIME = 7.0
+// How long the finished signature stays up after the last stroke lands. Every
+// mark is given a life that expires at this one shared moment rather than a
+// fixed span from its own birth, so the whole monogram goes at once instead of
+// disappearing stroke by stroke in the order it was written.
+const SIGN_HOLD = 3.4
 const BREEZE_FIRST_DELAY = 5.0 // s after signing before the first gust
 const BREEZE_INTERVAL = 13.0 // s between gusts
 const BREEZE_DURATION = 5.2 // s for a gust to cross the hero — slow reads as air
@@ -1210,8 +1214,11 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
             }
             // smaller than a wind leaf — a signature is written with a fine nib,
             // and small blades keep the letterforms crisp instead of fattening
-            // the strokes until they run together
-            spawnTrail.current(p.x, p.y, dx, dy, 1, WRITE_LIFETIME, true, 0.5)
+            // the strokes until they run together. Life is measured to a common
+            // deadline, so the first stroke of the Y and the last of the K
+            // disappear on the same frame rather than one at a time.
+            const signEnds = auto.settledAt + WRITE_START_DELAY + WRITE_DURATION + SIGN_HOLD
+            spawnTrail.current(p.x, p.y, dx, dy, 1, Math.max(signEnds - t, 0.1), true, 0.5)
           }
         }
       } else {
@@ -1311,23 +1318,15 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
           continue
         }
         const lifeT = Math.min(age / slot.life, 1)
-        // A held mark stays pinned while the word is meant to be read, then the
-        // wind is allowed to take it. This is what makes the signature legible
-        // at all: the drift and sway that give the cursor trail its life were
-        // smearing the letters out of shape faster than they could be read.
-        // Holds almost the whole way, then goes in well under a second. Earlier
-        // values spent a third of the mark's life dissolving, which left the
-        // word half-gone and smearing for most of the time it was on screen.
-        const release = slot.hold ? Math.max(0, (lifeT - 0.9) / 0.1) : 1
-        // Size is the only channel these have, so fading means shrinking — but
-        // sin() peaks at mid-life, which meant every letter swelled to double
-        // before it went. On a drifting wind leaf that's fine; on a letter the
-        // strokes fatten into each other and the word closes up just as you try
-        // to read it. Held marks snap to full size, hold flat while the word is
-        // legible, then shrink away in step with the release.
-        const envelope = slot.hold
-          ? Math.min(lifeT / 0.05, 1) * (1 - Math.pow(release, 0.55))
-          : Math.sin(lifeT * Math.PI)
+        // A held mark never drifts or sways. That motion is what gives the
+        // cursor trail its life, but on a letter it smears the stroke out of
+        // shape faster than the word can be read.
+        const release = slot.hold ? 0 : 1
+        // Size is the only channel these have, so any fade reads as a shrink,
+        // and a shrinking signature looks like it's being rubbed out. Held marks
+        // snap to full size, stay there, and are simply gone when their shared
+        // life runs out. Free wind leaves still breathe in and out with sin().
+        const envelope = slot.hold ? Math.min(age / 0.12, 1) : Math.sin(lifeT * Math.PI)
         const sway = Math.sin(age * TRAIL_WAVE_FREQ + slot.seed) * waveAmp * envelope * release
         const drift = driftSpeed * age * release
         const perpX = -slot.dirY
@@ -1496,36 +1495,100 @@ function useHeroPhotoTexture(src) {
   return state
 }
 
-export default function HeroLeafParticles({ anchorPx, boxRef, heroFrameRef }) {
+// Checked once, before anything tries to mount a Canvas. On a machine with no
+// WebGL — an old browser, a locked-down device, a driver that refuses — R3F
+// would throw while creating the renderer and take the whole hero down with it.
+// Here we simply decline, and the static mark in Hero.jsx stays where it is.
+function hasWebGL() {
+  if (typeof window === 'undefined') return false
+  try {
+    const probe = document.createElement('canvas')
+    return !!(window.WebGLRenderingContext && (probe.getContext('webgl2') || probe.getContext('webgl')))
+  } catch {
+    return false
+  }
+}
+
+// Fires on the first frame the scene actually draws at a real size. This only
+// mounts once R3F has measured its container, so reaching a frame here is the
+// honest signal that the hero can retire its static mark.
+function CanvasVitals({ onReady }) {
+  const size = useThree((s) => s.size)
+  const reported = useRef(false)
+  useFrame(() => {
+    if (!reported.current && size.width > 1 && size.height > 1) {
+      reported.current = true
+      onReady?.()
+    }
+  })
+  return null
+}
+
+export default function HeroLeafParticles({ anchorPx, boxRef, heroFrameRef, onReady }) {
   const data = useLogoParticles('/images/logo-green.png', 21000)
   const { texture: photoTexture, imageAspect } = useHeroPhotoTexture(REVEAL_PHOTO)
+  const [webglOK] = useState(hasWebGL)
+  const hostRef = useRef(null)
+
+  // R3F only mounts the scene once react-use-measure reports a non-zero size for
+  // its wrapper, and it re-measures on ResizeObserver/window-resize alone. If
+  // that first reading comes back empty — a layout that hadn't settled, a
+  // container measured mid-transition — nothing ever asks again, and the hero is
+  // left with a bare 300x150 canvas and no logo in it for the whole visit. That
+  // has turned up repeatedly in testing, so it gets a watchdog rather than
+  // trust: compare the canvas against the box it sits in a few times a second
+  // and, when they disagree, fire the one event that makes R3F look again. It
+  // lives outside the Canvas on purpose — in the failure case there is no scene
+  // mounted to run inside.
+  useEffect(() => {
+    if (!webglOK) return undefined
+    const tick = () => {
+      const host = hostRef.current
+      if (!host) return
+      const el = host.querySelector('canvas')
+      const want = host.clientWidth
+      if (el && want > 1 && Math.abs(el.clientWidth - want) > 2) {
+        window.dispatchEvent(new Event('resize'))
+      }
+    }
+    const id = setInterval(tick, 250)
+    tick()
+    return () => clearInterval(id)
+  }, [webglOK])
+
+  if (!webglOK) return null
   return (
-    <Canvas
-      dpr={[1, 1.75]}
-      gl={{ alpha: true, antialias: true }}
-      // R3F sets pointerEvents:'auto' on this element by default, which
-      // overrides the pointer-events-none on its wrapping div — combined
-      // with touchAction:'none' that made the canvas swallow every touch
-      // gesture across the full hero height, so mobile visitors couldn't
-      // scroll past the hero at all. Our drag/hover/trail interactions are
-      // all wired via window-level pointer listeners (see ParticleCloud),
-      // not canvas hit-testing, so the canvas itself never needs to receive
-      // pointer events — forcing it back to none/auto here is safe and
-      // restores normal touch-scrolling without affecting desktop, where
-      // mouse wheel scroll was never touch-action-gated in the first place.
-      style={{ pointerEvents: 'none', touchAction: 'auto', width: '100%', height: '100%' }}
-    >
-      {anchorPx && <CameraRig anchorPx={anchorPx} />}
-      {data && anchorPx && (
-        <ParticleCloud
-          data={data}
-          anchorPx={anchorPx}
-          boxRef={boxRef}
-          heroFrameRef={heroFrameRef}
-          photoTexture={photoTexture}
-          imageAspect={imageAspect}
-        />
-      )}
-    </Canvas>
+    <div ref={hostRef} style={{ width: '100%', height: '100%' }}>
+      <Canvas
+        dpr={[1, 1.75]}
+        gl={{ alpha: true, antialias: true }}
+        // R3F sets pointerEvents:'auto' on this element by default, which
+        // overrides the pointer-events-none on its wrapping div — combined
+        // with touchAction:'none' that made the canvas swallow every touch
+        // gesture across the full hero height, so mobile visitors couldn't
+        // scroll past the hero at all. Our drag/hover/trail interactions are
+        // all wired via window-level pointer listeners (see ParticleCloud),
+        // not canvas hit-testing, so the canvas itself never needs to receive
+        // pointer events — forcing it back to none/auto here is safe and
+        // restores normal touch-scrolling without affecting desktop, where
+        // mouse wheel scroll was never touch-action-gated in the first place.
+        style={{ pointerEvents: 'none', touchAction: 'auto', width: '100%', height: '100%' }}
+      >
+        {/* only once there is something to draw — a mask still downloading on a
+            bad connection must keep the static mark up, not blank the hero */}
+        {data && anchorPx && <CanvasVitals onReady={onReady} />}
+        {anchorPx && <CameraRig anchorPx={anchorPx} />}
+        {data && anchorPx && (
+          <ParticleCloud
+            data={data}
+            anchorPx={anchorPx}
+            boxRef={boxRef}
+            heroFrameRef={heroFrameRef}
+            photoTexture={photoTexture}
+            imageAspect={imageAspect}
+          />
+        )}
+      </Canvas>
+    </div>
   )
 }

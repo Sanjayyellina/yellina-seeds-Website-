@@ -32,16 +32,21 @@
     <meta name="twitter:description" content="Family-owned seed company from Telangana. Hybrid maize, sweet corn & paddy — 31+ years of seed production experience under our own name." />
     <meta name="twitter:image" content="https://www.yellinaseeds.com/images/og-cover.jpg" />
 
-    <!-- Hero particle logo needs these the instant it mounts — start the
-         fetch as early as possible so there's no visible gap before the
-         fly-in begins. crossorigin must match the crossOrigin="anonymous"
-         used when these are fetched via Image() in HeroLeafParticles.jsx —
-         otherwise the preload's credentials mode doesn't match the real
-         request, the browser treats it as a cache miss, and fetches the
-         same file a second time from scratch (a very real cause of a long
-         delay before the logo starts forming on a slow connection). -->
-    <link rel="preload" as="image" href="/images/photos/field-corn-rows-sunset.jpg" crossorigin="anonymous" />
-    <link rel="preload" as="image" href="/images/logo-green.png" crossorigin="anonymous" />
+    <!-- Hero particle logo needs these the instant it mounts — start the fetch
+         as early as possible so there's no visible gap before the fly-in.
+         No crossorigin, on purpose: each of these files is requested by more
+         than one consumer — the hero photo as a CSS background and as a WebGL
+         texture, the logo as the nav's <img> and as the particle mask. A
+         preload only serves a request whose CORS mode matches, and CSS
+         backgrounds and plain <img> are always no-CORS, so asking for CORS
+         here meant the preload was only ever reused by one of them and the
+         other downloaded the whole file again. They're same-origin, so no-CORS
+         costs nothing and every consumer now shares the one fetch.
+         fetchpriority is high because on a slow connection these two decide
+         when the hero stops being an empty frame; everything else on the page
+         can wait behind them. -->
+    <link rel="preload" as="image" href="/images/photos/field-corn-rows-sunset.jpg" fetchpriority="high" />
+    <link rel="preload" as="image" href="/images/logo-green.png" fetchpriority="high" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
