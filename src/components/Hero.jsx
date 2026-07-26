@@ -23,12 +23,12 @@ const PARTNER_LOGOS = [
 function Seal({ lines }) {
   return (
     <div
-      className="w-[78px] h-[78px] rounded-full flex flex-col items-center justify-center text-center shrink-0 bg-green-950 shadow-[0_8px_20px_-8px_rgba(20,47,27,0.5)]"
-      style={{ border: '2px solid var(--color-gold)', outline: '1px dashed rgba(201,162,39,0.55)', outlineOffset: '-6px' }}
+      className="w-[44px] h-[44px] sm:w-[64px] sm:h-[64px] lg:w-[78px] lg:h-[78px] rounded-full flex flex-col items-center justify-center text-center shrink-0 bg-green-950 shadow-[0_8px_20px_-8px_rgba(20,47,27,0.5)]"
+      style={{ border: '2px solid var(--color-gold)', outline: '1px dashed rgba(201,162,39,0.55)', outlineOffset: '-5px' }}
     >
-      <span className="text-[9px] font-bold leading-tight" style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-gold-soft)' }}>{lines[0]}</span>
-      <span className="text-white text-[8px] font-bold leading-tight tracking-[0.08em]" style={{ fontFamily: 'var(--font-sans)' }}>{lines[1]}</span>
-      {lines[2] && <span className="text-white/70 text-[6px] font-semibold leading-tight tracking-[0.06em] mt-0.5 px-2" style={{ fontFamily: 'var(--font-sans)' }}>{lines[2]}</span>}
+      <span className="text-[6px] sm:text-[7.5px] lg:text-[9px] font-bold leading-tight" style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-gold-soft)' }}>{lines[0]}</span>
+      <span className="text-white text-[5.5px] sm:text-[6.5px] lg:text-[8px] font-bold leading-tight tracking-[0.06em] lg:tracking-[0.08em]" style={{ fontFamily: 'var(--font-sans)' }}>{lines[1]}</span>
+      {lines[2] && <span className="hidden sm:block text-white/70 text-[5px] lg:text-[6px] font-semibold leading-tight tracking-[0.06em] mt-0.5 px-1.5" style={{ fontFamily: 'var(--font-sans)' }}>{lines[2]}</span>}
     </div>
   )
 }
@@ -39,6 +39,7 @@ export default function Hero({ onNavigate }) {
   const glowRef = useRef(null)
   const copyRef = useRef(null)
   const emblemSpacerRef = useRef(null)
+  const wordmarkRef = useRef(null)
   const rotationBoxRef = useRef(null)
   const heroFrameRef = useRef(null)
   const [anchorPx, setAnchorPx] = useState(null)
@@ -50,10 +51,15 @@ export default function Hero({ onNavigate }) {
       if (!emblemSpacerRef.current || !heroFrameRef.current) return
       const box = emblemSpacerRef.current.getBoundingClientRect()
       const frame = heroFrameRef.current.getBoundingClientRect()
+      // the wordmark's baseline is measured too, so the particle cloud can sign
+      // the monogram underneath the company name rather than across it
+      const wordmark = wordmarkRef.current?.getBoundingClientRect()
       setAnchorPx({
         x: box.left + box.width / 2 - frame.left,
         y: box.top + box.height / 2 - frame.top,
         boxHeight: box.height,
+        wordmarkBottom: wordmark ? wordmark.bottom - frame.top : null,
+        wordmarkCenter: wordmark ? wordmark.top + wordmark.height / 2 - frame.top : null,
       })
     }
     measure()
@@ -133,14 +139,18 @@ export default function Hero({ onNavigate }) {
           />
         ))}
 
-        {/* monument with side rails */}
-        <div ref={copyRef} className="relative max-w-7xl mx-auto px-6 w-full grid lg:grid-cols-[180px_1fr_150px] items-center gap-8 pt-16 md:pt-20 will-change-transform">
+        {/* Monument with side rails. The same three-column composition at every
+            width — phones get a scaled-down version of the desktop arrangement
+            rather than a different one, so the rails and seals stay where they
+            belong instead of the rails vanishing and the seals relocating into
+            a row of their own below the buttons. */}
+        <div ref={copyRef} className="relative max-w-7xl mx-auto px-2 sm:px-6 w-full grid grid-cols-[56px_1fr_48px] sm:grid-cols-[96px_1fr_80px] lg:grid-cols-[180px_1fr_150px] items-center gap-1.5 sm:gap-5 lg:gap-8 pt-16 md:pt-20 will-change-transform">
           {/* left rail — the numbers */}
-          <div className="hidden lg:flex flex-col gap-8 justify-self-start" aria-hidden="true">
+          <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8 justify-self-start" aria-hidden="true">
             {[['31+', t('hero.railYears')], ['15+', t('hero.railPartners')], ['2,000+ MT', t('hero.railDrying')]].map(([n, l]) => (
-              <div key={l} className="reveal is-visible pl-4 border-l-2" style={{ borderColor: 'var(--color-gold)' }}>
-                <div className="text-3xl font-medium text-green-800 leading-none" style={{ fontFamily: 'var(--font-serif)' }}>{n}</div>
-                <div className="mt-1.5 text-[9px] uppercase tracking-[0.2em] font-bold text-ink-mute" style={{ fontFamily: 'var(--font-sans)' }}>{l}</div>
+              <div key={l} className="reveal is-visible pl-2 lg:pl-4 border-l-2" style={{ borderColor: 'var(--color-gold)' }}>
+                <div className="text-[15px] sm:text-xl lg:text-3xl font-medium text-green-800 leading-none" style={{ fontFamily: 'var(--font-serif)' }}>{n}</div>
+                <div className="mt-1 lg:mt-1.5 text-[6px] sm:text-[7.5px] lg:text-[9px] uppercase tracking-[0.14em] lg:tracking-[0.2em] font-bold text-ink-mute leading-tight" style={{ fontFamily: 'var(--font-sans)' }}>{l}</div>
               </div>
             ))}
           </div>
@@ -149,7 +159,9 @@ export default function Hero({ onNavigate }) {
           <div className="flex flex-col items-center text-center">
 
           {/* the emblem */}
-          <div className="relative mt-8 select-none" aria-hidden="true" style={{ width: 'min(72vw, 520px)' }}>
+          {/* narrower on phones so the rails have room to sit either side of it,
+              which is what keeps the composition the same shape as desktop */}
+          <div className="relative mt-8 select-none w-[min(56vw,520px)] lg:w-[min(72vw,520px)]" aria-hidden="true">
             <div className="logo-halo absolute -inset-[14%]" />
             <div ref={rotationBoxRef} className="relative aspect-[456/371]">
               {/* invisible spacer marking where the particle logo (rendered in the
@@ -163,7 +175,7 @@ export default function Hero({ onNavigate }) {
           </div>
 
           {/* wordmark lockup */}
-          <div className="mt-7">
+          <div className="mt-7" ref={wordmarkRef}>
             <div className="text-4xl sm:text-5xl font-semibold text-green-800 tracking-tight" style={{ fontFamily: 'var(--font-serif)' }}>Yellina Seeds</div>
             <div className="mt-2 text-[10px] uppercase tracking-[0.34em] font-bold" style={{ fontFamily: 'var(--font-sans)', color: 'var(--color-gold)' }}>
               {t('common.tagline')}
@@ -172,7 +184,7 @@ export default function Hero({ onNavigate }) {
 
           {/* thesis */}
           <h1
-            className="mt-6 text-green-950 leading-[1.12] tracking-tight font-light text-3xl sm:text-4xl lg:text-[44px] max-w-3xl"
+            className="mt-6 text-green-950 leading-[1.12] tracking-tight font-light text-[26px] sm:text-4xl lg:text-[44px] max-w-3xl"
             style={{ fontFamily: 'var(--font-serif)' }}
           >
             {t('hero.h1a')} <span className="text-green-700">{t('hero.h1b')}</span>
@@ -195,15 +207,12 @@ export default function Hero({ onNavigate }) {
             </a>
           </div>
 
-          <div className="mt-8 flex lg:hidden items-center justify-center gap-4">
-            {SEALS.map((s) => (
-              <Seal key={s[0] + s[1]} lines={s} />
-            ))}
-          </div>
           </div>
 
-          {/* right rail — the seals */}
-          <div className="hidden lg:flex flex-col gap-5 items-center justify-self-end">
+          {/* right rail — the seals. One rail at every width now; the separate
+              mobile row that used to sit under the buttons is gone, since it was
+              the main thing making the phone layout a different composition. */}
+          <div className="flex flex-col gap-3 sm:gap-4 lg:gap-5 items-center justify-self-end">
             {SEALS.map((s) => (
               <Seal key={'r' + s[0] + s[1]} lines={s} />
             ))}

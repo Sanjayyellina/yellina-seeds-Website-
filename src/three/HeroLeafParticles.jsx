@@ -34,10 +34,30 @@ const SPHERE_FRAGMENT = /* glsl */ `
     );
     vec3 texColor = texture2D(uMap, coverUV).rgb;
     vec3 n = normalize(vWorldNormal);
+    // the blades are open sheets drawn on both sides, so a back face arrives
+    // with its normal pointing away — without flipping it those leaves shade
+    // as though unlit and the mark comes out blotchy
+    if (!gl_FrontFacing) n = -n;
     float diff = max(dot(n, normalize(vec3(0.45, 0.6, 0.65))), 0.0);
     float diff2 = max(dot(n, normalize(vec3(-0.4, -0.2, -0.3))), 0.0) * 0.3;
     float light = 0.6 + diff * 0.65 + diff2;
     gl_FragColor = vec4(texColor * light, 1.0);
+  }
+`
+
+// The outline every leaf in here is cut from, flat or solid. y runs -1 at the
+// stem to +1 at the tip, and the return value is the blade's half-width there.
+//
+// The two exponents are the whole trick, and the reason this reads as a leaf
+// where a symmetric lens (the obvious "two overlapping circles" shape) reads as
+// an almond: the tip exponent is the larger of the two, so the tip closes to a
+// real point while the base stays blunt, and the widest span lands about a
+// third of the way below centre — exactly where it sits on a real blade.
+const LEAF_SHAPE = /* glsl */ `
+  float leafHalfWidth(float y) {
+    float toTip  = clamp((1.0 - y) * 0.5, 0.0, 1.0);
+    float toBase = clamp((1.0 + y) * 0.5, 0.0, 1.0);
+    return 1.15 * pow(toTip, 0.85) * pow(toBase, 0.42);
   }
 `
 
@@ -46,25 +66,47 @@ const DOT_VERTEX = /* glsl */ `
   attribute float aSeed;
   uniform float uTime;
   varying float vTwinkle;
+  varying vec2 vRot;
+  varying float vCurl;
   void main() {
     float tw = 0.55 + 0.45 * sin(uTime * 1.6 + aSeed * 6.2831);
     vTwinkle = tw;
+    // its own resting angle, drifting a couple of degrees as if on a breeze
+    float a = aSeed * 6.2831 + sin(uTime * 0.45 + aSeed * 11.0) * 0.18;
+    vRot = vec2(cos(a), sin(a));
+    // and its own curve, signed so roughly half the blades bend the other way
+    vCurl = (fract(aSeed * 37.0) - 0.5) * 0.44;
     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-    gl_PointSize = aSize * tw * (9.0 / -mvPosition.z);
+    // a blade fills far less of its sprite than a disc did, so the sprite grows
+    // to keep the cloud's density where it was
+    gl_PointSize = aSize * tw * (13.0 / -mvPosition.z);
     gl_Position = projectionMatrix * mvPosition;
   }
 `
 const DOT_FRAGMENT = /* glsl */ `
   precision mediump float;
   varying float vTwinkle;
+  varying vec2 vRot;
+  varying float vCurl;
   uniform sampler2D uMap;
   uniform vec2 uResolution;
   uniform float uImageAspect;
+  ${LEAF_SHAPE}
   void main() {
-    vec2 uv = gl_PointCoord - vec2(0.5);
-    float d = length(uv);
-    if (d > 0.5) discard;
-    float falloff = smoothstep(0.5, 0.0, d);
+    vec2 p = (gl_PointCoord - vec2(0.5)) * 2.0;
+    p.y = -p.y;                 // gl_PointCoord grows downward; put the tip up
+    // into the blade's own frame, then bend it along its length
+    p = vec2(p.x * vRot.x + p.y * vRot.y, -p.x * vRot.y + p.y * vRot.x);
+    p.x -= vCurl * (1.0 - p.y * p.y);
+
+    if (abs(p.y) > 1.0) discard;
+    // guarded so the vanishing width at each end can't blow up the divide —
+    // it narrowing to nothing is what gives the tip its point for free
+    float w = max(leafHalfWidth(p.y), 0.004);
+    float acrossBlade = abs(p.x) / w;
+    if (acrossBlade > 1.0) discard;
+    float alpha = smoothstep(1.0, 0.70, acrossBlade);
+    float midrib = smoothstep(0.26, 0.0, acrossBlade);
 
     vec2 screenUV = gl_FragCoord.xy / uResolution;
     float sAR = uResolution.x / uResolution.y;
@@ -75,7 +117,10 @@ const DOT_FRAGMENT = /* glsl */ `
       screenUV.y * ratio.y + (1.0 - ratio.y) * 0.5
     );
     vec3 texColor = texture2D(uMap, coverUV).rgb;
-    gl_FragColor = vec4(texColor * (0.82 + 0.18 * vTwinkle), falloff);
+    // the vein catching a little more light is most of what makes a small green
+    // shape read as a leaf rather than a smudge
+    vec3 col = texColor * (0.82 + 0.18 * vTwinkle) * (1.0 + midrib * 0.16);
+    gl_FragColor = vec4(col, alpha);
   }
 `
 
@@ -93,7 +138,12 @@ const RAY_DIRS = [
   [1, 0], [-1, 0], [0, 1], [0, -1],
   [0.7071, 0.7071], [-0.7071, 0.7071], [0.7071, -0.7071], [-0.7071, -0.7071],
 ]
-const MAX_RAY = 26
+// Only ever needs to reach far enough for the dome factor to saturate, which
+// happens about 5px in (REF_EDGE_DIST over the world-per-pixel scale). Marching
+// to 26 was ~3x the work for a result that clamped to the same value, and this
+// loop runs 21k times before the logo can appear — it is the main thing standing
+// between page load and the formation starting.
+const MAX_RAY = 8
 
 // Samples the real logo's alpha channel into a point cloud. Each point also
 // gets an approximate distance-to-silhouette-edge (via short ray marches),
@@ -218,7 +268,11 @@ function useLogoParticles(src, count = 9000) {
         edgeDir[i * 2] = Math.cos(angle)
         edgeDir[i * 2 + 1] = Math.sin(angle)
 
-        const swoopAngle = Math.random() * Math.PI * 2
+        // Bowed by a shared prevailing wind rather than a uniformly random
+        // direction: with every particle bowing its own way the arrival read as
+        // a swarm converging, where leaves caught in one gust all bend broadly
+        // the same way. The spread keeps it from looking mechanical.
+        const swoopAngle = 2.55 + (Math.random() - 0.5) * 2.0
         swoop[i * 3] = Math.cos(swoopAngle)
         swoop[i * 3 + 1] = Math.sin(swoopAngle)
         swoop[i * 3 + 2] = (Math.random() - 0.5) * 0.7
@@ -243,13 +297,19 @@ function useLogoParticles(src, count = 9000) {
   return data
 }
 
-const INTRO_DURATION = 1.1 // seconds each particle takes to arrive, once its delay elapses
-const INTRO_MAX_DELAY = 0.25 // random per-particle stagger, spread over this many seconds
+// The flight is the whole point now, not a transition to get past — leaves come
+// in off the page edges and take their time about it. Stagger plus flight lands
+// the last arrival around 3.6s, and because the stagger is a good fraction of
+// the flight, there are always leaves still on their way in while others have
+// already landed, which is what stops it looking like one synchronised swarm.
+const INTRO_DURATION = 2.8 // seconds each particle takes to arrive, once its delay elapses
+const INTRO_MAX_DELAY = 0.8 // random per-particle stagger, spread over this many seconds
 
-// Quartic — a quick initial launch away from the edges without being an
-// abrupt snap, then a gentle, unhurried settle into the final logo shape.
+// Cubic rather than quartic. Over a flight this long a quartic launches too
+// hard and then crawls; cubic keeps the leaf moving through the middle of its
+// arc, where the tumble and the curve are actually visible.
 function easeOutCubic(x) {
-  return 1 - Math.pow(1 - x, 4)
+  return 1 - Math.pow(1 - x, 3)
 }
 function smoothstep01(x) {
   const t = Math.min(Math.max(x, 0), 1)
@@ -300,12 +360,50 @@ const RIPPLE_DELAY_MAX = 0.5 // seconds for the wave to reach the radius edge fr
 const RIPPLE_RISE_TIME = 0.35 // seconds for the effect to ease in once the wave reaches a particle
 
 const TRAIL_POOL = 220
-const TRAIL_LIFETIME = 3 // seconds
+const TRAIL_LIFETIME = 1.9 // seconds — how far the tail reaches behind the cursor
 const TRAIL_WAVE_AMP = 0.055 // sideways sway amplitude, world units (pre-scale)
 const TRAIL_WAVE_FREQ = 1.5 // radians/sec of the sway oscillation
 const TRAIL_DRIFT_SPEED = 0.05 // world units/sec carried along the movement direction, like wind
 const TRAIL_MIN_SPACING = 10 // px between spawned trail marks
-const TRAIL_DOT_SIZE = [22, 14] // [base, random-add] point-size units — kept very small
+const TRAIL_DOT_SIZE = [14, 9] // [base, random-add] point-size units — kept small
+
+// Once the mark has settled, the trail signs the founder's initials across the
+// hero on its own, then afterwards a gust blows through every so often. Both
+// reuse the cursor trail wholesale — same pool, same leaves, same fade — so it
+// reads as the same wind that follows your pointer, just doing it unprompted.
+//
+// One unbroken cursive gesture through Y-M-K rather than three separate block
+// letters — the pen never lifts, so it flows the way initials are actually
+// signed. Anchors run left to right in a box roughly 2.6 wide by 1 tall, with y
+// pointing up; the retraces (back down a stem before throwing the next arm) are
+// deliberate, since that is what a hand does and it's what stops the shape
+// looking like geometry.
+const MONOGRAM_ANCHORS = [
+  // Y — down into the valley, up the second arm, then the descending tail
+  [0.0, 0.94], [0.16, 0.62], [0.31, 0.4], [0.47, 0.72], [0.6, 0.95],
+  [0.52, 0.5], [0.45, 0.16], [0.36, 0.0],
+  // flick across into the M
+  [0.56, 0.06], [0.72, 0.3],
+  // M — up, down into the notch, up again, and away
+  [0.78, 0.04], [0.86, 0.88], [1.06, 0.34], [1.28, 0.88], [1.38, 0.06],
+  // link into the K
+  [1.54, 0.14], [1.68, 0.42],
+  // K — stem up, retrace down, throw the arm, retrace, then the leg out
+  [1.78, 0.04], [1.85, 0.9], [1.85, 0.52], [2.24, 0.86],
+  [1.92, 0.46], [2.34, 0.04], [2.44, 0.02],
+]
+// signatures lean; upright initials read as a logo, not as someone's hand
+const MONOGRAM_SLANT = 0.16
+const WRITE_START_DELAY = 0.9 // s after the intro settles before the pen starts
+const WRITE_DURATION = 2.6 // s to sign all three letters
+// Sized against WRITE_DURATION, not picked freely: a mark holds its position for
+// the first 62% of its life, so that hold has to outlast the whole signing plus
+// a beat to read it. At 7s the Y is still pinned ~1.7s after the K lands, then
+// the wind takes the word away letter by letter.
+const WRITE_LIFETIME = 7.0
+const BREEZE_FIRST_DELAY = 5.0 // s after signing before the first gust
+const BREEZE_INTERVAL = 13.0 // s between gusts
+const BREEZE_DURATION = 5.2 // s for a gust to cross the hero — slow reads as air
 
 // Ambient floating dots — a dense field of small motes licking upward from
 // across the whole logo shape, like the leaf itself is gently on fire. Each
@@ -355,9 +453,37 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
       dirX: 1,
       dirY: 0,
       seed: 0,
+      life: TRAIL_LIFETIME,
+      hold: false,
     }))
   )
   const trailCursor = useRef(0)
+
+  // Held in a ref and refreshed each render so both the pointer handler (inside
+  // an effect that must not re-subscribe on every layout change) and the frame
+  // loop can spawn through the exact same path.
+  const spawnTrail = useRef(null)
+  spawnTrail.current = (worldX, worldY, dirX, dirY, count = 2, life = TRAIL_LIFETIME, hold = false, sizeScale = 1) => {
+    for (let n = 0; n < count; n++) {
+      const slot = trailSlots.current[trailCursor.current]
+      slot.active = true
+      slot.x = worldX
+      slot.y = worldY
+      slot.z = (Math.random() - 0.5) * 0.05
+      slot.spawnTime = currentTimeRef.current
+      slot.baseSize =
+        (TRAIL_DOT_SIZE[0] + Math.random() * TRAIL_DOT_SIZE[1]) * layout.scaleFactor * sizeScale
+      slot.dirX = dirX
+      slot.dirY = dirY
+      slot.seed = Math.random() * Math.PI * 2
+      slot.life = life
+      slot.hold = hold
+      trailCursor.current = (trailCursor.current + 1) % TRAIL_POOL
+    }
+  }
+
+  // Where the signing pen has got to, and when the next gust is due.
+  const autoTrail = useRef({ settledAt: null, penIndex: 0, gustAt: null, gustIndex: 0, gustSeed: 0, gustAngle: 0, gustCX: 0, gustCY: 0 })
 
   // Scales the whole scene so the logo keeps its original on-screen size even
   // though the canvas now spans the full hero instead of a small box, and
@@ -378,6 +504,126 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
       anchorWorldY: ndcY * halfHeight,
     }
   }, [size, anchorPx])
+
+  // The strip of hero that the mark doesn't occupy, between its base and the
+  // bottom edge. Both the signature and the gusts live in here so neither ever
+  // has to compete with the logo for the same pixels.
+  // The mark's own footprint, as an ellipse in world space. The gusts cross the
+  // whole hero but skip anything that falls inside this, so the wind reads as
+  // flowing around the logo instead of straight through it.
+  const logoFootprint = useMemo(() => {
+    const boxH = anchorPx.boxHeight
+    const boxW = boxH * (456 / 371)
+    return {
+      cx: layout.anchorWorldX,
+      cy: layout.anchorWorldY,
+      // 0.82 because the measured box is the spacer, which is a little larger
+      // than the visible mark inside it
+      rx: (boxW / size.width) * layout.halfWidth * 0.82,
+      ry: (boxH / size.height) * layout.halfHeight * 0.82,
+    }
+  }, [layout, anchorPx, size])
+
+  const outsideLogo = (x, y) => {
+    const dx = (x - logoFootprint.cx) / logoFootprint.rx
+    const dy = (y - logoFootprint.cy) / logoFootprint.ry
+    return dx * dx + dy * dy > 1
+  }
+
+  // The monogram as one ordered list of evenly spaced world-space points.
+  // Three passes: place and slant the anchors, round the corners off with a
+  // Catmull-Rom spline so the gesture curves instead of turning in hard angles,
+  // then walk that curve at a fixed step so the leaves land evenly however
+  // sharply it happens to be turning. Precomputing all of it means the frame
+  // loop only advances an index, and the pen keeps one constant speed.
+  const penPath = useMemo(() => {
+    // Wide and generous — these are the founder's initials, so legibility beats
+    // subtlety. The aspect is held while clamping to the hero's width, so a
+    // narrow window shrinks the whole monogram instead of squashing it.
+    const ASPECT = 3.2
+    let height = layout.halfHeight * 0.42
+    let width = height * ASPECT
+    const maxWidth = layout.halfWidth * 1.7
+    if (width > maxWidth) {
+      width = maxWidth
+      height = width / ASPECT
+    }
+
+    // Signed straight across the company name — measured, not guessed, so it
+    // follows the wordmark wherever the layout puts it. The glyph anchors run
+    // roughly -0.2 to 0.95 about the baseline, so the baseline is dropped by
+    // just under half that span to sit the monogram centred on the name.
+    const wordmarkY =
+      anchorPx.wordmarkCenter != null
+        ? -((anchorPx.wordmarkCenter / size.height) * 2 - 1) * layout.halfHeight
+        : logoFootprint.cy - logoFootprint.ry
+    const baseY = wordmarkY - height * 0.38
+    const originX = layout.anchorWorldX - width / 2
+
+    // measured off the anchors rather than hardcoded, so editing the gesture
+    // (dropping the closing flourish, say) can't quietly leave the monogram
+    // scaled against a span it no longer has
+    let spanMin = Infinity
+    let spanMax = -Infinity
+    for (const [ax] of MONOGRAM_ANCHORS) {
+      if (ax < spanMin) spanMin = ax
+      if (ax > spanMax) spanMax = ax
+    }
+    const spanX = Math.max(spanMax - spanMin, 0.0001)
+
+    const placed = MONOGRAM_ANCHORS.map(([ax, ay]) => ({
+      x: originX + ((ax - spanMin) / spanX) * width + ay * height * MONOGRAM_SLANT,
+      y: baseY + ay * height,
+    }))
+
+    // Catmull-Rom through the anchors
+    const at = (i) => placed[Math.max(0, Math.min(placed.length - 1, i))]
+    const curve = []
+    for (let i = 0; i < placed.length - 1; i++) {
+      const p0 = at(i - 1)
+      const p1 = at(i)
+      const p2 = at(i + 1)
+      const p3 = at(i + 2)
+      for (let s = 0; s < 12; s++) {
+        const t = s / 12
+        const t2 = t * t
+        const t3 = t2 * t
+        curve.push({
+          x:
+            0.5 *
+            (2 * p1.x + (-p0.x + p2.x) * t + (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 +
+              (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3),
+          y:
+            0.5 *
+            (2 * p1.y + (-p0.y + p2.y) * t + (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 +
+              (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3),
+        })
+      }
+    }
+    curve.push(placed[placed.length - 1])
+
+    // Resampled at a fixed step so stroke density doesn't bunch on the curves.
+    // Stepped wider than the stroke is thick on purpose: the letters read better
+    // as a line of separate leaves with air between them than as a solid ribbon,
+    // where neighbouring blades merge and the strokes close up.
+    const spacing = 0.05 * layout.scaleFactor
+    const points = [{ ...curve[0], penDown: false }]
+    let carried = 0
+    for (let i = 1; i < curve.length; i++) {
+      const a = curve[i - 1]
+      const b = curve[i]
+      const segLen = Math.hypot(b.x - a.x, b.y - a.y)
+      if (segLen < 1e-6) continue
+      let travelled = spacing - carried
+      while (travelled <= segLen) {
+        const f = travelled / segLen
+        points.push({ x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f, penDown: true })
+        travelled += spacing
+      }
+      carried = segLen - (travelled - spacing)
+    }
+    return points
+  }, [layout, anchorPx, size, logoFootprint])
 
   // Converts a raw viewport pixel position to this canvas's world space
   // (independent of the rotating group's own anchor offset).
@@ -442,19 +688,7 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
       // two marks per move, both starting at the same spot — the second
       // trails the first with its own random size/wave pacing, so the
       // reveal reads fuller without just being one thicker trail
-      for (let n = 0; n < 2; n++) {
-        const slot = trailSlots.current[trailCursor.current]
-        slot.active = true
-        slot.x = world.x
-        slot.y = world.y
-        slot.z = (Math.random() - 0.5) * 0.05
-        slot.spawnTime = currentTimeRef.current
-        slot.baseSize = (TRAIL_DOT_SIZE[0] + Math.random() * TRAIL_DOT_SIZE[1]) * layout.scaleFactor
-        slot.dirX = dirX
-        slot.dirY = dirY
-        slot.seed = Math.random() * Math.PI * 2
-        trailCursor.current = (trailCursor.current + 1) % TRAIL_POOL
-      }
+      spawnTrail.current(world.x, world.y, dirX, dirY, 2)
     }
     const onDown = (e) => {
       const boxEl = boxRef.current
@@ -486,7 +720,10 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
   const startsLocal = useMemo(() => {
     const total = data.sizes.length
     const out = new Float32Array(total * 3)
-    const margin = 1.12
+    // just outside the frame: far enough that leaves cross the edge already
+    // moving rather than popping into being on it, but not so far that the first
+    // stretch of the flight happens off-screen where nobody can see it
+    const margin = 1.14
     for (let i = 0; i < total; i++) {
       const dx = data.edgeDir[i * 2]
       const dy = data.edgeDir[i * 2 + 1]
@@ -514,10 +751,21 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
       const tgy = data.targets[i3 + 1]
       const tgz = data.targets[i3 + 2]
       const segLen = Math.hypot(tgx - sx, tgy - sy, tgz - sz)
-      const swoopMag = segLen * (0.28 + (data.seeds[i] % 1) * 0.5)
-      out[i3] = (sx + tgx) / 2 + data.swoop[i3] * swoopMag
-      out[i3 + 1] = (sy + tgy) / 2 + data.swoop[i3 + 1] * swoopMag
-      out[i3 + 2] = (sz + tgz) / 2 + data.swoop[i3 + 2] * swoopMag * 0.4
+      // Each path bows perpendicular to its *own* approach rather than along one
+      // shared wind direction. The shared direction was the reason the arrival
+      // looked like it came from a single side: whichever edge a leaf started
+      // from, its path curved the same way, so they all ended up sweeping across
+      // in one direction. Curving relative to its own run lets leaves arc in
+      // from every edge, and biasing the handedness by seed gives the whole
+      // flight a gentle swirl instead of random scatter.
+      const runX = tgx - sx
+      const runY = tgy - sy
+      const runLen = Math.hypot(runX, runY) || 1
+      const handed = (data.seeds[i] % 1) < 0.62 ? 1 : -1
+      const swoopMag = segLen * (0.26 + (data.seeds[i] % 1) * 0.42) * handed
+      out[i3] = (sx + tgx) / 2 + (-runY / runLen) * swoopMag
+      out[i3 + 1] = (sy + tgy) / 2 + (runX / runLen) * swoopMag
+      out[i3 + 2] = (sz + tgz) / 2 + data.swoop[i3 + 2] * Math.abs(swoopMag) * 0.4
     }
     return out
   }, [data, startsLocal])
@@ -613,6 +861,76 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
   }, [floatParticles])
 
   const dummy = useMemo(() => new THREE.Object3D(), [])
+  const tumbleEuler = useMemo(() => new THREE.Euler(), [])
+  const tumbleQuat = useMemo(() => new THREE.Quaternion(), [])
+
+  // The solid counterpart to the flat blades, cut from the same outline as the
+  // shader's leafHalfWidth so the two kinds of leaf are the same shape. Built
+  // as a curved sheet rather than a solid of revolution: a lathed teardrop is
+  // radially symmetric, which is why it never quite looked like a leaf. This is
+  // a real blade — domed across its width, ridged along the midrib, and curled
+  // a little down its length so it catches light unevenly the way a leaf does.
+  const leafBladeGeometry = useMemo(() => {
+    const ROWS = 14
+    const COLS = 6
+    const halfWidth = (y) => {
+      const toTip = Math.max((1 - y) * 0.5, 0)
+      const toBase = Math.max((1 + y) * 0.5, 0)
+      return 1.15 * Math.pow(toTip, 0.85) * Math.pow(toBase, 0.42)
+    }
+
+    const positions = []
+    for (let r = 0; r <= ROWS; r++) {
+      const y = -1 + (2 * r) / ROWS
+      const w = halfWidth(y)
+      for (let c = 0; c <= COLS; c++) {
+        const u = -1 + (2 * c) / COLS
+        // dome scaled by local width, so the narrow ends stay flat instead of
+        // pinching into a spike
+        const dome = (1 - u * u) * w * 0.34
+        const ridge = Math.exp(-(u * u) / 0.02) * 0.05
+        const curl = (y * y - 0.35) * 0.12
+        positions.push(u * w, y, dome + ridge + curl)
+      }
+    }
+
+    const indices = []
+    const stride = COLS + 1
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const i0 = r * stride + c
+        indices.push(i0, i0 + stride, i0 + 1, i0 + 1, i0 + stride, i0 + stride + 1)
+      }
+    }
+
+    const geo = new THREE.BufferGeometry()
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
+    geo.setIndex(indices)
+    // a blade covers less of its footprint than a sphere of the same scale, so
+    // it's widened a touch to keep the mark as dense as it was
+    geo.scale(1.3, 1.05, 1.3)
+    geo.computeVertexNormals()
+    return geo
+  }, [])
+
+  useEffect(() => () => leafBladeGeometry.dispose(), [leafBladeGeometry])
+
+  // One resting orientation per blade, taken from its seed so it never changes
+  // frame to frame. Spin in the screen plane is free — the blade stays face-on —
+  // but the out-of-plane tilt is kept small on purpose: fully random 3D rotation
+  // turns too many blades edge-on and thins the mark out into patches.
+  const leafQuats = useMemo(() => {
+    const out = new Array(groups.sphereCount)
+    const euler = new THREE.Euler()
+    const quat = new THREE.Quaternion()
+    for (let i = 0; i < data.seeds.length; i++) {
+      if (!data.isSphere[i]) continue
+      const s = data.seeds[i]
+      euler.set(Math.sin(s * 31.7) * 0.4, Math.cos(s * 17.3) * 0.4, s * Math.PI * 2)
+      out[groups.slot[i]] = quat.setFromEuler(euler).clone()
+    }
+    return out
+  }, [data, groups])
 
   // Only replay the fly-in when the logo's actual particle data changes —
   // NOT on every `layout` recompute. `layout` depends on the canvas's
@@ -626,6 +944,8 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
     introDone.current = false
     introStartTime.current = null
     swingStartTime.current = null
+    // so the initials get signed again on a real revisit, not just the once
+    autoTrail.current = { settledAt: null, penIndex: 0, gustAt: null, gustIndex: 0, gustSeed: 0, gustAngle: 0, gustCX: 0, gustCY: 0 }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
@@ -690,7 +1010,8 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
       if (introStartTime.current === null) introStartTime.current = t
       const introT = t - introStartTime.current
       let allArrived = true
-      const wobbleAmp = 0.09 * layout.scaleFactor
+      // a touch more flutter, since it now has time to be seen
+      const wobbleAmp = 0.13 * layout.scaleFactor
       const radiusUnit = 0.0028 * layout.scaleFactor
       for (let i = 0; i < data.delays.length; i++) {
         const local = (introT - data.delays[i]) / INTRO_DURATION
@@ -707,10 +1028,30 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
         const px = bx + Math.sin(t * 3.2 + seed * 6.283) * flutter
         const py = by + Math.cos(t * 2.6 + seed * 9.42) * flutter
         const pz = bz
-        const growth = 0.2 + 0.8 * eased
+        // Leaves start at a bit over half size rather than a fifth. At 0.2 they
+        // were effectively specks for most of the flight, which is why the
+        // arrival never read as leaves blowing in from the edges — you simply
+        // couldn't see them until they were nearly home. Mid-small on the way
+        // in, full size once landed.
+        const growth = 0.72 + 0.28 * eased
 
         if (data.isSphere[i]) {
           dummy.position.set(px, py, pz)
+          // Tumbling in on the wind, then settling. They're leaves, so arriving
+          // at a fixed angle looked like assembly rather than weather; each one
+          // now spins on its own axes in flight and eases into its resting
+          // angle as it lands (eased² so the settle happens late, near the end).
+          if (eased < 1) {
+            tumbleEuler.set(
+              seed * 11 + t * (2.2 + seed * 3.4),
+              seed * 7 + t * (1.6 + seed * 2.6),
+              seed * 5 + t * (2.6 + seed * 2.2)
+            )
+            tumbleQuat.setFromEuler(tumbleEuler)
+            dummy.quaternion.copy(tumbleQuat).slerp(leafQuats[groups.slot[i]], eased * eased)
+          } else {
+            dummy.quaternion.copy(leafQuats[groups.slot[i]])
+          }
           dummy.scale.setScalar(data.sizes[i] * growth * radiusUnit)
           dummy.updateMatrix()
           meshRef.current.setMatrixAt(groups.slot[i], dummy.matrix)
@@ -819,6 +1160,7 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
 
         if (data.isSphere[i]) {
           dummy.position.set(px, py, pz)
+          dummy.quaternion.copy(leafQuats[groups.slot[i]])
           dummy.scale.setScalar(data.sizes[i] * radiusUnit)
           dummy.updateMatrix()
           meshRef.current.setMatrixAt(groups.slot[i], dummy.matrix)
@@ -837,6 +1179,114 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
       dotGeometry.attributes.aSize.needsUpdate = true
     }
 
+    // Unprompted trail: sign the initials once the mark has settled, then let a
+    // gust cross the hero every so often. Both just feed the same spawn path the
+    // cursor uses, so nothing downstream needs to know the difference.
+    if (introDone.current) {
+      const auto = autoTrail.current
+      if (auto.settledAt === null) auto.settledAt = t
+
+      const sinceSettled = t - auto.settledAt
+      const writeElapsed = sinceSettled - WRITE_START_DELAY
+
+      if (auto.penIndex < penPath.length) {
+        if (writeElapsed > 0) {
+          // constant pen speed: how far along the path we should be by now
+          const target = Math.min(
+            penPath.length,
+            Math.ceil((writeElapsed / WRITE_DURATION) * penPath.length)
+          )
+          for (; auto.penIndex < target; auto.penIndex++) {
+            const p = penPath[auto.penIndex]
+            const prev = penPath[auto.penIndex - 1]
+            let dx = 0
+            let dy = 1
+            if (p.penDown && prev) {
+              const len = Math.hypot(p.x - prev.x, p.y - prev.y)
+              if (len > 1e-5) {
+                dx = (p.x - prev.x) / len
+                dy = (p.y - prev.y) / len
+              }
+            }
+            // smaller than a wind leaf — a signature is written with a fine nib,
+            // and small blades keep the letterforms crisp instead of fattening
+            // the strokes until they run together
+            spawnTrail.current(p.x, p.y, dx, dy, 1, WRITE_LIFETIME, true, 0.5)
+          }
+        }
+      } else {
+        // signing finished — schedule and run gusts from here on
+        if (auto.gustAt === null) {
+          auto.gustAt = t + BREEZE_FIRST_DELAY
+            // A fresh heading and origin each time. Kept within ~35 degrees of
+            // horizontal in either direction, because near-vertical wind reads
+            // as falling rather than blowing — but it may now come from the
+            // right as readily as the left.
+            const fromLeft = Math.random() < 0.5
+            const tilt = (Math.random() * 2 - 1) * 0.62
+            auto.gustAngle = fromLeft ? tilt : Math.PI - tilt
+            auto.gustCX = (Math.random() * 0.5 - 0.25) * layout.halfWidth
+            auto.gustCY = (Math.random() * 1.3 - 0.55) * layout.halfHeight
+        }
+        const gustElapsed = t - auto.gustAt
+        if (gustElapsed >= 0) {
+          if (gustElapsed <= BREEZE_DURATION) {
+            const STEPS = 80
+            const target = Math.min(STEPS, Math.ceil((gustElapsed / BREEZE_DURATION) * STEPS))
+            for (; auto.gustIndex < target; auto.gustIndex++) {
+              const raw = auto.gustIndex / STEPS
+              // eased so the gust gathers, runs, and trails off rather than
+              // crossing at one flat speed — most of what makes it read as air
+              // rather than as something being drawn
+              const f = raw * raw * (3 - 2 * raw)
+              // Travels along its own heading rather than always left to right,
+              // so successive gusts come from different quarters. The reach is
+              // the hero's diagonal, so a gust still crosses fully at any angle.
+              const dirX = Math.cos(auto.gustAngle)
+              const dirY = Math.sin(auto.gustAngle)
+              const reach = Math.hypot(layout.halfWidth, layout.halfHeight) * 1.15
+              const along = -reach + 2 * reach * f
+              // A long, lazy wavelength instead of a tight wiggle, and three
+              // strands offset across the heading: one line of leaves reads as a
+              // stroke, several drifting together read as moving air.
+              const phase = f * 2.1 + auto.gustSeed
+              for (let s = 0; s < 3; s++) {
+                const wave =
+                  (s - 1) * layout.halfHeight * 0.07 +
+                  Math.sin(phase + s * 0.85) * layout.halfHeight * 0.1
+                // offset perpendicular to the direction of travel
+                const x = auto.gustCX + dirX * along - dirY * wave
+                const y = auto.gustCY + dirY * along + dirX * wave
+                // skipped over the mark itself, so the wind flows around it
+                if (outsideLogo(x, y)) {
+                  const drift = Math.cos(phase + s * 0.85) * 0.3
+                  spawnTrail.current(
+                    x, y,
+                    dirX - dirY * drift,
+                    dirY + dirX * drift,
+                    1, TRAIL_LIFETIME, false, 0.72
+                  )
+                }
+              }
+            }
+          } else {
+            auto.gustAt = t + BREEZE_INTERVAL
+            auto.gustIndex = 0
+            auto.gustSeed = Math.random() * Math.PI * 2
+            // A fresh heading and origin each time. Kept within ~35 degrees of
+            // horizontal in either direction, because near-vertical wind reads
+            // as falling rather than blowing — but it may now come from the
+            // right as readily as the left.
+            const fromLeft = Math.random() < 0.5
+            const tilt = (Math.random() * 2 - 1) * 0.62
+            auto.gustAngle = fromLeft ? tilt : Math.PI - tilt
+            auto.gustCX = (Math.random() * 0.5 - 0.25) * layout.halfWidth
+            auto.gustCY = (Math.random() * 1.3 - 0.55) * layout.halfHeight
+          }
+        }
+      }
+    }
+
     // trail dots in the side background zones — spawned on mousemove, each
     // one riding a sideways wave along its own heading as it fades, like a
     // gust of wind carrying it off rather than sitting still and shrinking
@@ -852,18 +1302,38 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
           continue
         }
         const age = t - slot.spawnTime
-        if (age > TRAIL_LIFETIME) {
+        // per-mark, not one global constant: the signature has to outlive the
+        // time it takes to write it or its first letter is gone before its last
+        // is drawn, while the cursor trail stays short
+        if (age > slot.life) {
           slot.active = false
           sizeAttr.array[i] = 0
           continue
         }
-        const lifeT = Math.min(age / TRAIL_LIFETIME, 1)
-        const envelope = Math.sin(lifeT * Math.PI)
-        const sway = Math.sin(age * TRAIL_WAVE_FREQ + slot.seed) * waveAmp * envelope
+        const lifeT = Math.min(age / slot.life, 1)
+        // A held mark stays pinned while the word is meant to be read, then the
+        // wind is allowed to take it. This is what makes the signature legible
+        // at all: the drift and sway that give the cursor trail its life were
+        // smearing the letters out of shape faster than they could be read.
+        // Holds almost the whole way, then goes in well under a second. Earlier
+        // values spent a third of the mark's life dissolving, which left the
+        // word half-gone and smearing for most of the time it was on screen.
+        const release = slot.hold ? Math.max(0, (lifeT - 0.9) / 0.1) : 1
+        // Size is the only channel these have, so fading means shrinking — but
+        // sin() peaks at mid-life, which meant every letter swelled to double
+        // before it went. On a drifting wind leaf that's fine; on a letter the
+        // strokes fatten into each other and the word closes up just as you try
+        // to read it. Held marks snap to full size, hold flat while the word is
+        // legible, then shrink away in step with the release.
+        const envelope = slot.hold
+          ? Math.min(lifeT / 0.05, 1) * (1 - Math.pow(release, 0.55))
+          : Math.sin(lifeT * Math.PI)
+        const sway = Math.sin(age * TRAIL_WAVE_FREQ + slot.seed) * waveAmp * envelope * release
+        const drift = driftSpeed * age * release
         const perpX = -slot.dirY
         const perpY = slot.dirX
-        posAttr.array[i * 3] = slot.x + perpX * sway + slot.dirX * driftSpeed * age
-        posAttr.array[i * 3 + 1] = slot.y + perpY * sway + slot.dirY * driftSpeed * age
+        posAttr.array[i * 3] = slot.x + perpX * sway + slot.dirX * drift
+        posAttr.array[i * 3 + 1] = slot.y + perpY * sway + slot.dirY * drift
         posAttr.array[i * 3 + 2] = slot.z
         sizeAttr.array[i] = slot.baseSize * envelope
       }
@@ -919,8 +1389,16 @@ function ParticleCloud({ data, anchorPx, boxRef, heroFrameRef, photoTexture, ima
     <>
       <group ref={groupRef}>
         <instancedMesh ref={meshRef} args={[undefined, undefined, groups.sphereCount]}>
-          <sphereGeometry args={[1, 8, 6]} />
-          <shaderMaterial ref={sphereMatRef} vertexShader={SPHERE_VERTEX} fragmentShader={SPHERE_FRAGMENT} uniforms={sphereUniforms} />
+          <primitive object={leafBladeGeometry} attach="geometry" />
+          {/* a blade is an open sheet, not a closed volume, so both faces have
+              to draw or half of them vanish depending on which way they turned */}
+          <shaderMaterial
+            ref={sphereMatRef}
+            vertexShader={SPHERE_VERTEX}
+            fragmentShader={SPHERE_FRAGMENT}
+            uniforms={sphereUniforms}
+            side={THREE.DoubleSide}
+          />
         </instancedMesh>
         <points geometry={dotGeometry}>
           <shaderMaterial
